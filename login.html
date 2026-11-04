@@ -1,0 +1,191 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hunter Access | THE SYSTEM</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      min-height: 100vh;
+      background: radial-gradient(ellipse at center, #172b43, #080d18 70%);
+      color: #e8f2ff;
+      font-family: Arial, sans-serif;
+      display: grid;
+      place-items: center;
+      padding: 20px;
+    }
+
+    .card {
+      width: 100%;
+      max-width: 420px;
+      background: #101d2e;
+      border: 1px solid #31506b;
+      padding: 35px 28px;
+      box-shadow: 0 0 50px #35c8dc12;
+    }
+
+    .logo {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .logo .symbol {
+      font-size: 45px;
+      color: #76e5dc;
+    }
+
+    h1 {
+      font-size: 26px;
+      letter-spacing: 4px;
+      margin-top: 10px;
+    }
+
+    .subtitle {
+      color: #8ba6bd;
+      font-size: 10px;
+      letter-spacing: 3px;
+      margin-top: 8px;
+    }
+
+    .tabs {
+      display: flex;
+      margin-bottom: 25px;
+      border-bottom: 1px solid #29445e;
+    }
+
+    .tab {
+      flex: 1;
+      padding: 13px;
+      color: #8299ad;
+      background: transparent;
+      border: 0;
+      cursor: pointer;
+      letter-spacing: 2px;
+    }
+
+    .tab.active {
+      color: #76e5dc;
+      border-bottom: 2px solid #76e5dc;
+    }
+
+    label {
+      display: block;
+      color: #a5b7c9;
+      font-size: 11px;
+      letter-spacing: 2px;
+      margin: 18px 0 8px;
+    }
+
+    input {
+      width: 100%;
+      background: #192a3e;
+      border: 1px solid #314b65;
+      padding: 14px;
+      color: white;
+      outline: none;
+    }
+
+    input:focus { border-color: #76e5dc; }
+
+    .submit {
+      width: 100%;
+      margin-top: 25px;
+      padding: 16px;
+      border: 0;
+      background: #76e5dc;
+      color: #08121e;
+      font-weight: bold;
+      letter-spacing: 2px;
+      cursor: pointer;
+    }
+
+    .submit:hover { background: #b0fff5; }
+
+    .message {
+      margin-top: 18px;
+      color: #76e5dc;
+      font-size: 13px;
+      line-height: 1.5;
+      text-align: center;
+    }
+
+    .back {
+      display: block;
+      margin-top: 25px;
+      text-align: center;
+      color: #8299ad;
+      text-decoration: none;
+      font-size: 12px;
+    }
+  </style>
+</head>
+
+<body>
+  <main class="card">
+    <header class="logo">
+      <div class="symbol">◈</div>
+      <h1>THE SYSTEM</h1>
+      <p class="subtitle">HUNTER AUTHENTICATION</p>
+    </header>
+
+    <div class="tabs">
+      <button class="tab active" id="loginTab" type="button">LOGIN</button>
+      <button class="tab" id="registerTab" type="button">REGISTER</button>
+    </div>
+
+    <form id="authForm">
+      <label for="email">EMAIL ADDRESS</label>
+      <input id="email" type="email" placeholder="hunter@email.com" required>
+
+      <label for="password">PASSWORD</label>
+      <input id="password" type="password" placeholder="Minimum 8 characters" minlength="8" required>
+
+      <div id="inviteGroup" hidden>
+        <label for="inviteCode">INVITATION CODE</label>
+        <input id="inviteCode" type="text" placeholder="SYSTEM-XXXX-XXXX">
+      </div>
+
+      <button class="submit" id="submitButton" type="submit">
+        ENTER THE SYSTEM
+      </button>
+    </form>
+
+    <p class="message" id="message" role="status" aria-live="polite"></p>
+
+    <a href="index.html" class="back">← BACK TO MAIN PAGE</a>
+  </main>
+
+  <script>
+    const loginTab = document.getElementById("loginTab");
+    const registerTab = document.getElementById("registerTab");
+    const inviteGroup = document.getElementById("inviteGroup");
+    const inviteCode = document.getElementById("inviteCode");
+    const submitButton = document.getElementById("submitButton");
+    const message = document.getElementById("message");
+    let mode = "login";
+
+    function setMode(nextMode) {
+      mode = nextMode;
+      loginTab.classList.toggle("active", mode === "login");
+      registerTab.classList.toggle("active", mode === "register");
+      inviteGroup.hidden = mode !== "register";
+      inviteCode.required = mode === "register";
+      submitButton.textContent = mode === "login"
+        ? "ENTER THE SYSTEM"
+        : "CREATE HUNTER";
+      message.textContent = "";
+    }
+
+    loginTab.addEventListener("click", () => setMode("login"));
+    registerTab.addEventListener("click", () => setMode("register"));
+
+    document.getElementById("authForm").addEventListener("submit", (event) => {
+      event.preventDefault();
+      message.textContent = "Authentication will be connected in the next step.";
+    });
+  </script>
+</body>
+</html>
