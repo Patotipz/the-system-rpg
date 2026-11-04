@@ -119,8 +119,9 @@ form.addEventListener("submit", async (event) => {
     }
 
     message.textContent =
-      "ACCESS GRANTED. Welcome, Hunter. Character creation is next.";
+  "ACCESS GRANTED. Welcome, Hunter.";
 
+window.location.href = "character.html";
   } catch (error) {
     console.error(error);
     message.textContent = error.message;
