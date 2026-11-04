@@ -1,0 +1,148 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>THE SYSTEM | Dashboard</title>
+  <link rel="stylesheet" href="assets/css/dashboard.css">
+</head>
+<body>
+
+  <aside class="sidebar">
+    <div class="logo">THE <span>SYSTEM</span></div>
+
+    <div class="menu-label">MAIN MENU</div>
+
+    <nav>
+      <a href="#dashboard" class="nav-link active">◈ DASHBOARD</a>
+      <a href="#status" class="nav-link">▣ STATUS</a>
+      <a href="#quests" class="nav-link">⚔ QUESTS</a>
+      <a href="#inventory" class="nav-link">▤ INVENTORY</a>
+      <a href="#achievements" class="nav-link">♛ ACHIEVEMENTS</a>
+      <a href="#activity" class="nav-link">◷ ACTIVITY</a>
+    </nav>
+
+    <div class="sidebar-bottom">
+      <button id="logoutButton">↪ LOG OUT</button>
+      <p>SYSTEM VERSION 1.0</p>
+    </div>
+  </aside>
+
+  <main class="main-content" id="dashboard">
+
+    <header class="topbar">
+      <div>
+        <p class="system-label">[ SYSTEM ONLINE ]</p>
+        <h1>HUNTER DASHBOARD</h1>
+      </div>
+
+      <div class="topbar-right">
+        <span id="hunterRank">RANK E</span>
+        <span id="hunterLevel">LV. 1</span>
+      </div>
+    </header>
+
+    <section class="welcome-section">
+      <div>
+        <p class="system-label">WELCOME BACK, HUNTER</p>
+        <h2 id="hunterName">Loading...</h2>
+        <p class="muted">Your journey continues.</p>
+      </div>
+
+      <div class="hunter-avatar" id="hunterAvatar">⚔️</div>
+    </section>
+
+    <section class="progress-section">
+      <div class="section-heading">
+        <h2>EXPERIENCE</h2>
+        <span id="xpText">0 XP</span>
+      </div>
+
+      <div class="xp-track">
+        <div class="xp-fill" id="xpBar"></div>
+      </div>
+
+      <p class="muted" id="xpNext">Your next level awaits.</p>
+    </section>
+
+    <section class="resource-grid">
+      <article class="resource-card">
+        <span>✦</span>
+        <p>COINS</p>
+        <h2 id="hunterCoins">0</h2>
+      </article>
+
+      <article class="resource-card">
+        <span>♥</span>
+        <p>HP</p>
+        <h2 id="hunterHP">100</h2>
+      </article>
+
+      <article class="resource-card">
+        <span>⚡</span>
+        <p>ENERGY</p>
+        <h2 id="hunterEnergy">100</h2>
+      </article>
+    </section>
+
+    <section class="content-grid">
+
+      <article class="panel" id="status">
+        <div class="panel-heading">
+          <h2>STATUS WINDOW</h2>
+          <span>ATTRIBUTES</span>
+        </div>
+
+        <div id="statsList" class="stats-list">
+          <p class="muted">Loading attributes...</p>
+        </div>
+      </article>
+
+      <article class="panel" id="quests">
+        <div class="panel-heading">
+          <h2>ACTIVE QUESTS</h2>
+          <span>MISSIONS</span>
+        </div>
+
+        <div id="questsList">
+          <p class="muted">Loading quests...</p>
+        </div>
+      </article>
+
+    </section>
+
+    <section class="panel secondary-panel" id="inventory">
+      <div class="panel-heading">
+        <h2>INVENTORY</h2>
+        <span>ITEM STORAGE</span>
+      </div>
+      <p class="muted">Your inventory will appear here.</p>
+    </section>
+
+    <section class="panel secondary-panel" id="achievements">
+      <div class="panel-heading">
+        <h2>ACHIEVEMENTS</h2>
+        <span>HUNTER RECORD</span>
+      </div>
+      <p class="muted">Your achievements will appear here.</p>
+    </section>
+
+    <section class="panel secondary-panel" id="activity">
+      <div class="panel-heading">
+        <h2>ACTIVITY LOG</h2>
+        <span>RECENT EVENTS</span>
+      </div>
+      <div id="activityList">
+        <p class="muted">No recent activity.</p>
+      </div>
+    </section>
+
+    <p id="dashboardMessage" class="system-label"></p>
+
+  </main>
+
+  <script type="module" src="assets/js/dashboard.js"></script>
+
+</body>
+</html>
