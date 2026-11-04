@@ -1,0 +1,132 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  min-height: 100vh;
+  background:
+    radial-gradient(ellipse at top, #10264a 0%, #080d18 55%, #03060c 100%);
+  color: #eaf2ff;
+  font-family: Arial, sans-serif;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 25px;
+}
+
+.character-container {
+  width: 100%;
+  max-width: 600px;
+  padding: 45px 35px;
+  background: rgba(9, 19, 38, 0.88);
+  border: 1px solid #244b7b;
+  box-shadow: 0 0 45px rgba(25, 105, 220, 0.15);
+  text-align: center;
+}
+
+.system-label {
+  color: #54a9ff;
+  font-size: 12px;
+  letter-spacing: 4px;
+  margin-bottom: 20px;
+}
+
+h1 {
+  font-size: clamp(25px, 5vw, 36px);
+  letter-spacing: 3px;
+  margin-bottom: 12px;
+}
+
+.subtitle {
+  color: #8499b8;
+  margin-bottom: 40px;
+}
+
+label,
+h2 {
+  display: block;
+  text-align: left;
+  font-size: 13px;
+  letter-spacing: 2px;
+  color: #74baff;
+  margin-bottom: 14px;
+}
+
+input {
+  width: 100%;
+  padding: 16px;
+  margin-bottom: 35px;
+  background: #0b1628;
+  border: 1px solid #29486e;
+  color: white;
+  font-size: 15px;
+  outline: none;
+}
+
+input:focus {
+  border-color: #4da6ff;
+  box-shadow: 0 0 12px rgba(77, 166, 255, 0.2);
+}
+
+.avatar-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 15px;
+  margin: 20px 0 35px;
+}
+
+.avatar {
+  min-height: 100px;
+  background: #101e34;
+  border: 1px solid #29486e;
+  color: white;
+  font-size: 38px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.avatar:hover {
+  border-color: #65b4ff;
+  transform: translateY(-3px);
+}
+
+.avatar.selected {
+  border: 2px solid #4da6ff;
+  background: #142e50;
+  box-shadow: 0 0 18px rgba(77, 166, 255, 0.3);
+}
+
+#saveCharacter {
+  width: 100%;
+  padding: 17px;
+  background: #1765b5;
+  border: 1px solid #65b4ff;
+  color: white;
+  font-weight: bold;
+  letter-spacing: 2px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+#saveCharacter:hover {
+  background: #247ed8;
+  box-shadow: 0 0 20px rgba(77, 166, 255, 0.3);
+}
+
+#characterMessage {
+  margin-top: 20px;
+  color: #75bdff;
+  font-size: 13px;
+}
+
+@media (max-width: 480px) {
+  .character-container {
+    padding: 35px 20px;
+  }
+
+  .avatar {
+    min-height: 80px;
+  }
+}
