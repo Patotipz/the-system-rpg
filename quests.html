@@ -1,0 +1,110 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>THE SYSTEM | Quest Board</title>
+  <link rel="stylesheet" href="assets/css/dashboard.css">
+  <link rel="stylesheet" href="assets/css/quests.css">
+</head>
+<body>
+
+  <aside class="sidebar">
+    <div class="logo">THE <span>SYSTEM</span></div>
+
+    <div class="menu-label">MAIN MENU</div>
+
+    <nav>
+      <a href="dashboard.html" class="nav-link">◈ DASHBOARD</a>
+      <a href="dashboard.html#status" class="nav-link">▣ STATUS</a>
+      <a href="quests.html" class="nav-link active">⚔ QUESTS</a>
+      <a href="dashboard.html#inventory" class="nav-link">▤ INVENTORY</a>
+      <a href="dashboard.html#achievements" class="nav-link">♛ ACHIEVEMENTS</a>
+      <a href="dashboard.html#activity" class="nav-link">◷ ACTIVITY</a>
+    </nav>
+
+    <div class="sidebar-bottom">
+      <button id="logoutButton">↪ LOG OUT</button>
+      <p>SYSTEM VERSION 1.0</p>
+    </div>
+  </aside>
+
+  <main class="main-content">
+
+    <header class="topbar">
+      <div>
+        <p class="system-label">[ SYSTEM MISSION CENTER ]</p>
+        <h1>QUEST BOARD</h1>
+      </div>
+      <div class="topbar-right">
+        <span id="hunterRank">RANK E</span>
+        <span id="hunterLevel">LV. 1</span>
+      </div>
+    </header>
+
+    <section class="quest-intro">
+      <p class="system-label">[ AVAILABLE MISSIONS ]</p>
+      <h2>CHOOSE YOUR NEXT CHALLENGE</h2>
+      <p class="muted">
+        Complete quests, earn experience and become stronger.
+      </p>
+    </section>
+
+    <section class="quest-summary">
+      <article class="resource-card">
+        <span>⚔</span>
+        <p>ACTIVE QUESTS</p>
+        <h2 id="activeQuestCount">0</h2>
+      </article>
+
+      <article class="resource-card">
+        <span>✦</span>
+        <p>AVAILABLE QUESTS</p>
+        <h2 id="availableQuestCount">0</h2>
+      </article>
+
+      <article class="resource-card">
+        <span>🏆</span>
+        <p>COMPLETED QUESTS</p>
+        <h2 id="completedQuestCount">0</h2>
+      </article>
+    </section>
+
+    <section class="quest-section">
+      <div class="quest-section-heading">
+        <h2>AVAILABLE MISSIONS</h2>
+        <span>QUEST CATALOG</span>
+      </div>
+
+      <div class="quest-filters">
+        <button class="filter-button active" data-filter="all">ALL</button>
+        <button class="filter-button" data-filter="daily">DAILY</button>
+        <button class="filter-button" data-filter="main">MAIN</button>
+        <button class="filter-button" data-filter="dungeon">DUNGEON</button>
+      </div>
+
+      <div id="availableQuests" class="quest-grid">
+        <p class="muted">Loading available missions...</p>
+      </div>
+    </section>
+
+    <section class="quest-section">
+      <div class="quest-section-heading">
+        <h2>MY ACTIVE QUESTS</h2>
+        <span>YOUR MISSIONS</span>
+      </div>
+
+      <div id="myQuests" class="quest-grid">
+        <p class="muted">Loading your missions...</p>
+      </div>
+    </section>
+
+    <p id="questMessage" class="system-label"></p>
+
+  </main>
+
+  <script type="module" src="assets/js/quests.js"></script>
+
+</body>
+</html>
