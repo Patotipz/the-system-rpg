@@ -98,7 +98,9 @@ form.addEventListener("submit", async (event) => {
 
     if (error) throw error;
 
-    message.textContent = "HUNTER CREATED SUCCESSFULLY.";
+   setTimeout(() => {
+  window.location.href = "dashboard.html";
+}, 1000);
 
   } catch (error) {
     console.error(error);
