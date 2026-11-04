@@ -18,6 +18,59 @@ let currentUser = null;
 let catalog = [];
 let userQuests = [];
 
+function getMexicoDate() {
+  const parts = new Intl.DateTimeFormat("en-CA", {
+    timeZone: "America/Mexico_City",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit"
+  }).formatToParts(new Date());
+
+  const values = Object.fromEntries(
+    parts.map(part => [part.type, part.value])
+  );
+
+  return `${values.year}-${values.month}-${values.day}`;
+}
+
+function startDailyRefresh() {
+  let lastDate = getMexicoDate();
+
+  setInterval(async () => {
+    const today = getMexicoDate();
+
+    if (today !== lastDate) {
+      lastDate = today;
+
+      try {
+        await loadQuests();
+        message.textContent = "NEW DAY. DAILY QUESTS RESET.";
+      } catch (error) {
+        console.error(error);
+        message.textContent = error.message;
+      }
+    }
+  }, 30000);
+
+  document.addEventListener("visibilitychange", async () => {
+    if (document.visibilityState !== "visible") return;
+
+    const today = getMexicoDate();
+
+    if (today !== lastDate) {
+      lastDate = today;
+
+      try {
+        await loadQuests();
+        message.textContent = "DAILY QUESTS UPDATED.";
+      } catch (error) {
+        console.error(error);
+        message.textContent = error.message;
+      }
+    }
+  });
+}
+
 async function initialize() {
   const { data: authData } = await supabase.auth.getUser();
   currentUser = authData.user;
@@ -36,7 +89,8 @@ async function initialize() {
   }
 
   await loadProfile();
-  await loadQuests();
+await loadQuests();
+startDailyRefresh();
 }
 
 async function loadProfile() {
