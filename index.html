@@ -1,0 +1,149 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#080d18">
+  <title>THE SYSTEM RPG</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      min-height: 100vh;
+      background:
+        radial-gradient(ellipse at 50% 35%, #152b43 0%, #080d18 65%);
+      color: #e8f2ff;
+      font-family: Arial, sans-serif;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 650px;
+      text-align: center;
+    }
+
+    .status {
+      display: inline-block;
+      color: #76e5dc;
+      border: 1px solid #367e83;
+      padding: 8px 18px;
+      letter-spacing: 4px;
+      font-size: 11px;
+      margin-bottom: 35px;
+    }
+
+    .symbol {
+      font-size: 65px;
+      color: #76e5dc;
+      margin-bottom: 20px;
+      text-shadow: 0 0 30px #3aa8c8;
+    }
+
+    h1 {
+      font-size: clamp(38px, 9vw, 68px);
+      letter-spacing: 7px;
+      font-weight: 800;
+    }
+
+    h1 span {
+      color: #76e5dc;
+    }
+
+    .subtitle {
+      color: #8ba6bd;
+      letter-spacing: 4px;
+      font-size: 12px;
+      margin-top: 15px;
+    }
+
+    .panel {
+      margin-top: 50px;
+      padding: 30px 24px;
+      background: rgba(17, 31, 49, .85);
+      border: 1px solid #29465d;
+      box-shadow: 0 0 45px rgba(39, 151, 177, .08);
+    }
+
+    .panel h2 {
+      color: #76e5dc;
+      font-size: 13px;
+      letter-spacing: 3px;
+      margin-bottom: 15px;
+    }
+
+    .panel p {
+      color: #a5b7c9;
+      line-height: 1.7;
+      font-size: 14px;
+    }
+
+    .button {
+      display: inline-block;
+      margin-top: 28px;
+      padding: 15px 35px;
+      background: #76e5dc;
+      color: #08121e;
+      text-decoration: none;
+      font-weight: bold;
+      letter-spacing: 2px;
+      font-size: 12px;
+      transition: .2s;
+    }
+
+    .button:hover {
+      background: #b0fff5;
+      box-shadow: 0 0 25px #76e5dc66;
+      transform: translateY(-2px);
+    }
+
+    footer {
+      margin-top: 35px;
+      color: #536b80;
+      font-size: 10px;
+      letter-spacing: 2px;
+    }
+  </style>
+</head>
+
+<body>
+  <main class="container">
+
+    <div class="status">SYSTEM INITIALIZING</div>
+
+    <div class="symbol">◈</div>
+
+    <h1>THE <span>SYSTEM</span></h1>
+
+    <p class="subtitle">YOUR SECOND LIFE BEGINS HERE</p>
+
+    <section class="panel">
+      <h2>HUNTER REGISTRATION</h2>
+
+      <p>
+        A new world awaits.<br>
+        Build your character, complete quests,
+        increase your attributes and rise through
+        the hunter ranks.
+      </p>
+
+      <a href="login.html" class="button">
+        ENTER THE SYSTEM
+      </a>
+    </section>
+
+    <footer>
+      HUNTER ASSOCIATION · CLASSIFIED ACCESS
+    </footer>
+
+  </main>
+</body>
+</html>
