@@ -80,7 +80,10 @@ async function initialize() {
     return;
   }
 
-  const { data: authorized } = await supabase.rpc("is_authorized");
+  const { data: authorized, error: authError } =
+    await supabase.rpc("is_authorized");
+
+  if (authError) throw authError;
 
   if (!authorized) {
     await supabase.auth.signOut();
@@ -89,8 +92,8 @@ async function initialize() {
   }
 
   await loadProfile();
-await loadQuests();
-startDailyRefresh();
+  await loadQuests();
+  startDailyRefresh();
 }
 
 async function loadProfile() {
@@ -127,37 +130,53 @@ async function loadQuests() {
   renderAll();
 }
 
-function renderAll() {
- const active = userQuests.filter(q =>
-  q.status === "active" || q.status === "pending"
-);
-  const completed = userQuests.filter(q => q.status === "completed");
-  const today = new Date().toLocaleDateString("en-CA", {
-  timeZone: "America/Mexico_City"
-});
+function getAvailableQuests() {
+  const today = getMexicoDate();
 
-const available = catalog.filter(quest => {
-  const assignments = userQuests.filter(
-    uq => uq.quest_id === quest.id
+  return catalog.filter(quest => {
+    const assignments = userQuests.filter(
+      uq => uq.quest_id === quest.id
+    );
+
+    if (quest.quest_type === "daily") {
+      return !assignments.some(uq =>
+        getMexicoDateFromTimestamp(uq.assigned_at) === today
+      );
+    }
+
+    if (quest.quest_type === "main") {
+      return assignments.length === 0;
+    }
+
+    return true;
+  });
+}
+
+function getMexicoDateFromTimestamp(timestamp) {
+  const parts = new Intl.DateTimeFormat("en-CA", {
+    timeZone: "America/Mexico_City",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit"
+  }).formatToParts(new Date(timestamp));
+
+  const values = Object.fromEntries(
+    parts.map(part => [part.type, part.value])
   );
 
-  if (quest.quest_type === "daily") {
-    return !assignments.some(uq => {
-      const assignedDate = new Date(uq.assigned_at)
-        .toLocaleDateString("en-CA", {
-          timeZone: "America/Mexico_City"
-        });
+  return `${values.year}-${values.month}-${values.day}`;
+}
 
-      return assignedDate === today;
-    });
-  }
+function renderAll() {
+  const active = userQuests.filter(q =>
+    q.status === "active" || q.status === "pending"
+  );
 
-  if (quest.quest_type === "main") {
-    return assignments.length === 0;
-  }
+  const completed = userQuests.filter(q =>
+    q.status === "completed"
+  );
 
-  return true;
-});
+  const available = getAvailableQuests();
 
   activeCount.textContent = active.length;
   availableCount.textContent = available.length;
@@ -227,6 +246,7 @@ function renderMyQuests(quests) {
   }).join("");
 }
 
+// FILTER BUTTONS
 document.querySelectorAll(".filter-button").forEach(button => {
   button.addEventListener("click", () => {
     document.querySelectorAll(".filter-button")
@@ -235,39 +255,11 @@ document.querySelectorAll(".filter-button").forEach(button => {
     button.classList.add("active");
     currentFilter = button.dataset.filter;
 
-   const today = new Date().toLocaleDateString("en-CA", {
-  timeZone: "America/Mexico_City"
+    renderAvailable(getAvailableQuests());
+  });
 });
 
-const available = catalog.filter(quest => {
-  const assignments = userQuests.filter(
-    uq => uq.quest_id === quest.id
-  );
-
-  if (quest.quest_type === "daily") {
-    return !assignments.some(uq => {
-      const assignedDate = new Date(uq.assigned_at)
-        .toLocaleDateString("en-CA", {
-          timeZone: "America/Mexico_City"
-        });
-
-      return assignedDate === today;
-    });
-  }
-
-  if (quest.quest_type === "main") {
-    return assignments.length === 0;
-  }
-
-  return true;
-});
-
-renderAvailable(available);
-});
-}); // Cierra filter-button forEach
-
-availableContainer.addEventListener("click", async event => {
-
+// ACCEPT QUEST
 availableContainer.addEventListener("click", async event => {
   const button = event.target.closest("[data-quest-id]");
   if (!button) return;
@@ -292,6 +284,7 @@ availableContainer.addEventListener("click", async event => {
   }
 });
 
+// COMPLETE OR CLAIM QUEST
 myQuestsContainer.addEventListener("click", async event => {
   const completeButton = event.target.closest("[data-complete-id]");
   const claimButton = event.target.closest("[data-claim-id]");
@@ -330,6 +323,7 @@ myQuestsContainer.addEventListener("click", async event => {
   }
 });
 
+// LOGOUT
 logoutButton.addEventListener("click", async () => {
   await supabase.auth.signOut();
   window.location.href = "login.html";
