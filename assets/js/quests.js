@@ -78,11 +78,32 @@ function renderAll() {
   q.status === "active" || q.status === "pending"
 );
   const completed = userQuests.filter(q => q.status === "completed");
-  const claimedIds = userQuests.map(q => q.quest_id);
+  const today = new Date().toLocaleDateString("en-CA", {
+  timeZone: "America/Mexico_City"
+});
 
-  const available = catalog.filter(q =>
-    !claimedIds.includes(q.id)
+const available = catalog.filter(quest => {
+  const assignments = userQuests.filter(
+    uq => uq.quest_id === quest.id
   );
+
+  if (quest.quest_type === "daily") {
+    return !assignments.some(uq => {
+      const assignedDate = new Date(uq.assigned_at)
+        .toLocaleDateString("en-CA", {
+          timeZone: "America/Mexico_City"
+        });
+
+      return assignedDate === today;
+    });
+  }
+
+  if (quest.quest_type === "main") {
+    return assignments.length === 0;
+  }
+
+  return true;
+});
 
   activeCount.textContent = active.length;
   availableCount.textContent = available.length;
@@ -160,12 +181,34 @@ document.querySelectorAll(".filter-button").forEach(button => {
     button.classList.add("active");
     currentFilter = button.dataset.filter;
 
-    const available = catalog.filter(q =>
-      !userQuests.some(uq => uq.quest_id === q.id)
-    );
+   const today = new Date().toLocaleDateString("en-CA", {
+  timeZone: "America/Mexico_City"
+});
 
-    renderAvailable(available);
-  });
+const available = catalog.filter(quest => {
+  const assignments = userQuests.filter(
+    uq => uq.quest_id === quest.id
+  );
+
+  if (quest.quest_type === "daily") {
+    return !assignments.some(uq => {
+      const assignedDate = new Date(uq.assigned_at)
+        .toLocaleDateString("en-CA", {
+          timeZone: "America/Mexico_City"
+        });
+
+      return assignedDate === today;
+    });
+  }
+
+  if (quest.quest_type === "main") {
+    return assignments.length === 0;
+  }
+
+  return true;
+});
+
+renderAvailable(available);
 });
 
 availableContainer.addEventListener("click", async event => {
