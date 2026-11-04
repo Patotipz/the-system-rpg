@@ -118,10 +118,22 @@ form.addEventListener("submit", async (event) => {
       return;
     }
 
-    message.textContent =
-  "ACCESS GRANTED. Welcome, Hunter.";
+const { data: profile, error: profileError } =
+  await supabase
+    .from("profiles")
+    .select("display_name, avatar_id")
+    .eq("user_id", (await supabase.auth.getUser()).data.user.id)
+    .single();
 
-window.location.href = "character.html";
+if (profileError) throw profileError;
+
+const hasCharacter =
+  profile.display_name &&
+  profile.display_name.trim().length >= 3;
+
+window.location.href = hasCharacter
+  ? "dashboard.html"
+  : "character.html";
   } catch (error) {
     console.error(error);
     message.textContent = error.message;
