@@ -157,35 +157,6 @@
 
     <a href="index.html" class="back">← BACK TO MAIN PAGE</a>
   </main>
-
-  <script>
-    const loginTab = document.getElementById("loginTab");
-    const registerTab = document.getElementById("registerTab");
-    const inviteGroup = document.getElementById("inviteGroup");
-    const inviteCode = document.getElementById("inviteCode");
-    const submitButton = document.getElementById("submitButton");
-    const message = document.getElementById("message");
-    let mode = "login";
-
-    function setMode(nextMode) {
-      mode = nextMode;
-      loginTab.classList.toggle("active", mode === "login");
-      registerTab.classList.toggle("active", mode === "register");
-      inviteGroup.hidden = mode !== "register";
-      inviteCode.required = mode === "register";
-      submitButton.textContent = mode === "login"
-        ? "ENTER THE SYSTEM"
-        : "CREATE HUNTER";
-      message.textContent = "";
-    }
-
-    loginTab.addEventListener("click", () => setMode("login"));
-    registerTab.addEventListener("click", () => setMode("register"));
-
-    document.getElementById("authForm").addEventListener("submit", (event) => {
-      event.preventDefault();
-      message.textContent = "Authentication will be connected in the next step.";
-    });
   <script type="module" src="assets/js/auth.js"></script>
 </body>
 </html>
