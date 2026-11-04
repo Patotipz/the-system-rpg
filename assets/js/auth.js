@@ -130,7 +130,8 @@ if (profileError) throw profileError;
 const hasCharacter =
   profile.display_name &&
   profile.display_name.trim().length >= 3;
-
+console.log("PROFILE:", profile);
+console.log("HAS CHARACTER:", hasCharacter);
 window.location.href = hasCharacter
   ? "dashboard.html"
   : "character.html";
