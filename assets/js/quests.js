@@ -264,6 +264,9 @@ const available = catalog.filter(quest => {
 
 renderAvailable(available);
 });
+}); // Cierra filter-button forEach
+
+availableContainer.addEventListener("click", async event => {
 
 availableContainer.addEventListener("click", async event => {
   const button = event.target.closest("[data-quest-id]");
