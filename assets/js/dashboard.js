@@ -41,7 +41,7 @@ async function initializeDashboard() {
     const { data: profile, error: profileError } =
       await supabase
         .from("profiles")
-        .select("display_name, avatar_id, level, xp, rank, coins")
+        .select("display_name, avatar_id, rank, level, xp, coins, current_streak, longest_streak")
         .eq("user_id", user.id)
         .single();
 
