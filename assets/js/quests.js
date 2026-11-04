@@ -74,7 +74,9 @@ async function loadQuests() {
 }
 
 function renderAll() {
-  const active = userQuests.filter(q => q.status === "active");
+ const active = userQuests.filter(q =>
+  q.status === "active" || q.status === "pending"
+);
   const completed = userQuests.filter(q => q.status === "completed");
   const claimedIds = userQuests.map(q => q.quest_id);
 
@@ -126,7 +128,7 @@ function renderMyQuests(quests) {
 
     let action = "";
 
-    if (q.status === "active") {
+    if (q.status === "active" || q.status === "pending") {
       action = `
         <button class="quest-action" data-complete-id="${q.id}">
           COMPLETE QUEST
