@@ -223,6 +223,52 @@ h1 {
   background: linear-gradient(90deg, #1764ad, #72c4ff);
   transition: width 0.4s;
 }
+/* STREAK CARDS */
+.streak-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+  margin: 24px 0;
+}
+
+.streak-card {
+  background: #0c1728;
+  border: 1px solid #203b5c;
+  padding: 28px;
+  min-height: 150px;
+}
+
+.streak-card .stat-icon {
+  font-size: 28px;
+  display: block;
+  margin-bottom: 16px;
+}
+
+.streak-card .stat-label {
+  color: #8195b0;
+  font-size: 13px;
+  letter-spacing: 2px;
+  font-weight: 700;
+}
+
+.streak-card .stat-value {
+  color: #e5efff;
+  font-size: 36px;
+  font-weight: 800;
+  margin-top: 8px;
+}
+
+.streak-card .stat-description {
+  color: #8195b0;
+  font-size: 13px;
+  margin-top: 6px;
+}
+
+@media (max-width: 650px) {
+  .streak-grid {
+    grid-template-columns: 1fr;
+  }
+}
 
 .progress-section .muted {
   margin-top: 12px;
