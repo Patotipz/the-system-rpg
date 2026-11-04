@@ -67,7 +67,11 @@ async function initializeDashboard() {
 
     document.getElementById("xpNext").textContent =
       "Accumulated experience points";
+document.getElementById("currentStreak").textContent =
+  profile.current_streak ?? 0;
 
+document.getElementById("longestStreak").textContent =
+  profile.longest_streak ?? 0;
     // 4. Load Hunter attributes
     const { data: stats, error: statsError } =
       await supabase
