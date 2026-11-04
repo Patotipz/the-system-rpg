@@ -386,3 +386,61 @@ h1 {
     font-size: 19px;
   }
 }
+
+/* HUNTER ATTRIBUTES */
+
+.stat-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 14px;
+  background: var(--surface-2);
+  border-left: 2px solid var(--blue);
+}
+
+.stat-row span {
+  color: var(--blue-light);
+  font-size: 12px;
+  letter-spacing: 2px;
+}
+
+.stat-row strong {
+  color: var(--text);
+  font-size: 14px;
+}
+
+/* QUEST CARDS */
+
+.quest-card {
+  padding: 15px;
+  margin-bottom: 12px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--blue);
+}
+
+.quest-card h3 {
+  color: var(--blue-light);
+  font-size: 13px;
+  margin-bottom: 8px;
+}
+
+.quest-card p {
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.6;
+  margin-top: 5px;
+}
+
+.quest-card p:last-child {
+  color: #8cbfff;
+  letter-spacing: 1px;
+  font-size: 10px;
+}
+
+/* BUTTON FEEDBACK */
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
