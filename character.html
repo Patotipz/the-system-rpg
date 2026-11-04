@@ -1,0 +1,55 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>THE SYSTEM | Create Hunter</title>
+  <link rel="stylesheet" href="assets/css/character.css">
+</head>
+<body>
+
+  <main class="character-container">
+    <p class="system-label">[ SYSTEM NOTIFICATION ]</p>
+
+    <h1>CREATE YOUR HUNTER</h1>
+    <p class="subtitle">Your journey begins here.</p>
+
+    <form id="characterForm">
+
+      <label for="hunterName">HUNTER NAME</label>
+      <input
+        type="text"
+        id="hunterName"
+        maxlength="20"
+        placeholder="Enter your Hunter name"
+        required
+      >
+
+      <h2>SELECT YOUR AVATAR</h2>
+
+      <div class="avatar-grid" id="avatarGrid">
+
+        <button type="button" class="avatar selected" data-avatar="hunter-01">⚔️</button>
+        <button type="button" class="avatar" data-avatar="hunter-02">🛡️</button>
+        <button type="button" class="avatar" data-avatar="hunter-03">🔥</button>
+        <button type="button" class="avatar" data-avatar="hunter-04">🌑</button>
+        <button type="button" class="avatar" data-avatar="hunter-05">⚡</button>
+        <button type="button" class="avatar" data-avatar="hunter-06">🐉</button>
+
+      </div>
+
+      <button type="submit" id="saveCharacter">
+        CONFIRM HUNTER
+      </button>
+
+      <p id="characterMessage"></p>
+
+    </form>
+  </main>
+
+  <script type="module" src="assets/js/character.js"></script>
+
+</body>
+</html>
+```
