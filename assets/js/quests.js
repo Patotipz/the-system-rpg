@@ -168,8 +168,24 @@ async function loadQuests() {
   renderAll();
 }
 
+
+function getMexicoWeekStart(dateString) {
+  const [year, month, day] = dateString.split("-").map(Number);
+
+  const date = new Date(Date.UTC(year, month - 1, day));
+  const dayOfWeek = date.getUTCDay();
+
+  // Monday is the first day of the week
+  const daysToMonday = (dayOfWeek + 6) % 7;
+
+  date.setUTCDate(date.getUTCDate() - daysToMonday);
+
+  return date.toISOString().slice(0, 10);
+}
+
 function getAvailableQuests() {
   const today = getMexicoDate();
+  const currentWeek = getMexicoWeekStart(today);
 
   return catalog.filter(quest => {
     const assignments = userQuests.filter(
@@ -182,13 +198,26 @@ function getAvailableQuests() {
       );
     }
 
-    if (quest.quest_type === "main") {
+    if (quest.quest_type === "weekly") {
+      return !assignments.some(uq =>
+        getMexicoWeekStart(
+          getMexicoDateFromTimestamp(uq.assigned_at)
+        ) === currentWeek
+      );
+    }
+
+    if (
+      quest.quest_type === "main" ||
+      quest.quest_type === "special"
+    ) {
       return assignments.length === 0;
     }
 
+    // Preserve existing dungeon behavior
     return true;
   });
 }
+
 
 function getMexicoDateFromTimestamp(timestamp) {
   const parts = new Intl.DateTimeFormat("en-CA", {
