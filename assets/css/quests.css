@@ -365,3 +365,129 @@
     box-shadow: 0 0 30px rgba(140, 191, 255, 0.55);
   }
 }
+/* =========================================
+   QUEST TYPES — VISUAL IDENTITY
+========================================= */
+
+/* Card header */
+
+.quest-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.quest-type {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  font-size: 9px;
+  font-weight: bold;
+  letter-spacing: 1.5px;
+  border: 1px solid currentColor;
+}
+
+.quest-difficulty {
+  padding: 5px 8px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--border);
+  color: var(--muted);
+  font-size: 9px;
+  letter-spacing: 1px;
+}
+
+/* DAILY — BLUE */
+
+.quest-card.type-daily {
+  border-left-color: #4b9cff;
+}
+
+.type-daily .quest-type {
+  color: #75b7ff;
+  background: rgba(75,156,255,0.10);
+}
+
+/* WEEKLY — GREEN */
+
+.quest-card.type-weekly {
+  border-left-color: #45d69a;
+}
+
+.type-weekly .quest-type {
+  color: #65e5ad;
+  background: rgba(69,214,154,0.10);
+}
+
+/* SPECIAL — PURPLE */
+
+.quest-card.type-special {
+  border-left-color: #b58aff;
+}
+
+.type-special .quest-type {
+  color: #c5a3ff;
+  background: rgba(181,138,255,0.10);
+}
+
+/* MAIN — GOLD */
+
+.quest-card.type-main {
+  border-left-color: #e8bd55;
+  background: linear-gradient(
+    120deg,
+    var(--surface-2),
+    rgba(232,189,85,0.06)
+  );
+}
+
+.type-main .quest-type {
+  color: #f0ca70;
+  background: rgba(232,189,85,0.10);
+}
+
+/* DUNGEON — RED */
+
+.quest-card.type-dungeon {
+  border-left-color: #ff6474;
+}
+
+.type-dungeon .quest-type {
+  color: #ff8793;
+  background: rgba(255,100,116,0.10);
+}
+
+/* Rewards */
+
+.quest-rewards span:first-child {
+  color: #8cbfff;
+}
+
+.quest-rewards span:last-child {
+  color: #e8bd55;
+}
+
+/* Hover effects */
+
+.quest-card.type-daily:hover {
+  border-color: #4b9cff;
+}
+
+.quest-card.type-weekly:hover {
+  border-color: #45d69a;
+}
+
+.quest-card.type-special:hover {
+  border-color: #b58aff;
+}
+
+.quest-card.type-main:hover {
+  border-color: #e8bd55;
+}
+
+.quest-card.type-dungeon:hover {
+  border-color: #ff6474;
+}
