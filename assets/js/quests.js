@@ -327,6 +327,7 @@ function renderAvailable(quests) {
   }).join("");
 }
 
+
 function renderMyQuests(quests) {
   if (!quests.length) {
     myQuestsContainer.innerHTML =
@@ -334,8 +335,42 @@ function renderMyQuests(quests) {
     return;
   }
 
+  const questTypes = {
+    daily: {
+      label: "DAILY QUEST",
+      class: "type-daily",
+      icon: "◈"
+    },
+    weekly: {
+      label: "WEEKLY QUEST",
+      class: "type-weekly",
+      icon: "◷"
+    },
+    special: {
+      label: "SPECIAL QUEST",
+      class: "type-special",
+      icon: "✦"
+    },
+    main: {
+      label: "MAIN QUEST",
+      class: "type-main",
+      icon: "♛"
+    },
+    dungeon: {
+      label: "DUNGEON",
+      class: "type-dungeon",
+      icon: "⚔"
+    }
+  };
+
   myQuestsContainer.innerHTML = quests.map(q => {
     const quest = q.quests;
+
+    const type = questTypes[quest.quest_type] || {
+      label: "QUEST",
+      class: "type-default",
+      icon: "◇"
+    };
 
     let action = "";
 
@@ -352,16 +387,34 @@ function renderMyQuests(quests) {
     }
 
     return `
-      <article class="quest-card">
-        <span class="quest-difficulty">${quest.difficulty}</span>
+      <article class="quest-card ${type.class}">
+        <div class="quest-card-top">
+          <span class="quest-type">
+            ${type.icon} ${type.label}
+          </span>
+
+          <span class="quest-difficulty">
+            RANK ${quest.difficulty}
+          </span>
+        </div>
+
         <h3>${quest.title}</h3>
+
         <p>${quest.description || ""}</p>
+
+        <div class="quest-rewards">
+          <span>✦ +${quest.xp_reward} XP</span>
+          <span>◈ +${quest.coin_reward} COINS</span>
+        </div>
+
         <p>STATUS: ${q.status.toUpperCase()}</p>
+
         ${action}
       </article>
     `;
   }).join("");
 }
+
 
 // FILTER BUTTONS
 document.querySelectorAll(".filter-button").forEach(button => {
