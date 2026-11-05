@@ -1,4 +1,3 @@
-
 import { supabase } from "./config.js";
 
 const message = document.getElementById("dashboardMessage");
@@ -13,6 +12,7 @@ const avatarMap = {
   "hunter-05": "⚡",
   "hunter-06": "🐉"
 };
+
 // MEXICO CITY DATE
 function getMexicoDateKey(date) {
   const parts = new Intl.DateTimeFormat("en-CA", {
@@ -28,9 +28,10 @@ function getMexicoDateKey(date) {
 
   return `${values.year}-${values.month}-${values.day}`;
 }
+
 async function initializeDashboard() {
   try {
-    // 1. Verify user session
+    // 1. VERIFY USER SESSION
     const {
       data: { user },
       error: userError
@@ -41,7 +42,7 @@ async function initializeDashboard() {
       return;
     }
 
-    // 2. Verify authorization
+    // 2. VERIFY AUTHORIZATION
     const { data: authorized, error: authError } =
       await supabase.rpc("is_authorized");
 
@@ -50,12 +51,14 @@ async function initializeDashboard() {
       window.location.href = "login.html";
       return;
     }
-// 3. Refresh streak before loading profile
-const { data: refreshedStreak, error: streakError } =
-  await supabase.rpc("refresh_streak");
 
-if (streakError) throw streakError;
-    // 3. Load Hunter profile
+    // 3. REFRESH STREAK
+    const { error: streakError } =
+      await supabase.rpc("refresh_streak");
+
+    if (streakError) throw streakError;
+
+    // 4. LOAD HUNTER PROFILE
     const { data: profile, error: profileError } =
       await supabase
         .from("profiles")
@@ -80,39 +83,43 @@ if (streakError) throw streakError;
     document.getElementById("hunterCoins").textContent =
       profile.coins ?? 0;
 
-  document.getElementById("xpText").textContent =
-  `${profile.xp} XP`;
+    // XP PROGRESS
+    document.getElementById("xpText").textContent =
+      `${profile.xp} XP`;
 
-const currentLevelXp =
-  100 * (profile.level - 1) * profile.level / 2;
+    const currentLevelXp =
+      100 * (profile.level - 1) * profile.level / 2;
 
-const nextLevelXp =
-  100 * profile.level * (profile.level + 1) / 2;
+    const nextLevelXp =
+      100 * profile.level * (profile.level + 1) / 2;
 
-const xpIntoLevel = Math.max(
-  0,
-  profile.xp - currentLevelXp
-);
+    const xpIntoLevel = Math.max(
+      0,
+      profile.xp - currentLevelXp
+    );
 
-const xpNeededForLevel =
-  nextLevelXp - currentLevelXp;
+    const xpNeededForLevel =
+      nextLevelXp - currentLevelXp;
 
-const xpProgress = Math.min(
-  100,
-  (xpIntoLevel / xpNeededForLevel) * 100
-);
+    const xpProgress = Math.min(
+      100,
+      (xpIntoLevel / xpNeededForLevel) * 100
+    );
 
-document.getElementById("xpBar").style.width =
-  `${xpProgress}%`;
+    document.getElementById("xpBar").style.width =
+      `${xpProgress}%`;
 
-document.getElementById("xpNext").textContent =
-  `${Math.max(0, nextLevelXp - profile.xp)} XP TO NEXT LEVEL · ${Math.round(xpProgress)}%`;
-document.getElementById("currentStreak").textContent =
-  profile.current_streak ?? 0;
+    document.getElementById("xpNext").textContent =
+      `${Math.max(0, nextLevelXp - profile.xp)} XP TO NEXT LEVEL · ${Math.round(xpProgress)}%`;
 
-document.getElementById("longestStreak").textContent =
-  profile.longest_streak ?? 0;
-    // 4. Load Hunter attributes
+    // STREAKS
+    document.getElementById("currentStreak").textContent =
+      profile.current_streak ?? 0;
+
+    document.getElementById("longestStreak").textContent =
+      profile.longest_streak ?? 0;
+
+    // 5. LOAD HUNTER ATTRIBUTES
     const { data: stats, error: statsError } =
       await supabase
         .from("player_stats")
@@ -122,8 +129,11 @@ document.getElementById("longestStreak").textContent =
 
     if (statsError) throw statsError;
 
-    document.getElementById("hunterHP").textContent = stats.hp;
-    document.getElementById("hunterEnergy").textContent = stats.energy;
+    document.getElementById("hunterHP").textContent =
+      stats.hp;
+
+    document.getElementById("hunterEnergy").textContent =
+      stats.energy;
 
     const attributes = [
       ["STR", stats.strength],
@@ -150,7 +160,7 @@ document.getElementById("longestStreak").textContent =
       statsList.appendChild(row);
     });
 
-    // 5. Load player's quests
+    // 6. LOAD PLAYER QUESTS
     const { data: quests, error: questsError } =
       await supabase
         .from("user_quests")
@@ -175,23 +185,15 @@ document.getElementById("longestStreak").textContent =
     if (questsError) throw questsError;
 
     questsList.replaceChildren();
-// LOAD COMPLETED QUEST COUNT
-const { count: completedCount, error: completedError } =
-  await supabase
-    .from("user_quests")
-    .select("id", { count: "exact", head: true })
-    .eq("user_id", user.id)
-    .in("status", ["completed", "claimed"]);
 
-if (completedError) throw completedError;
-
-document.getElementById("completedQuestCount").textContent =
-  completedCount ?? 0;
     if (!quests || quests.length === 0) {
       const empty = document.createElement("p");
       empty.className = "muted";
-      empty.textContent = "No active quests. Your next mission awaits.";
+      empty.textContent =
+        "No active quests. Your next mission awaits.";
+
       questsList.appendChild(empty);
+
     } else {
       quests.forEach((item) => {
         if (!item.quests) return;
@@ -203,7 +205,8 @@ document.getElementById("completedQuestCount").textContent =
         title.textContent = item.quests.title;
 
         const description = document.createElement("p");
-        description.textContent = item.quests.description || "";
+        description.textContent =
+          item.quests.description || "";
 
         const details = document.createElement("p");
         details.textContent =
@@ -214,75 +217,93 @@ document.getElementById("completedQuestCount").textContent =
       });
     }
 
-    message.textContent = "SYSTEM ONLINE · HUNTER DATA LOADED";
+    // 7. LOAD COMPLETED QUEST COUNT
+    const { count: completedCount, error: completedError } =
+      await supabase
+        .from("user_quests")
+        .select("id", { count: "exact", head: true })
+        .eq("user_id", user.id)
+        .in("status", ["completed", "claimed"]);
+
+    if (completedError) throw completedError;
+
+    document.getElementById("completedQuestCount").textContent =
+      completedCount ?? 0;
+
+    // 8. LOAD DAILY AND WEEKLY QUEST COUNTS
+    const now = new Date();
+    const todayKey = getMexicoDateKey(now);
+
+    // GET MONDAY OF CURRENT WEEK
+    const today = new Date(`${todayKey}T12:00:00`);
+    const dayOfWeek = today.getDay();
+
+    const daysFromMonday = (dayOfWeek + 6) % 7;
+
+    today.setDate(today.getDate() - daysFromMonday);
+
+    const weekStartKey = getMexicoDateKey(today);
+
+    const weekEnd = new Date(today);
+    weekEnd.setDate(weekEnd.getDate() + 7);
+
+    const weekEndKey = getMexicoDateKey(weekEnd);
+
+    // LOAD COMPLETED QUESTS
+    const {
+      data: completedQuests,
+      error: dailyWeeklyError
+    } = await supabase
+      .from("user_quests")
+      .select(`
+        completed_at,
+        quests (
+          quest_type
+        )
+      `)
+      .eq("user_id", user.id)
+      .in("status", ["completed", "claimed"])
+      .not("completed_at", "is", null);
+
+    if (dailyWeeklyError) throw dailyWeeklyError;
+
+    let dailyCount = 0;
+    let weeklyCount = 0;
+
+    completedQuests.forEach(item => {
+      const completedDate = getMexicoDateKey(
+        new Date(item.completed_at)
+      );
+
+      if (completedDate === todayKey) {
+        dailyCount++;
+      }
+
+      if (
+        completedDate >= weekStartKey &&
+        completedDate < weekEndKey
+      ) {
+        weeklyCount++;
+      }
+    });
+
+    document.getElementById("dailyQuestCount").textContent =
+      dailyCount;
+
+    document.getElementById("weeklyQuestCount").textContent =
+      weeklyCount;
+
+    // 9. SYSTEM MESSAGE
+    message.textContent =
+      "SYSTEM ONLINE · HUNTER DATA LOADED";
 
   } catch (error) {
     console.error("Dashboard error:", error);
     message.textContent = error.message;
   }
 }
-// LOAD DAILY AND WEEKLY QUEST COUNTS
-const now = new Date();
 
-const todayKey = getMexicoDateKey(now);
-
-// Get Monday of current week in Mexico time
-const today = new Date(`${todayKey}T12:00:00`);
-const dayOfWeek = today.getDay();
-
-const daysFromMonday = (dayOfWeek + 6) % 7;
-
-today.setDate(today.getDate() - daysFromMonday);
-
-const weekStartKey = getMexicoDateKey(today);
-
-const weekEnd = new Date(today);
-weekEnd.setDate(weekEnd.getDate() + 7);
-
-const weekEndKey = getMexicoDateKey(weekEnd);
-
-// Load completed quests with their types
-const { data: completedQuests, error: dailyWeeklyError } =
-  await supabase
-    .from("user_quests")
-    .select(`
-      completed_at,
-      quests (
-        quest_type
-      )
-    `)
-    .eq("user_id", user.id)
-    .in("status", ["completed", "claimed"])
-    .not("completed_at", "is", null);
-
-if (dailyWeeklyError) throw dailyWeeklyError;
-
-let dailyCount = 0;
-let weeklyCount = 0;
-
-completedQuests.forEach(item => {
-  const completedDate = getMexicoDateKey(
-    new Date(item.completed_at)
-  );
-
-  if (completedDate === todayKey) {
-    dailyCount++;
-  }
-
-  if (
-    completedDate >= weekStartKey &&
-    completedDate < weekEndKey
-  ) {
-    weeklyCount++;
-  }
-});
-
-document.getElementById("dailyQuestCount").textContent =
-  dailyCount;
-
-document.getElementById("weeklyQuestCount").textContent =
-  weeklyCount;
-// Logout
+// LOGOUT
 document.getElementById("logoutButton").addEventListener("click", async () => {
   const { error } = await supabase.auth.signOut();
 
