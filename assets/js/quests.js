@@ -264,17 +264,67 @@ function renderAvailable(quests) {
     return;
   }
 
-  availableContainer.innerHTML = filtered.map(q => `
-    <article class="quest-card">
-      <span class="quest-difficulty">${q.difficulty}</span>
-      <h3>${q.title}</h3>
-      <p>${q.description || "No description available."}</p>
-      <p>+${q.xp_reward} XP · +${q.coin_reward} COINS</p>
-      <button class="quest-action" data-quest-id="${q.id}">
-        ACCEPT QUEST
-      </button>
-    </article>
-  `).join("");
+  const questTypes = {
+    daily: {
+      label: "DAILY QUEST",
+      class: "type-daily",
+      icon: "◈"
+    },
+    weekly: {
+      label: "WEEKLY QUEST",
+      class: "type-weekly",
+      icon: "◷"
+    },
+    special: {
+      label: "SPECIAL QUEST",
+      class: "type-special",
+      icon: "✦"
+    },
+    main: {
+      label: "MAIN QUEST",
+      class: "type-main",
+      icon: "♛"
+    },
+    dungeon: {
+      label: "DUNGEON",
+      class: "type-dungeon",
+      icon: "⚔"
+    }
+  };
+
+  availableContainer.innerHTML = filtered.map(q => {
+    const type = questTypes[q.quest_type] || {
+      label: "QUEST",
+      class: "type-default",
+      icon: "◇"
+    };
+
+    return `
+      <article class="quest-card ${type.class}">
+        <div class="quest-card-top">
+          <span class="quest-type">
+            ${type.icon} ${type.label}
+          </span>
+          <span class="quest-difficulty">
+            RANK ${q.difficulty}
+          </span>
+        </div>
+
+        <h3>${q.title}</h3>
+
+        <p>${q.description || "No description available."}</p>
+
+        <div class="quest-rewards">
+          <span>✦ +${q.xp_reward} XP</span>
+          <span>◈ +${q.coin_reward} COINS</span>
+        </div>
+
+        <button class="quest-action" data-quest-id="${q.id}">
+          ACCEPT QUEST
+        </button>
+      </article>
+    `;
+  }).join("");
 }
 
 function renderMyQuests(quests) {
