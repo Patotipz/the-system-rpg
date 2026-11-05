@@ -348,3 +348,78 @@
     padding: 16px;
   }
 }
+/* ================================
+   EQUIPMENT SYSTEM
+================================ */
+
+.inventory-item-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 15px;
+}
+
+.inventory-item-stats span {
+  background: rgba(57, 186, 255, 0.10);
+  border: 1px solid rgba(57, 186, 255, 0.3);
+  color: #65caff;
+  padding: 5px 9px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: bold;
+  letter-spacing: 1px;
+}
+
+.inventory-equipped {
+  display: inline-block;
+  margin-top: 15px;
+  padding: 6px 10px;
+  background: rgba(255, 196, 92, 0.12);
+  border: 1px solid #c58b32;
+  color: #ffc45c;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: bold;
+  letter-spacing: 1.5px;
+}
+
+.inventory-action {
+  width: 100%;
+  margin-top: 15px;
+  padding: 11px;
+  border-radius: 5px;
+  font-size: 11px;
+  font-weight: bold;
+  letter-spacing: 1.5px;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.equip-button {
+  background: rgba(57, 186, 255, 0.12);
+  border: 1px solid #39baff;
+  color: #65caff;
+}
+
+.equip-button:hover {
+  background: #1689c5;
+  color: #ffffff;
+  box-shadow: 0 0 15px rgba(57, 186, 255, 0.25);
+}
+
+.unequip-button {
+  background: rgba(255, 196, 92, 0.10);
+  border: 1px solid #c58b32;
+  color: #ffc45c;
+}
+
+.unequip-button:hover {
+  background: #a87524;
+  color: #ffffff;
+  box-shadow: 0 0 15px rgba(255, 196, 92, 0.2);
+}
+
+.inventory-action:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
