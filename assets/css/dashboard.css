@@ -583,3 +583,112 @@ button:disabled {
     font-size: 17px;
   }
 }
+
+/* =========================================
+   HUNTER RANK PROGRESSION
+========================================= */
+
+.rank-progression {
+  margin-top: 24px;
+}
+
+.rank-overview {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.current-rank,
+.next-rank {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 16px;
+  background: rgba(255, 255, 255, 0.025);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+
+.current-rank span,
+.next-rank span {
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 2px;
+}
+
+.current-rank strong,
+.next-rank strong {
+  margin: 8px 0;
+  font-size: 42px;
+  font-weight: 900;
+  color: #54baff;
+  text-shadow: 0 0 18px rgba(84, 186, 255, 0.35);
+}
+
+.next-rank strong {
+  color: #d5b56a;
+  text-shadow: 0 0 18px rgba(213, 181, 106, 0.3);
+}
+
+.next-rank small {
+  color: var(--muted);
+  font-size: 10px;
+  letter-spacing: 1px;
+}
+
+.rank-progress-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin: 24px 0 12px;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.rank-progress-info strong {
+  color: #fff;
+  font-size: 13px;
+  text-align: right;
+}
+
+.rank-track {
+  height: 12px;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.rank-fill {
+  background: linear-gradient(90deg, #2476d2, #d5b56a);
+  box-shadow: 0 0 14px rgba(84, 186, 255, 0.3);
+}
+
+.rank-progression > .muted {
+  margin-top: 12px;
+  font-size: 11px;
+  letter-spacing: 1px;
+}
+
+@media (max-width: 600px) {
+  .rank-overview {
+    gap: 10px;
+  }
+
+  .current-rank,
+  .next-rank {
+    padding: 18px 10px;
+  }
+
+  .current-rank strong,
+  .next-rank strong {
+    font-size: 34px;
+  }
+
+  .rank-progress-info {
+    flex-wrap: wrap;
+  }
+}
