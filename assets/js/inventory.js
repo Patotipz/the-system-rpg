@@ -48,6 +48,13 @@ function formatCategory(type) {
   return categories[type] || type.toUpperCase();
 }
 
+function canEquip(item) {
+  return (
+    ["weapon", "armor", "accessory"].includes(item.item_type) &&
+    item.shop_items?.equipment_slot
+  );
+}
+
 async function loadInventory() {
   const { data: authData, error: authError } =
     await supabase.auth.getUser();
@@ -144,7 +151,6 @@ function renderInventory() {
 
   inventoryContainer.innerHTML = filteredItems.map(item => {
     const icon = itemIcons[item.item_type] || "📦";
-
     const equipment = item.shop_items || {};
 
     const stats = [
@@ -155,6 +161,18 @@ function renderInventory() {
       ["PER", equipment.bonus_per],
       ["SEN", equipment.bonus_sen]
     ].filter(([, value]) => Number(value) > 0);
+
+    const equipButton = canEquip(item)
+      ? item.is_equipped
+        ? `<button class="inventory-action unequip-button"
+             data-unequip-id="${item.id}">
+             UNEQUIP
+           </button>`
+        : `<button class="inventory-action equip-button"
+             data-equip-id="${item.id}">
+             EQUIP
+           </button>`
+      : "";
 
     return `
       <article class="inventory-item rarity-${escapeHTML(item.rarity)}">
@@ -196,10 +214,56 @@ function renderInventory() {
             : ""
         }
 
+        ${equipButton}
+
       </article>
     `;
   }).join("");
 }
+
+// EQUIP / UNEQUIP ACTIONS
+inventoryContainer.addEventListener("click", async event => {
+  const equipButton = event.target.closest("[data-equip-id]");
+  const unequipButton = event.target.closest("[data-unequip-id]");
+
+  if (!equipButton && !unequipButton) return;
+
+  const button = equipButton || unequipButton;
+  const isEquipping = Boolean(equipButton);
+
+  const itemId = Number(
+    isEquipping
+      ? equipButton.dataset.equipId
+      : unequipButton.dataset.unequipId
+  );
+
+  button.disabled = true;
+  button.textContent = "PROCESSING...";
+
+  try {
+    const { data, error } = await supabase.rpc(
+      isEquipping
+        ? "equip_inventory_item"
+        : "unequip_inventory_item",
+      { p_inventory_id: itemId }
+    );
+
+    if (error) throw error;
+
+    inventoryMessage.textContent = isEquipping
+      ? `${data.item_name.toUpperCase()} EQUIPPED SUCCESSFULLY!`
+      : `${data.item_name.toUpperCase()} UNEQUIPPED SUCCESSFULLY!`;
+
+    await loadInventory();
+
+  } catch (error) {
+    console.error(error);
+    inventoryMessage.textContent =
+      error.message || "EQUIPMENT UPDATE FAILED.";
+
+    renderInventory();
+  }
+});
 
 inventoryFilter.addEventListener("change", renderInventory);
 
