@@ -555,7 +555,31 @@ availableContainer.addEventListener("click", async event => {
     button.disabled = false;
   }
 });
+// ACCEPT FEATURED QUEST
+featuredContainer.addEventListener("click", async event => {
+  const button = event.target.closest("[data-featured-quest-id]");
+  if (!button) return;
 
+  button.disabled = true;
+
+  try {
+    const questId = Number(button.dataset.featuredQuestId);
+
+    const { error } = await supabase.rpc("assign_quest", {
+      p_quest_id: questId
+    });
+
+    if (error) throw error;
+
+    message.textContent = "FEATURED QUEST ACCEPTED.";
+    await loadQuests();
+
+  } catch (error) {
+    console.error(error);
+    message.textContent = error.message;
+    button.disabled = false;
+  }
+});
 // COMPLETE OR CLAIM QUEST
 myQuestsContainer.addEventListener("click", async event => {
   const completeButton = event.target.closest("[data-complete-id]");
