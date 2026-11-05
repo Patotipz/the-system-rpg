@@ -17,7 +17,45 @@ let currentFilter = "all";
 let currentUser = null;
 let catalog = [];
 let userQuests = [];
+// ACHIEVEMENT NOTIFICATIONS
+const achievementModal = document.getElementById("achievementModal");
+const modalIcon = document.getElementById("modalAchievementIcon");
+const modalTitle = document.getElementById("modalAchievementTitle");
+const modalDescription = document.getElementById("modalAchievementDescription");
+const modalXP = document.getElementById("modalAchievementXP");
+const modalCoins = document.getElementById("modalAchievementCoins");
+const closeAchievementModal = document.getElementById("closeAchievementModal");
 
+let achievementQueue = [];
+
+function showNextAchievement() {
+  if (!achievementQueue.length) {
+    achievementModal.classList.add("hidden");
+    return;
+  }
+
+  const achievement = achievementQueue.shift();
+
+  modalIcon.textContent = "🏆";
+  modalTitle.textContent = achievement.title;
+  modalDescription.textContent = "A new achievement has been unlocked.";
+  modalXP.textContent = `+${achievement.xp_reward || 0} XP`;
+  modalCoins.textContent = `+${achievement.coin_reward || 0} COINS`;
+
+  achievementModal.classList.remove("hidden");
+}
+
+function showAchievementNotifications(achievements) {
+  if (!Array.isArray(achievements) || !achievements.length) return;
+
+  achievementQueue.push(...achievements);
+
+  if (achievementModal.classList.contains("hidden")) {
+    showNextAchievement();
+  }
+}
+
+closeAchievementModal.addEventListener("click", showNextAchievement);
 function getMexicoDate() {
   const parts = new Intl.DateTimeFormat("en-CA", {
     timeZone: "America/Mexico_City",
@@ -291,15 +329,18 @@ myQuestsContainer.addEventListener("click", async event => {
 
   try {
     if (completeButton) {
-      completeButton.disabled = true;
+  completeButton.disabled = true;
 
-      const { error } = await supabase.rpc("complete_quest", {
-        p_user_quest_id: Number(completeButton.dataset.completeId)
-      });
+  const { data, error } = await supabase.rpc("complete_quest", {
+    p_user_quest_id: Number(completeButton.dataset.completeId)
+  });
 
-      if (error) throw error;
+  if (error) throw error;
 
-      message.textContent = "QUEST COMPLETED. CLAIM YOUR REWARDS.";
+  message.textContent = "QUEST COMPLETED. CLAIM YOUR REWARDS.";
+
+  showAchievementNotifications(data?.achievements || []);
+}
     }
 
     if (claimButton) {
