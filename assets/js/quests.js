@@ -251,6 +251,7 @@ function renderAll() {
   completedCount.textContent = completed.length;
 
   renderAvailable(available);
+  renderFeatured(available);
   renderMyQuests(active.concat(completed));
 }
 
