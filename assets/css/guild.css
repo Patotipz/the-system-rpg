@@ -1,0 +1,282 @@
+
+:root {
+  --bg: #080d18;
+  --surface: #101a2b;
+  --surface-light: #16243a;
+  --border: #263b58;
+  --blue: #2878d0;
+  --blue-light: #55aaff;
+  --text: #e8f1ff;
+  --muted: #8497b2;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+  font-family: Arial, sans-serif;
+}
+
+.sidebar {
+  width: 250px;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  padding: 30px 20px;
+  background: #0c1422;
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+}
+
+.logo {
+  font-size: 1.5rem;
+  font-weight: 900;
+  letter-spacing: 3px;
+  margin-bottom: 50px;
+}
+
+.logo span {
+  color: var(--blue-light);
+}
+
+.menu-label {
+  color: var(--muted);
+  font-size: 0.7rem;
+  letter-spacing: 2px;
+  margin-bottom: 18px;
+}
+
+.sidebar nav {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.nav-link {
+  color: var(--muted);
+  text-decoration: none;
+  padding: 13px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  transition: 0.2s;
+}
+
+.nav-link:hover,
+.nav-link.active {
+  color: var(--blue-light);
+  background: rgba(40, 120, 208, 0.13);
+}
+
+.sidebar-bottom {
+  margin-top: auto;
+}
+
+.sidebar-bottom button {
+  width: 100%;
+  padding: 12px;
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text);
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.sidebar-bottom button:hover {
+  border-color: var(--blue-light);
+}
+
+.sidebar-bottom p {
+  color: var(--muted);
+  font-size: 0.65rem;
+  text-align: center;
+  margin-top: 18px;
+}
+
+.main-content {
+  margin-left: 250px;
+  padding: 35px;
+  max-width: 1600px;
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 35px;
+}
+
+.system-label {
+  color: var(--blue-light);
+  font-size: 0.75rem;
+  letter-spacing: 2px;
+  margin-bottom: 10px;
+}
+
+.topbar h1 {
+  font-size: 1.8rem;
+  letter-spacing: 2px;
+}
+
+.guild-status {
+  color: #65c7ff;
+  border: 1px solid #28699d;
+  padding: 9px 14px;
+  font-size: 0.7rem;
+  letter-spacing: 1px;
+}
+
+.guild-banner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 35px;
+  margin-bottom: 25px;
+  background: linear-gradient(120deg, #142b49, #101a2b 70%);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--blue);
+  border-radius: 8px;
+}
+
+.guild-banner h2 {
+  font-size: 1.8rem;
+  letter-spacing: 2px;
+  margin-bottom: 10px;
+}
+
+.muted {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.guild-emblem {
+  font-size: 4rem;
+  color: var(--blue-light);
+  opacity: 0.8;
+}
+
+.guild-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 18px;
+  margin-bottom: 25px;
+}
+
+.stat-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  padding: 22px;
+  border-radius: 7px;
+}
+
+.stat-card p {
+  color: var(--muted);
+  font-size: 0.7rem;
+  letter-spacing: 1px;
+  margin-bottom: 15px;
+}
+
+.stat-card h2 {
+  font-size: 1.8rem;
+  color: var(--blue-light);
+}
+
+.panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  padding: 25px;
+}
+
+.panel-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid var(--border);
+}
+
+.panel-heading h2 {
+  font-size: 1rem;
+  letter-spacing: 1px;
+}
+
+.panel-heading span {
+  color: var(--muted);
+  font-size: 0.7rem;
+  letter-spacing: 1px;
+}
+
+#guildMessage {
+  margin-top: 20px;
+}
+
+@media (max-width: 1000px) {
+  .guild-stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 700px) {
+  .sidebar {
+    width: 100%;
+    height: auto;
+    position: relative;
+    padding: 18px;
+  }
+
+  .logo {
+    margin-bottom: 20px;
+  }
+
+  .sidebar nav {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .sidebar-bottom {
+    margin-top: 20px;
+  }
+
+  .main-content {
+    margin-left: 0;
+    padding: 20px;
+  }
+
+  .topbar h1 {
+    font-size: 1.3rem;
+  }
+
+  .guild-banner {
+    padding: 22px;
+  }
+
+  .guild-banner h2 {
+    font-size: 1.3rem;
+  }
+
+  .guild-emblem {
+    font-size: 2.5rem;
+  }
+
+  .guild-stats {
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .stat-card {
+    padding: 15px;
+  }
+
+  .stat-card h2 {
+    font-size: 1.4rem;
+  }
+}
