@@ -522,3 +522,78 @@
 .equipment-slot:not(.slot-equipped) {
   opacity: 0.65;
 }
+/* HUNTER PORTRAIT */
+
+.hunter-portrait-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 30px 15px;
+  margin-bottom: 25px;
+  text-align: center;
+  position: relative;
+}
+
+.hunter-portrait-frame {
+  position: relative;
+  width: 230px;
+  height: 290px;
+  border: 1px solid rgba(57, 186, 255, 0.6);
+  border-radius: 8px;
+  overflow: hidden;
+  background: radial-gradient(
+    circle,
+    #173c62 0%,
+    #071426 70%,
+    #030914 100%
+  );
+  box-shadow:
+    0 0 20px rgba(57, 186, 255, 0.2),
+    inset 0 0 25px rgba(57, 186, 255, 0.1);
+}
+
+.hunter-portrait {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+  position: relative;
+  z-index: 1;
+}
+
+.hunter-aura {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2;
+  box-shadow: inset 0 0 30px rgba(57, 186, 255, 0.2);
+}
+
+.hunter-portrait-info {
+  margin-top: 18px;
+}
+
+.hunter-portrait-info > span {
+  color: #65caff;
+  font-size: 10px;
+  letter-spacing: 3px;
+}
+
+.hunter-portrait-info h2 {
+  color: #ffffff;
+  font-size: 22px;
+  letter-spacing: 3px;
+  margin: 8px 0;
+  text-shadow: 0 0 12px rgba(57, 186, 255, 0.5);
+}
+
+.hunter-portrait-info p {
+  color: #8caac5;
+  font-size: 12px;
+  letter-spacing: 2px;
+}
+
+.hunter-portrait-info p span {
+  color: #65caff;
+}
