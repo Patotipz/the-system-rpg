@@ -51,6 +51,24 @@ function showNextAchievement() {
 
   const achievement = achievementQueue.shift();
 
+  // Reset and apply SYSTEM notification styles
+  const modalContent = achievementModal.querySelector(
+    ".achievement-modal-content"
+  );
+
+  modalContent.classList.remove(
+    "system-level-up",
+    "system-rank-up"
+  );
+
+  if (achievement.isSystem) {
+    if (achievement.title === "RANK UP!") {
+      modalContent.classList.add("system-rank-up");
+    } else {
+      modalContent.classList.add("system-level-up");
+    }
+  }
+
   modalIcon.textContent = achievement.icon || "🏆";
   modalTitle.textContent = achievement.title;
   modalDescription.textContent =
