@@ -341,7 +341,66 @@ function renderAvailable(quests) {
     `;
   }).join("");
 }
+// FEATURED QUESTS
+function renderFeatured(quests) {
+  const featured = quests
+    .filter(q =>
+      q.quest_type === "main" ||
+      q.quest_type === "special"
+    )
+    .sort((a, b) => {
+      const priority = { main: 1, special: 2 };
+      return priority[a.quest_type] - priority[b.quest_type];
+    });
 
+  if (!featured.length) {
+    featuredContainer.innerHTML =
+      '<p class="muted">No featured missions available.</p>';
+    return;
+  }
+
+  const featuredTypes = {
+    main: {
+      label: "LEGENDARY MAIN QUEST",
+      class: "type-main",
+      icon: "♛"
+    },
+    special: {
+      label: "EPIC SPECIAL QUEST",
+      class: "type-special",
+      icon: "✦"
+    }
+  };
+
+  featuredContainer.innerHTML = featured.map(q => {
+    const type = featuredTypes[q.quest_type];
+
+    return `
+      <article class="quest-card ${type.class} featured-card">
+        <div class="quest-card-top">
+          <span class="quest-type">
+            ${type.icon} ${type.label}
+          </span>
+          <span class="quest-difficulty">
+            RANK ${q.difficulty}
+          </span>
+        </div>
+
+        <h3>${q.title}</h3>
+        <p>${q.description || "No description available."}</p>
+
+        <div class="quest-rewards">
+          <span>✦ +${q.xp_reward} XP</span>
+          <span>◈ +${q.coin_reward} COINS</span>
+        </div>
+
+        <button class="quest-action" data-featured-quest-id="${q.id}">
+          ACCEPT QUEST
+        </button>
+      </article>
+    `;
+  }).join("");
+}
 
 function renderMyQuests(quests) {
   if (!quests.length) {
