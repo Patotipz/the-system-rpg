@@ -29,6 +29,20 @@ const closeAchievementModal = document.getElementById("closeAchievementModal");
 
 let achievementQueue = [];
 
+// SYSTEM NOTIFICATIONS
+function showSystemNotification(title, description, icon) {
+  achievementQueue.push({
+    title,
+    description,
+    icon,
+    isSystem: true
+  });
+
+  if (achievementModal.classList.contains("hidden")) {
+    showNextAchievement();
+  }
+}
+
 function showNextAchievement() {
   if (!achievementQueue.length) {
     achievementModal.classList.add("hidden");
@@ -37,11 +51,18 @@ function showNextAchievement() {
 
   const achievement = achievementQueue.shift();
 
-  modalIcon.textContent = "🏆";
+  modalIcon.textContent = achievement.icon || "🏆";
   modalTitle.textContent = achievement.title;
-  modalDescription.textContent = "A new achievement has been unlocked.";
-  modalXP.textContent = `+${achievement.xp_reward || 0} XP`;
-  modalCoins.textContent = `+${achievement.coin_reward || 0} COINS`;
+  modalDescription.textContent =
+    achievement.description || "A new achievement has been unlocked.";
+
+  modalXP.textContent = achievement.isSystem
+    ? "SYSTEM ALERT"
+    : `+${achievement.xp_reward || 0} XP`;
+
+  modalCoins.textContent = achievement.isSystem
+    ? "PROGRESSION UPDATE"
+    : `+${achievement.coin_reward || 0} COINS`;
 
   achievementModal.classList.remove("hidden");
 }
@@ -580,6 +601,7 @@ featuredContainer.addEventListener("click", async event => {
     button.disabled = false;
   }
 });
+
 // COMPLETE OR CLAIM QUEST
 myQuestsContainer.addEventListener("click", async event => {
   const completeButton = event.target.closest("[data-complete-id]");
@@ -603,13 +625,50 @@ myQuestsContainer.addEventListener("click", async event => {
     if (claimButton) {
       claimButton.disabled = true;
 
-      const { error } = await supabase.rpc("claim_quest", {
+      // Get current level and rank before claiming
+      const { data: userData, error: userError } =
+        await supabase.auth.getUser();
+
+      if (userError) throw userError;
+
+      const { data: oldProfile, error: oldProfileError } =
+        await supabase
+          .from("profiles")
+          .select("level, rank")
+          .eq("user_id", userData.user.id)
+          .single();
+
+      if (oldProfileError) throw oldProfileError;
+
+      // Claim quest rewards
+      const { data, error } = await supabase.rpc("claim_quest", {
         p_user_quest_id: Number(claimButton.dataset.claimId)
       });
 
       if (error) throw error;
 
       message.textContent = "REWARDS CLAIMED SUCCESSFULLY.";
+
+      // Detect level and rank progression
+      if (data.level > oldProfile.level) {
+        showSystemNotification(
+          "LEVEL UP!",
+          `YOU REACHED LEVEL ${data.level}`,
+          "⚡"
+        );
+      }
+
+      if (data.rank !== oldProfile.rank) {
+        showSystemNotification(
+          "RANK UP!",
+          `HUNTER RANK ${oldProfile.rank} → ${data.rank}`,
+          "👑"
+        );
+      }
+
+      // Keep achievement notifications working
+      const achievements = data.achievements?.unlocked || [];
+      showAchievementNotifications(achievements);
     }
 
     await loadQuests();
