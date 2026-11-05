@@ -292,7 +292,43 @@ async function initializeDashboard() {
 
     document.getElementById("weeklyQuestCount").textContent =
       weeklyCount;
+// DAILY GOAL PROGRESS
+const dailyGoal = 4;
 
+const dailyProgress = Math.min(
+  100,
+  (dailyCount / dailyGoal) * 100
+);
+
+document.getElementById("dailyGoalText").textContent =
+  `${dailyCount} / ${dailyGoal}`;
+
+document.getElementById("dailyGoalBar").style.width =
+  `${dailyProgress}%`;
+
+document.getElementById("dailyGoalStatus").textContent =
+  dailyCount >= dailyGoal
+    ? "DAILY GOAL COMPLETED!"
+    : `${Math.round(dailyProgress)}% COMPLETE · ${dailyGoal - dailyCount} MISSIONS REMAINING`;
+
+// WEEKLY GOAL PROGRESS
+const weeklyGoal = 20;
+
+const weeklyProgress = Math.min(
+  100,
+  (weeklyCount / weeklyGoal) * 100
+);
+
+document.getElementById("weeklyGoalText").textContent =
+  `${weeklyCount} / ${weeklyGoal}`;
+
+document.getElementById("weeklyGoalBar").style.width =
+  `${weeklyProgress}%`;
+
+document.getElementById("weeklyGoalStatus").textContent =
+  weeklyCount >= weeklyGoal
+    ? "WEEKLY GOAL COMPLETED!"
+    : `${Math.round(weeklyProgress)}% COMPLETE · ${weeklyGoal - weeklyCount} MISSIONS REMAINING`;
     // 9. SYSTEM MESSAGE
     message.textContent =
       "SYSTEM ONLINE · HUNTER DATA LOADED";
