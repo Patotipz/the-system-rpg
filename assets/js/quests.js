@@ -407,7 +407,35 @@ function renderMyQuests(quests) {
           <span>◈ +${quest.coin_reward} COINS</span>
         </div>
 
-        <p>STATUS: ${q.status.toUpperCase()}</p>
+        <div class="quest-progress">
+  <div class="quest-progress-info">
+    <span>MISSION PROGRESS</span>
+    <strong>
+      ${q.status === "completed" ? "100%" : "25%"}
+    </strong>
+  </div>
+
+  <div class="quest-progress-track">
+    <div
+      class="quest-progress-fill ${
+        q.status === "completed"
+          ? "progress-completed"
+          : "progress-active"
+      }"
+      style="width: ${q.status === "completed" ? "100%" : "25%"}"
+    ></div>
+  </div>
+</div>
+
+<p class="quest-status-label ${
+  q.status === "completed" ? "status-ready" : "status-active"
+}">
+  ${
+    q.status === "completed"
+      ? "✦ READY TO CLAIM"
+      : "◈ ACTIVE MISSION"
+  }
+</p>
 
         ${action}
       </article>
