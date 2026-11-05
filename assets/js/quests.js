@@ -254,9 +254,22 @@ function renderAll() {
 }
 
 function renderAvailable(quests) {
-  const filtered = currentFilter === "all"
-    ? quests
-    : quests.filter(q => q.quest_type === currentFilter);
+  const priority = {
+    main: 1,
+    special: 2,
+    weekly: 3,
+    daily: 4,
+    dungeon: 5
+  };
+
+  const filtered = (
+    currentFilter === "all"
+      ? [...quests]
+      : quests.filter(q => q.quest_type === currentFilter)
+  ).sort((a, b) =>
+    (priority[a.quest_type] || 99) -
+    (priority[b.quest_type] || 99)
+  );
 
   if (!filtered.length) {
     availableContainer.innerHTML =
