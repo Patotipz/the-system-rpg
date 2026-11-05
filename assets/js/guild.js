@@ -3,6 +3,7 @@ import { supabase } from "./config.js";
 
 const rankingContainer = document.getElementById("rankingContainer");
 const guildMessage = document.getElementById("guildMessage");
+const activityContainer = document.getElementById("guildActivity");
 const logoutButton = document.getElementById("logoutButton");
 
 const membersElement = document.getElementById("guildMembers");
@@ -43,9 +44,11 @@ async function loadGuild() {
 
     if (rankingError) throw rankingError;
 
-    renderRanking(hunters || []);
+  renderRanking(hunters || []);
 
-    guildMessage.textContent = "[ GUILD DATA SYNCHRONIZED ]";
+await loadGuildActivity();
+
+guildMessage.textContent = "[ GUILD DATA SYNCHRONIZED ]";
 
   } catch (error) {
     console.error("Guild error:", error);
@@ -121,6 +124,56 @@ function escapeHTML(value) {
     '"': "&quot;",
     "'": "&#039;"
   })[character]);
+}
+
+async function loadGuildActivity() {
+  try {
+    const { data, error } = await supabase.rpc(
+      "get_guild_activity",
+      { p_limit: 20 }
+    );
+
+    if (error) throw error;
+
+    if (!data || data.length === 0) {
+      activityContainer.innerHTML =
+        '<p class="muted">No guild activity yet. Complete a quest to get started!</p>';
+      return;
+    }
+
+    activityContainer.innerHTML = data.map(activity => {
+      const date = new Date(activity.created_at);
+
+      const formattedDate = date.toLocaleString("en-US", {
+        day: "2-digit",
+        month: "short",
+        hour: "2-digit",
+        minute: "2-digit"
+      });
+
+      return `
+        <div class="activity-row">
+          <div class="activity-icon">⚔</div>
+
+          <div class="activity-info">
+            <strong>${escapeHTML(activity.display_name || "Unknown Hunter")}</strong>
+            <p>${escapeHTML(activity.description || activity.activity_type || "Guild activity")}</p>
+            <span>${formattedDate}</span>
+          </div>
+
+          <div class="activity-xp">
+            +${Number(activity.xp_earned || 0)} XP
+          </div>
+        </div>
+      `;
+    }).join("");
+
+  } catch (error) {
+    console.error("Guild activity error:", error);
+
+    activityContainer.innerHTML =
+      '<p class="muted">Unable to load guild activity.</p>';
+  }
 }
 
 // LOG OUT
