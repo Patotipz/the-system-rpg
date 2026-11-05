@@ -491,3 +491,67 @@
 .quest-card.type-dungeon:hover {
   border-color: #ff6474;
 }
+/* =========================================
+   QUEST PROGRESS & STATUS
+========================================= */
+
+.quest-progress {
+  margin: 18px 0 12px;
+}
+
+.quest-progress-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.quest-progress-info span {
+  color: var(--muted);
+  font-size: 9px;
+  letter-spacing: 1.5px;
+}
+
+.quest-progress-info strong {
+  color: var(--blue-light);
+  font-size: 11px;
+}
+
+.quest-progress-track {
+  width: 100%;
+  height: 6px;
+  overflow: hidden;
+  background: #0b1425;
+  border: 1px solid var(--border);
+}
+
+.quest-progress-fill {
+  height: 100%;
+  transition: width 0.4s ease;
+}
+
+.progress-active {
+  background: #4b9cff;
+  box-shadow: 0 0 10px rgba(75,156,255,0.5);
+}
+
+.progress-completed {
+  background: #e8bd55;
+  box-shadow: 0 0 10px rgba(232,189,85,0.5);
+}
+
+.quest-status-label {
+  display: inline-block;
+  margin: 5px 0;
+  font-size: 9px;
+  font-weight: bold;
+  letter-spacing: 1.5px;
+}
+
+.quest-status-label.status-active {
+  color: #75b7ff;
+}
+
+.quest-status-label.status-ready {
+  color: #e8bd55;
+}
