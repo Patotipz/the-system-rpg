@@ -78,7 +78,21 @@ async function loadInventory() {
     window.location.href = "index.html";
     return false;
   }
+const { data: profile, error: profileError } = await supabase
+  .from("profiles")
+  .select("display_name, rank, level")
+  .eq("user_id", authData.user.id)
+  .single();
 
+if (profileError) throw profileError;
+
+const nameEl = document.getElementById("equipmentHunterName");
+const rankEl = document.getElementById("equipmentHunterRank");
+const levelEl = document.getElementById("equipmentHunterLevel");
+
+if (nameEl) nameEl.textContent = profile.display_name || "HUNTER";
+if (rankEl) rankEl.textContent = `RANK ${profile.rank || "E"}`;
+if (levelEl) levelEl.textContent = `LV. ${profile.level ?? 1}`;
   const { data, error } = await supabase
     .from("inventory")
     .select(`
