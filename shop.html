@@ -1,0 +1,120 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>THE SYSTEM | SHOP</title>
+
+  <link rel="stylesheet" href="assets/css/dashboard.css">
+  <link rel="stylesheet" href="assets/css/shop.css">
+</head>
+
+<body>
+
+<div class="dashboard-layout">
+
+  <aside class="sidebar">
+    <div class="logo">THE <span>SYSTEM</span></div>
+
+    <div class="menu-label">MAIN MENU</div>
+
+    <nav>
+      <a href="dashboard.html" class="nav-link">◈ DASHBOARD</a>
+      <a href="dashboard.html#status" class="nav-link">▣ STATUS</a>
+      <a href="quests.html" class="nav-link">⚔ QUESTS</a>
+      <a href="shop.html" class="nav-link active">🛒 SHOP</a>
+      <a href="dashboard.html#inventory" class="nav-link">▤ INVENTORY</a>
+      <a href="achievements.html" class="nav-link">♛ ACHIEVEMENTS</a>
+      <a href="guild.html" class="nav-link">♜ GUILD</a>
+      <a href="dashboard.html#activity" class="nav-link">◷ ACTIVITY</a>
+    </nav>
+
+    <div class="sidebar-bottom">
+      <button id="logoutButton">↪ LOG OUT</button>
+      <p>SYSTEM VERSION 1.0</p>
+    </div>
+  </aside>
+
+  <main class="main-content shop-page">
+
+    <header class="shop-header">
+      <div>
+        <p class="system-label">HUNTER RESOURCE CENTER</p>
+        <h1>SYSTEM SHOP</h1>
+        <p class="muted">ACQUIRE ITEMS. ENHANCE YOUR POWER.</p>
+      </div>
+
+      <div class="shop-wallet">
+        <span>◈ YOUR COINS</span>
+        <strong id="shopCoins">0</strong>
+      </div>
+    </header>
+
+    <section class="shop-banner">
+      <div>
+        <span>WELCOME, HUNTER</span>
+        <h2>PREPARE FOR YOUR NEXT BATTLE</h2>
+        <p>Discover weapons, armor, consumables and rare treasures.</p>
+      </div>
+      <div class="shop-banner-icon">♜</div>
+    </section>
+
+    <section class="shop-catalog">
+
+      <div class="shop-section-heading">
+        <div>
+          <h2>ITEM CATALOG</h2>
+          <p class="muted">EXPLORE AVAILABLE SYSTEM ITEMS</p>
+        </div>
+
+        <span id="shopItemCount">0 ITEMS</span>
+      </div>
+
+      <div class="shop-controls">
+        <input
+          type="text"
+          id="shopSearch"
+          placeholder="Search items..."
+        >
+
+        <select id="categoryFilter">
+          <option value="all">ALL CATEGORIES</option>
+          <option value="consumable">CONSUMABLES</option>
+          <option value="weapon">WEAPONS</option>
+          <option value="armor">ARMOR</option>
+          <option value="accessory">ACCESSORIES</option>
+          <option value="material">MATERIALS</option>
+          <option value="skill_item">SKILL ITEMS</option>
+          <option value="cosmetic">COSMETICS</option>
+          <option value="boost">BOOSTS</option>
+        </select>
+
+        <select id="rarityFilter">
+          <option value="all">ALL RARITIES</option>
+          <option value="common">COMMON</option>
+          <option value="uncommon">UNCOMMON</option>
+          <option value="rare">RARE</option>
+          <option value="epic">EPIC</option>
+          <option value="legendary">LEGENDARY</option>
+          <option value="mythic">MYTHIC</option>
+          <option value="transcendent">TRANSCENDENT</option>
+        </select>
+      </div>
+
+      <div id="shopMessage" class="shop-message"></div>
+
+      <div id="shopItems" class="shop-grid">
+        <p class="muted">CONNECTING TO SYSTEM SHOP...</p>
+      </div>
+
+    </section>
+
+  </main>
+
+</div>
+
+<script type="module" src="assets/js/shop.js"></script>
+
+</body>
+</html>
