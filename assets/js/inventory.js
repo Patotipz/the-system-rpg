@@ -1,3 +1,4 @@
+
 import { supabase } from "./config.js";
 
 const inventoryContainer = document.getElementById("inventoryItems");
@@ -55,6 +56,7 @@ function canEquip(item) {
   );
 }
 
+// LOAD INVENTORY AND EQUIPMENT
 async function loadInventory() {
   const { data: authData, error: authError } =
     await supabase.auth.getUser();
@@ -108,11 +110,13 @@ async function loadInventory() {
   allItems = data || [];
 
   updateSummary();
+  renderEquipment();
   renderInventory();
 
   return true;
 }
 
+// SUMMARY COUNTERS
 function updateSummary() {
   inventoryTotal.textContent = allItems.reduce(
     (total, item) => total + item.quantity,
@@ -132,6 +136,44 @@ function updateSummary() {
     .filter(item => item.item_type === "material").length;
 }
 
+// HUNTER EQUIPMENT DISPLAY
+function renderEquipment() {
+  const slots = document.querySelectorAll(".equipment-slot");
+
+  slots.forEach(slot => {
+    const slotName = slot.dataset.slot;
+
+    const equippedItem = allItems.find(item =>
+      item.is_equipped &&
+      item.shop_items?.equipment_slot === slotName
+    );
+
+    const small = slot.querySelector("small");
+
+    if (!small) return;
+
+    if (equippedItem) {
+      slot.classList.add("slot-equipped");
+
+      small.innerHTML = `
+        <strong class="equipped-item-name">
+          ${escapeHTML(equippedItem.item_name)}
+        </strong>
+        <span class="equipped-item-rarity">
+          ${escapeHTML(equippedItem.rarity.toUpperCase())}
+        </span>
+      `;
+
+      slot.title = equippedItem.item_name;
+    } else {
+      slot.classList.remove("slot-equipped");
+      small.textContent = "EMPTY";
+      slot.title = "Empty equipment slot";
+    }
+  });
+}
+
+// INVENTORY CARDS
 function renderInventory() {
   const filter = inventoryFilter.value;
 
@@ -265,8 +307,10 @@ inventoryContainer.addEventListener("click", async event => {
   }
 });
 
+// FILTER
 inventoryFilter.addEventListener("change", renderInventory);
 
+// LOGOUT
 document.getElementById("logoutButton")
   .addEventListener("click", async () => {
     const { error } = await supabase.auth.signOut();
@@ -280,6 +324,7 @@ document.getElementById("logoutButton")
     window.location.href = "index.html";
   });
 
+// INITIALIZE
 async function initializeInventory() {
   try {
     inventoryMessage.textContent = "CONNECTING TO SYSTEM...";
