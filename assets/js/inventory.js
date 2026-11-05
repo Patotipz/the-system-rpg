@@ -1,0 +1,235 @@
+import { supabase } from "./config.js";
+
+const inventoryContainer = document.getElementById("inventoryItems");
+const inventoryMessage = document.getElementById("inventoryMessage");
+const inventoryTotal = document.getElementById("inventoryTotal");
+const inventoryFilter = document.getElementById("inventoryFilter");
+
+const weaponCount = document.getElementById("weaponCount");
+const armorCount = document.getElementById("armorCount");
+const consumableCount = document.getElementById("consumableCount");
+const materialCount = document.getElementById("materialCount");
+
+let allItems = [];
+
+const itemIcons = {
+  consumable: "🧪",
+  weapon: "⚔️",
+  armor: "🛡️",
+  accessory: "💍",
+  material: "💎",
+  skill_item: "📜",
+  cosmetic: "✨",
+  boost: "⚡"
+};
+
+function escapeHTML(value) {
+  return String(value ?? "").replace(/[&<>"']/g, char => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;"
+  })[char]);
+}
+
+function formatCategory(type) {
+  const categories = {
+    consumable: "CONSUMABLE",
+    weapon: "WEAPON",
+    armor: "ARMOR",
+    accessory: "ACCESSORY",
+    material: "MATERIAL",
+    skill_item: "SKILL ITEM",
+    cosmetic: "COSMETIC",
+    boost: "BOOST"
+  };
+
+  return categories[type] || type.toUpperCase();
+}
+
+async function loadInventory() {
+  const { data: authData, error: authError } =
+    await supabase.auth.getUser();
+
+  if (authError) throw authError;
+
+  if (!authData.user) {
+    window.location.href = "index.html";
+    return false;
+  }
+
+  const { data: authorization, error: authorizationError } =
+    await supabase.rpc("is_authorized");
+
+  if (authorizationError) throw authorizationError;
+
+  if (!authorization) {
+    await supabase.auth.signOut();
+    window.location.href = "index.html";
+    return false;
+  }
+
+  const { data, error } = await supabase
+    .from("inventory")
+    .select(`
+      id,
+      item_name,
+      item_description,
+      item_type,
+      rarity,
+      quantity,
+      is_equipped,
+      enhancement_level,
+      shop_item_id,
+      shop_items (
+        equipment_slot,
+        bonus_str,
+        bonus_agi,
+        bonus_vit,
+        bonus_int,
+        bonus_per,
+        bonus_sen,
+        hp_restore,
+        energy_restore
+      )
+    `)
+    .order("obtained_at", { ascending: false });
+
+  if (error) throw error;
+
+  allItems = data || [];
+
+  updateSummary();
+  renderInventory();
+
+  return true;
+}
+
+function updateSummary() {
+  inventoryTotal.textContent = allItems.reduce(
+    (total, item) => total + item.quantity,
+    0
+  );
+
+  weaponCount.textContent = allItems
+    .filter(item => item.item_type === "weapon").length;
+
+  armorCount.textContent = allItems
+    .filter(item => item.item_type === "armor").length;
+
+  consumableCount.textContent = allItems
+    .filter(item => item.item_type === "consumable").length;
+
+  materialCount.textContent = allItems
+    .filter(item => item.item_type === "material").length;
+}
+
+function renderInventory() {
+  const filter = inventoryFilter.value;
+
+  const filteredItems = allItems.filter(item =>
+    filter === "all" || item.item_type === filter
+  );
+
+  if (!filteredItems.length) {
+    inventoryContainer.innerHTML = `
+      <div class="inventory-empty">
+        <h3>INVENTORY EMPTY</h3>
+        <p>Visit the SYSTEM SHOP to acquire new items.</p>
+      </div>
+    `;
+    return;
+  }
+
+  inventoryContainer.innerHTML = filteredItems.map(item => {
+    const icon = itemIcons[item.item_type] || "📦";
+
+    const equipment = item.shop_items || {};
+
+    const stats = [
+      ["STR", equipment.bonus_str],
+      ["AGI", equipment.bonus_agi],
+      ["VIT", equipment.bonus_vit],
+      ["INT", equipment.bonus_int],
+      ["PER", equipment.bonus_per],
+      ["SEN", equipment.bonus_sen]
+    ].filter(([, value]) => Number(value) > 0);
+
+    return `
+      <article class="inventory-item rarity-${escapeHTML(item.rarity)}">
+
+        <div class="inventory-item-icon">${icon}</div>
+
+        <span class="inventory-item-category">
+          ${escapeHTML(formatCategory(item.item_type))}
+        </span>
+
+        <h3>${escapeHTML(item.item_name)}</h3>
+
+        <p class="inventory-item-description">
+          ${escapeHTML(item.item_description || "No description available.")}
+        </p>
+
+        <span class="inventory-item-rarity">
+          ${escapeHTML(item.rarity.toUpperCase())}
+        </span>
+
+        <div class="inventory-item-footer">
+          <span>QUANTITY: ${item.quantity}</span>
+          <span>+${item.enhancement_level || 0} ENH</span>
+        </div>
+
+        ${
+          stats.length
+            ? `<div class="inventory-item-stats">
+                ${stats.map(([name, value]) =>
+                  `<span>${name} +${value}</span>`
+                ).join("")}
+              </div>`
+            : ""
+        }
+
+        ${
+          item.is_equipped
+            ? `<span class="inventory-equipped">EQUIPPED</span>`
+            : ""
+        }
+
+      </article>
+    `;
+  }).join("");
+}
+
+inventoryFilter.addEventListener("change", renderInventory);
+
+document.getElementById("logoutButton")
+  .addEventListener("click", async () => {
+    const { error } = await supabase.auth.signOut();
+
+    if (error) {
+      console.error(error);
+      inventoryMessage.textContent = error.message;
+      return;
+    }
+
+    window.location.href = "index.html";
+  });
+
+async function initializeInventory() {
+  try {
+    inventoryMessage.textContent = "CONNECTING TO SYSTEM...";
+
+    const success = await loadInventory();
+
+    if (success) {
+      inventoryMessage.textContent = "";
+    }
+  } catch (error) {
+    console.error(error);
+    inventoryMessage.textContent =
+      error.message || "SYSTEM CONNECTION ERROR.";
+  }
+}
+
+initializeInventory();
