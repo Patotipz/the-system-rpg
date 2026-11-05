@@ -2,6 +2,7 @@
 import { supabase } from "./config.js";
 
 const availableContainer = document.getElementById("availableQuests");
+const featuredContainer = document.getElementById("featuredQuests");
 const myQuestsContainer = document.getElementById("myQuests");
 const message = document.getElementById("questMessage");
 
