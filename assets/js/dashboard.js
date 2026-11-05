@@ -221,7 +221,67 @@ document.getElementById("completedQuestCount").textContent =
     message.textContent = error.message;
   }
 }
+// LOAD DAILY AND WEEKLY QUEST COUNTS
+const now = new Date();
 
+const todayKey = getMexicoDateKey(now);
+
+// Get Monday of current week in Mexico time
+const today = new Date(`${todayKey}T12:00:00`);
+const dayOfWeek = today.getDay();
+
+const daysFromMonday = (dayOfWeek + 6) % 7;
+
+today.setDate(today.getDate() - daysFromMonday);
+
+const weekStartKey = getMexicoDateKey(today);
+
+const weekEnd = new Date(today);
+weekEnd.setDate(weekEnd.getDate() + 7);
+
+const weekEndKey = getMexicoDateKey(weekEnd);
+
+// Load completed quests with their types
+const { data: completedQuests, error: dailyWeeklyError } =
+  await supabase
+    .from("user_quests")
+    .select(`
+      completed_at,
+      quests (
+        quest_type
+      )
+    `)
+    .eq("user_id", user.id)
+    .in("status", ["completed", "claimed"])
+    .not("completed_at", "is", null);
+
+if (dailyWeeklyError) throw dailyWeeklyError;
+
+let dailyCount = 0;
+let weeklyCount = 0;
+
+completedQuests.forEach(item => {
+  const completedDate = getMexicoDateKey(
+    new Date(item.completed_at)
+  );
+
+  if (completedDate === todayKey) {
+    dailyCount++;
+  }
+
+  if (
+    completedDate >= weekStartKey &&
+    completedDate < weekEndKey
+  ) {
+    weeklyCount++;
+  }
+});
+
+document.getElementById("dailyQuestCount").textContent =
+  dailyCount;
+
+document.getElementById("weeklyQuestCount").textContent =
+  weeklyCount;
 // Logout
 document.getElementById("logoutButton").addEventListener("click", async () => {
   const { error } = await supabase.auth.signOut();
