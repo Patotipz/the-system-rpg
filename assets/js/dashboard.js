@@ -36,7 +36,11 @@ async function initializeDashboard() {
       window.location.href = "login.html";
       return;
     }
+// 3. Refresh streak before loading profile
+const { data: refreshedStreak, error: streakError } =
+  await supabase.rpc("refresh_streak");
 
+if (streakError) throw streakError;
     // 3. Load Hunter profile
     const { data: profile, error: profileError } =
       await supabase
