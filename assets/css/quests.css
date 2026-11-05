@@ -670,3 +670,90 @@
     padding: 14px;
   }
 }
+
+/* =========================================
+   SYSTEM PROGRESSION NOTIFICATIONS
+========================================= */
+
+/* LEVEL UP — ELECTRIC BLUE */
+.achievement-modal-content.system-level-up {
+  border-color: #54baff;
+  box-shadow:
+    0 0 25px rgba(84, 186, 255, 0.35),
+    0 0 80px rgba(84, 186, 255, 0.18);
+}
+
+.achievement-modal-content.system-level-up::before {
+  background: linear-gradient(
+    90deg,
+    transparent,
+    #54baff,
+    transparent
+  );
+}
+
+.system-level-up .achievement-modal-icon {
+  background: #123b65;
+  border-color: #54baff;
+  box-shadow: 0 0 30px rgba(84, 186, 255, 0.4);
+}
+
+.system-level-up .achievement-modal-label {
+  color: #54baff;
+}
+
+/* RANK UP — LEGENDARY GOLD */
+.achievement-modal-content.system-rank-up {
+  border-color: #e5bd63;
+  box-shadow:
+    0 0 30px rgba(229, 189, 99, 0.4),
+    0 0 90px rgba(229, 189, 99, 0.2);
+}
+
+.achievement-modal-content.system-rank-up::before {
+  background: linear-gradient(
+    90deg,
+    transparent,
+    #ffe09a,
+    transparent
+  );
+}
+
+.system-rank-up .achievement-modal-icon {
+  background: #49391b;
+  border-color: #e5bd63;
+  box-shadow: 0 0 35px rgba(229, 189, 99, 0.5);
+}
+
+.system-rank-up .achievement-modal-label {
+  color: #ffe09a;
+}
+
+.system-rank-up h2 {
+  color: #ffe09a;
+  text-shadow: 0 0 15px rgba(229, 189, 99, 0.35);
+}
+
+/* SPECIAL ANIMATION */
+@keyframes systemNotificationAppear {
+  0% {
+    opacity: 0;
+    transform: scale(0.7);
+    filter: brightness(2);
+  }
+
+  60% {
+    opacity: 1;
+    transform: scale(1.04);
+  }
+
+  100% {
+    transform: scale(1);
+    filter: brightness(1);
+  }
+}
+
+.achievement-modal-content.system-level-up,
+.achievement-modal-content.system-rank-up {
+  animation: systemNotificationAppear 0.65s ease;
+}
