@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>THE SYSTEM | Inventory</title>
+
+  <link rel="stylesheet" href="assets/css/dashboard.css">
+  <link rel="stylesheet" href="assets/css/inventory.css">
+</head>
+
+<body>
+
+  <div class="dashboard-layout">
+
+    <aside class="sidebar">
+      <div class="logo">THE <span>SYSTEM</span></div>
+
+      <div class="menu-label">MAIN MENU</div>
+
+      <nav>
+        <a href="dashboard.html" class="nav-link">◈ DASHBOARD</a>
+        <a href="dashboard.html#status" class="nav-link">▣ STATUS</a>
+        <a href="quests.html" class="nav-link">⚔ QUESTS</a>
+        <a href="shop.html" class="nav-link">🛒 SHOP</a>
+        <a href="inventory.html" class="nav-link active">▤ INVENTORY</a>
+        <a href="achievements.html" class="nav-link">♛ ACHIEVEMENTS</a>
+        <a href="guild.html" class="nav-link">♜ GUILD</a>
+        <a href="dashboard.html#activity" class="nav-link">◷ ACTIVITY</a>
+      </nav>
+
+      <div class="sidebar-bottom">
+        <button id="logoutButton">↪ LOG OUT</button>
+        <p>SYSTEM VERSION 1.0</p>
+      </div>
+    </aside>
+
+    <main class="main-content inventory-page">
+
+      <header class="inventory-header">
+        <div>
+          <span class="eyebrow">HUNTER RESOURCES</span>
+          <h1>INVENTORY</h1>
+          <p>MANAGE YOUR ITEMS, EQUIPMENT AND RESOURCES.</p>
+        </div>
+
+        <div class="inventory-count">
+          <span>ITEMS OWNED</span>
+          <strong id="inventoryTotal">0</strong>
+        </div>
+      </header>
+
+      <section class="inventory-summary">
+        <div class="inventory-stat">
+          <span>WEAPONS</span>
+          <strong id="weaponCount">0</strong>
+        </div>
+
+        <div class="inventory-stat">
+          <span>ARMOR</span>
+          <strong id="armorCount">0</strong>
+        </div>
+
+        <div class="inventory-stat">
+          <span>CONSUMABLES</span>
+          <strong id="consumableCount">0</strong>
+        </div>
+
+        <div class="inventory-stat">
+          <span>MATERIALS</span>
+          <strong id="materialCount">0</strong>
+        </div>
+      </section>
+
+      <section class="inventory-section">
+
+        <div class="inventory-toolbar">
+          <div>
+            <h2>MY ITEMS</h2>
+            <span>YOUR ACQUIRED RESOURCES</span>
+          </div>
+
+          <select id="inventoryFilter">
+            <option value="all">ALL ITEMS</option>
+            <option value="weapon">WEAPONS</option>
+            <option value="armor">ARMOR</option>
+            <option value="accessory">ACCESSORIES</option>
+            <option value="consumable">CONSUMABLES</option>
+            <option value="material">MATERIALS</option>
+            <option value="boost">BOOSTS</option>
+            <option value="skill_item">SKILL ITEMS</option>
+            <option value="cosmetic">COSMETICS</option>
+          </select>
+        </div>
+
+        <p id="inventoryMessage">CONNECTING TO SYSTEM...</p>
+
+        <div id="inventoryItems" class="inventory-grid">
+          <p>Loading inventory...</p>
+        </div>
+
+      </section>
+
+    </main>
+  </div>
+
+  <script type="module" src="assets/js/inventory.js"></script>
+
+</body>
+</html>
