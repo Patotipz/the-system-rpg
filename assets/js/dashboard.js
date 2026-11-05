@@ -112,6 +112,54 @@ async function initializeDashboard() {
     document.getElementById("xpNext").textContent =
       `${Math.max(0, nextLevelXp - profile.xp)} XP TO NEXT LEVEL · ${Math.round(xpProgress)}%`;
 
+// HUNTER RANK PROGRESSION
+const rankRequirements = {
+  E: { next: "D", currentXP: 0, nextXP: 1000, nextLevel: 5 },
+  D: { next: "C", currentXP: 1000, nextXP: 4500, nextLevel: 10 },
+  C: { next: "B", currentXP: 4500, nextXP: 19000, nextLevel: 20 },
+  B: { next: "A", currentXP: 19000, nextXP: 43500, nextLevel: 30 },
+  A: { next: "S", currentXP: 43500, nextXP: 122500, nextLevel: 50 },
+  S: null
+};
+
+const currentRank = profile.rank;
+const rankData = rankRequirements[currentRank];
+
+document.getElementById("currentRankDisplay").textContent = currentRank;
+
+if (rankData) {
+  const rankProgress = Math.min(
+    100,
+    Math.max(
+      0,
+      ((profile.xp - rankData.currentXP) /
+        (rankData.nextXP - rankData.currentXP)) * 100
+    )
+  );
+
+  const remainingXP = Math.max(0, rankData.nextXP - profile.xp);
+
+  document.getElementById("nextRankDisplay").textContent = rankData.next;
+  document.getElementById("nextRankLevel").textContent =
+    `REACH LEVEL ${rankData.nextLevel}`;
+
+  document.getElementById("rankXpText").textContent =
+    `${profile.xp.toLocaleString()} / ${rankData.nextXP.toLocaleString()} XP`;
+
+  document.getElementById("rankProgressBar").style.width =
+    `${rankProgress}%`;
+
+  document.getElementById("rankProgressStatus").textContent =
+    `${remainingXP.toLocaleString()} XP TO NEXT RANK`;
+} else {
+  document.getElementById("nextRankDisplay").textContent = "MAX";
+  document.getElementById("nextRankLevel").textContent = "HIGHEST RANK";
+  document.getElementById("rankXpText").textContent = "MAXIMUM RANK";
+  document.getElementById("rankProgressBar").style.width = "100%";
+  document.getElementById("rankProgressStatus").textContent =
+    "YOU HAVE REACHED THE HIGHEST HUNTER RANK";
+}
+
     // STREAKS
     document.getElementById("currentStreak").textContent =
       profile.current_streak ?? 0;
