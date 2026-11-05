@@ -66,11 +66,33 @@ if (streakError) throw streakError;
     document.getElementById("hunterCoins").textContent =
       profile.coins ?? 0;
 
-    document.getElementById("xpText").textContent =
-      `${profile.xp} XP`;
+  document.getElementById("xpText").textContent =
+  `${profile.xp} XP`;
 
-    document.getElementById("xpNext").textContent =
-      "Accumulated experience points";
+const currentLevelXp =
+  100 * (profile.level - 1) * profile.level / 2;
+
+const nextLevelXp =
+  100 * profile.level * (profile.level + 1) / 2;
+
+const xpIntoLevel = Math.max(
+  0,
+  profile.xp - currentLevelXp
+);
+
+const xpNeededForLevel =
+  nextLevelXp - currentLevelXp;
+
+const xpProgress = Math.min(
+  100,
+  (xpIntoLevel / xpNeededForLevel) * 100
+);
+
+document.getElementById("xpBar").style.width =
+  `${xpProgress}%`;
+
+document.getElementById("xpNext").textContent =
+  `${Math.max(0, nextLevelXp - profile.xp)} XP TO NEXT LEVEL · ${Math.round(xpProgress)}%`;
 document.getElementById("currentStreak").textContent =
   profile.current_streak ?? 0;
 
