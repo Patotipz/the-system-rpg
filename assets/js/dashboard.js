@@ -161,7 +161,18 @@ document.getElementById("longestStreak").textContent =
     if (questsError) throw questsError;
 
     questsList.replaceChildren();
+// LOAD COMPLETED QUEST COUNT
+const { count: completedCount, error: completedError } =
+  await supabase
+    .from("user_quests")
+    .select("id", { count: "exact", head: true })
+    .eq("user_id", user.id)
+    .in("status", ["completed", "claimed"]);
 
+if (completedError) throw completedError;
+
+document.getElementById("completedQuestCount").textContent =
+  completedCount ?? 0;
     if (!quests || quests.length === 0) {
       const empty = document.createElement("p");
       empty.className = "muted";
