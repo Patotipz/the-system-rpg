@@ -329,18 +329,17 @@ myQuestsContainer.addEventListener("click", async event => {
 
   try {
     if (completeButton) {
-  completeButton.disabled = true;
+      completeButton.disabled = true;
 
-  const { data, error } = await supabase.rpc("complete_quest", {
-    p_user_quest_id: Number(completeButton.dataset.completeId)
-  });
+      const { data, error } = await supabase.rpc("complete_quest", {
+        p_user_quest_id: Number(completeButton.dataset.completeId)
+      });
 
-  if (error) throw error;
+      if (error) throw error;
 
-  message.textContent = "QUEST COMPLETED. CLAIM YOUR REWARDS.";
+      message.textContent = "QUEST COMPLETED. CLAIM YOUR REWARDS.";
 
-  showAchievementNotifications(data?.achievements || []);
-}
+      showAchievementNotifications(data?.achievements || []);
     }
 
     if (claimButton) {
@@ -363,6 +362,7 @@ myQuestsContainer.addEventListener("click", async event => {
     message.textContent = error.message;
   }
 });
+
 
 // LOGOUT
 logoutButton.addEventListener("click", async () => {
