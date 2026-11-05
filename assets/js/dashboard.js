@@ -168,46 +168,53 @@ if (rankData) {
       profile.longest_streak ?? 0;
 
     // 5. LOAD HUNTER ATTRIBUTES
-    const { data: stats, error: statsError } =
-      await supabase
-        .from("player_stats")
-        .select("hp, energy, strength, vitality, agility, intelligence, perception, sense")
-        .eq("user_id", user.id)
-        .single();
 
-    if (statsError) throw statsError;
+// LOAD HP AND ENERGY
+const { data: stats, error: statsError } =
+  await supabase
+    .from("player_stats")
+    .select("hp, energy")
+    .eq("user_id", user.id)
+    .single();
 
-    document.getElementById("hunterHP").textContent =
-      stats.hp;
+if (statsError) throw statsError;
 
-    document.getElementById("hunterEnergy").textContent =
-      stats.energy;
+document.getElementById("hunterHP").textContent =
+  stats.hp;
 
-    const attributes = [
-      ["STR", stats.strength],
-      ["VIT", stats.vitality],
-      ["AGI", stats.agility],
-      ["INT", stats.intelligence],
-      ["PER", stats.perception],
-      ["SEN", stats.sense]
-    ];
+document.getElementById("hunterEnergy").textContent =
+  stats.energy;
 
-    statsList.replaceChildren();
+// LOAD BASE STATS + EQUIPMENT BONUSES
+const { data: hunterStats, error: hunterStatsError } =
+  await supabase.rpc("get_hunter_stats");
 
-    attributes.forEach(([name, value]) => {
-      const row = document.createElement("div");
-      row.className = "stat-row";
+if (hunterStatsError) throw hunterStatsError;
 
-      const label = document.createElement("span");
-      label.textContent = name;
+const attributes = [
+  ["STR", hunterStats.total_stats.str],
+  ["VIT", hunterStats.total_stats.vit],
+  ["AGI", hunterStats.total_stats.agi],
+  ["INT", hunterStats.total_stats.int],
+  ["PER", hunterStats.total_stats.per],
+  ["SEN", hunterStats.total_stats.sen]
+];
 
-      const amount = document.createElement("strong");
-      amount.textContent = value;
+statsList.replaceChildren();
 
-      row.append(label, amount);
-      statsList.appendChild(row);
-    });
+attributes.forEach(([name, value]) => {
+  const row = document.createElement("div");
+  row.className = "stat-row";
 
+  const label = document.createElement("span");
+  label.textContent = name;
+
+  const amount = document.createElement("strong");
+  amount.textContent = value;
+
+  row.append(label, amount);
+  statsList.appendChild(row);
+});
     // 6. LOAD PLAYER QUESTS
     const { data: quests, error: questsError } =
       await supabase
