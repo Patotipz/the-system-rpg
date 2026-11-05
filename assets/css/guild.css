@@ -352,3 +352,70 @@ body {
     display: none;
   }
 }
+
+/* GUILD ACTIVITY FEED */
+
+.activity-panel {
+  margin-top: 25px;
+}
+
+.activity-row {
+  display: grid;
+  grid-template-columns: 45px 1fr auto;
+  align-items: center;
+  gap: 15px;
+  padding: 18px 10px;
+  border-bottom: 1px solid var(--border);
+  transition: background 0.2s ease;
+}
+
+.activity-row:hover {
+  background: var(--surface-light);
+}
+
+.activity-icon {
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  color: var(--blue-light);
+  background: rgba(40, 120, 208, 0.12);
+}
+
+.activity-info strong {
+  color: var(--blue-light);
+  font-size: 0.9rem;
+}
+
+.activity-info p {
+  color: var(--text);
+  font-size: 0.85rem;
+  margin: 5px 0;
+}
+
+.activity-info span {
+  color: var(--muted);
+  font-size: 0.7rem;
+}
+
+.activity-xp {
+  color: #65d6a2;
+  font-weight: 700;
+  font-size: 0.85rem;
+  white-space: nowrap;
+}
+
+@media (max-width: 600px) {
+  .activity-row {
+    grid-template-columns: 35px 1fr;
+    gap: 10px;
+  }
+
+  .activity-xp {
+    grid-column: 2;
+    text-align: left;
+  }
+}
