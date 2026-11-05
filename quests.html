@@ -103,7 +103,41 @@
     <p id="questMessage" class="system-label"></p>
 
   </main>
+<!-- ACHIEVEMENT UNLOCKED MODAL -->
+<div id="achievementModal" class="achievement-modal hidden">
 
+  <div class="achievement-modal-content">
+
+    <p class="system-label">[ SYSTEM NOTIFICATION ]</p>
+
+    <div class="achievement-modal-icon" id="modalAchievementIcon">
+      🏆
+    </div>
+
+    <p class="achievement-modal-label">
+      ACHIEVEMENT UNLOCKED
+    </p>
+
+    <h2 id="modalAchievementTitle">
+      AWAKENING
+    </h2>
+
+    <p id="modalAchievementDescription">
+      A new achievement has been unlocked.
+    </p>
+
+    <div class="achievement-modal-rewards">
+      <span id="modalAchievementXP">+50 XP</span>
+      <span id="modalAchievementCoins">+25 COINS</span>
+    </div>
+
+    <button id="closeAchievementModal" class="quest-action">
+      CONFIRM
+    </button>
+
+  </div>
+
+</div>
   <script type="module" src="assets/js/quests.js"></script>
 
 </body>
