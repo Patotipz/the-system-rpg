@@ -502,8 +502,8 @@
 .equipment-layout .hunter-portrait-frame {
   position: relative;
   isolation: isolate;
-  width: 230px;
-  height: 290px;
+  width: 280px;
+  height: 360px;
   overflow: visible;
   border: 1px solid #39baff;
   border-radius: 9px;
