@@ -264,14 +264,22 @@ function renderInventory() {
              EQUIP
            </button>`
       : "";
-const enhanceButton = canEquip(item) &&
-  Number(item.enhancement_level || 0) < 10
-    ? `<button class="inventory-action enhance-button"
-         data-enhance-id="${item.id}">
-         <span class="enhance-icon">✦</span>
-         ENHANCE
-       </button>`
-    : "";
+const enhancementCosts = [
+  100, 200, 350, 500, 700,
+  900, 1200, 1500, 1900, 2500
+];
+
+const currentLevel = Number(item.enhancement_level || 0);
+const nextEnhancementCost = enhancementCosts[currentLevel];
+
+const enhanceButton = canEquip(item) && currentLevel < 10
+  ? `<button class="inventory-action enhance-button"
+       data-enhance-id="${item.id}">
+       <span class="enhance-icon">✦</span>
+       ENHANCE
+       <span class="enhance-cost">${nextEnhancementCost} COINS</span>
+     </button>`
+  : "";
     return `
       <article class="inventory-item rarity-${escapeHTML(item.rarity)}">
 
