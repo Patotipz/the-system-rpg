@@ -852,3 +852,29 @@
     max-width: none;
   }
 }
+/* EQUIPPED ITEM TEXT */
+
+.equipment-slot small {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.equipped-item-name {
+  color: #eaf6ff;
+  font-size: 11px;
+  font-weight: bold;
+}
+
+.equipped-item-rarity {
+  color: #65caff;
+  font-size: 9px;
+  letter-spacing: 1px;
+}
+
+.equipment-slot.slot-equipped {
+  border-color: #39baff;
+  background: linear-gradient(145deg, #163b55, #091725);
+}
