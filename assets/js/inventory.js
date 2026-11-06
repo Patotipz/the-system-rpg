@@ -245,13 +245,13 @@ function renderInventory() {
     const equipment = item.shop_items || {};
 
     const stats = [
-      ["STR", equipment.bonus_str],
-      ["AGI", equipment.bonus_agi],
-      ["VIT", equipment.bonus_vit],
-      ["INT", equipment.bonus_int],
-      ["PER", equipment.bonus_per],
-      ["SEN", equipment.bonus_sen]
-    ].filter(([, value]) => Number(value) > 0);
+  ["STR", getEnhancedBonus(item, "bonus_str")],
+  ["AGI", getEnhancedBonus(item, "bonus_agi")],
+  ["VIT", getEnhancedBonus(item, "bonus_vit")],
+  ["INT", getEnhancedBonus(item, "bonus_int")],
+  ["PER", getEnhancedBonus(item, "bonus_per")],
+  ["SEN", getEnhancedBonus(item, "bonus_sen")]
+].filter(([, value]) => value > 0);
 
     const equipButton = canEquip(item)
       ? item.is_equipped
