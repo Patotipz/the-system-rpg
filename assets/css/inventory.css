@@ -878,3 +878,23 @@
   border-color: #39baff;
   background: linear-gradient(145deg, #163b55, #091725);
 }
+
+/* ENHANCEMENT BUTTON */
+.inventory-action.enhance-button {
+  background: linear-gradient(135deg, #392b70, #6546a5);
+  border: 1px solid #9878e8;
+  color: #ffffff;
+  box-shadow: 0 0 10px rgba(101, 70, 165, 0.25);
+}
+
+.inventory-action.enhance-button:hover {
+  background: linear-gradient(135deg, #503a91, #8060c9);
+  box-shadow: 0 0 16px rgba(128, 96, 201, 0.45);
+  transform: translateY(-2px);
+}
+
+.inventory-action.enhance-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
