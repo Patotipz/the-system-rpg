@@ -216,31 +216,6 @@ function renderEquipment() {
   });
 }
 
-  // CALCULATE TOTAL EQUIPMENT BONUSES
-  const bonusAttributes = {
-    STR: "bonus_str",
-    AGI: "bonus_agi",
-    VIT: "bonus_vit",
-    INT: "bonus_int",
-    PER: "bonus_per",
-    SEN: "bonus_sen"
-  };
-
-  const equippedItems = allItems.filter(item => item.is_equipped);
-
-  Object.entries(bonusAttributes).forEach(([attribute, column]) => {
-    const totalBonus = equippedItems.reduce((total, item) => {
-      return total + Number(item.shop_items?.[column] || 0);
-    }, 0);
-
-    const element = document.getElementById(`bonus${attribute}`);
-
-    if (element) {
-      element.textContent = `+${totalBonus}`;
-    }
-  });
-}
-
 
 // INVENTORY CARDS
 function renderInventory() {
