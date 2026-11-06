@@ -333,27 +333,49 @@ const isEnhancing = Boolean(enhanceButton);
 const isEquipping = Boolean(equipButton);
 
   const itemId = Number(
-    isEquipping
+  isEnhancing
+    ? enhanceButton.dataset.enhanceId
+    : isEquipping
       ? equipButton.dataset.equipId
       : unequipButton.dataset.unequipId
-  );
+);
 
   button.disabled = true;
   button.textContent = "PROCESSING...";
 
   try {
-    const { data, error } = await supabase.rpc(
-      isEquipping
-        ? "equip_inventory_item"
-        : "unequip_inventory_item",
-      { p_inventory_id: itemId }
-    );
+    const rpcName = isEnhancing
+  ? "enhance_inventory_item"
+  : isEquipping
+    ? "equip_inventory_item"
+    : "unequip_inventory_item";
+
+const { data, error } = await supabase.rpc(
+  rpcName,
+  { p_inventory_id: itemId }
+);
 
     if (error) throw error;
 
-    inventoryMessage.textContent = isEquipping
-      ? `${data.item_name.toUpperCase()} EQUIPPED SUCCESSFULLY!`
-      : `${data.item_name.toUpperCase()} UNEQUIPPED SUCCESSFULLY!`;
+    if (!data.success) {
+  inventoryMessage.textContent = data.message || "ACTION FAILED.";
+  await loadInventory();
+  return;
+}
+
+if (isEnhancing) {
+  inventoryMessage.textContent =
+    `${data.item_name.toUpperCase()} ENHANCED TO +${data.enhancement_level}! ` +
+    `${data.cost} COINS SPENT. ${data.remaining_coins} COINS REMAINING.`;
+
+} else if (isEquipping) {
+  inventoryMessage.textContent =
+    `${data.item_name.toUpperCase()} EQUIPPED SUCCESSFULLY!`;
+
+} else {
+  inventoryMessage.textContent =
+    `${data.item_name.toUpperCase()} UNEQUIPPED SUCCESSFULLY!`;
+}
 
     await loadInventory();
 
