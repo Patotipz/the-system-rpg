@@ -784,19 +784,31 @@ button:disabled {
 ========================================= */
 
 .activity-card {
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: 48px minmax(0, 1fr) auto;
   align-items: center;
-  gap: 20px;
-  padding: 18px 20px;
+  gap: 16px;
+  padding: 20px;
   background: var(--surface-2);
   border-left: 3px solid var(--blue);
   border-bottom: 1px solid var(--border);
-  transition: background 0.2s ease;
+  transition: background 0.2s ease, border-color 0.2s ease;
 }
 
 .activity-card:hover {
   background: var(--surface);
+  border-left-color: var(--blue-light);
+}
+
+.activity-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  font-size: 21px;
 }
 
 .activity-info {
@@ -817,6 +829,7 @@ button:disabled {
   color: #ffffff;
   font-size: 13px;
   margin: 0;
+  overflow-wrap: anywhere;
 }
 
 .activity-date {
@@ -827,7 +840,7 @@ button:disabled {
 
 .activity-xp {
   color: #8bffb0;
-  font-size: 16px;
+  font-size: 17px;
   font-weight: 900;
   white-space: nowrap;
   text-shadow: 0 0 10px #8bffb044;
@@ -835,11 +848,19 @@ button:disabled {
 
 @media (max-width: 600px) {
   .activity-card {
+    grid-template-columns: 38px minmax(0, 1fr);
+    gap: 12px;
     padding: 15px;
-    gap: 10px;
+  }
+
+  .activity-icon {
+    width: 36px;
+    height: 36px;
+    font-size: 18px;
   }
 
   .activity-xp {
+    grid-column: 2;
     font-size: 14px;
   }
 }
