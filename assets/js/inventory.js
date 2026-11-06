@@ -268,6 +268,7 @@ const enhanceButton = canEquip(item) &&
   Number(item.enhancement_level || 0) < 10
     ? `<button class="inventory-action enhance-button"
          data-enhance-id="${item.id}">
+         <span class="enhance-icon">✦</span>
          ENHANCE
        </button>`
     : "";
