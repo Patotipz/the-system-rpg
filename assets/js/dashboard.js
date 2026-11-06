@@ -429,45 +429,98 @@ if (activityList) {
 
     activityList.appendChild(emptyMessage);
   } else {
-    activities.forEach((activity) => {
-      const card = document.createElement("div");
-      card.className = "activity-card";
+    activities.forEach((activity) => {activities.forEach((activity) => {
+  const activityTypes = {
+    quest_completed: {
+      icon: "⚔️",
+      label: "QUEST COMPLETED"
+    },
+    level_up: {
+      icon: "⬆️",
+      label: "LEVEL UP"
+    },
+    rank_up: {
+      icon: "🏆",
+      label: "RANK UP"
+    },
+    item_acquired: {
+      icon: "💎",
+      label: "ITEM ACQUIRED"
+    },
+    item_equipped: {
+      icon: "🛡️",
+      label: "ITEM EQUIPPED"
+    },
+    item_enhanced: {
+      icon: "✨",
+      label: "ITEM ENHANCED"
+    }
+  };
 
-      const info = document.createElement("div");
-      info.className = "activity-info";
+  const type = activityTypes[activity.activity_type] || {
+    icon: "◈",
+    label: activity.activity_type.replaceAll("_", " ").toUpperCase()
+  };
 
-      const title = document.createElement("strong");
-      title.className = "activity-title";
+  const card = document.createElement("div");
+  card.className = "activity-card";
 
-      title.textContent =
-        activity.activity_type === "quest_completed"
-          ? "QUEST COMPLETED"
-          : activity.activity_type.replaceAll("_", " ").toUpperCase();
+  const icon = document.createElement("div");
+  icon.className = "activity-icon";
+  icon.textContent = type.icon;
 
-      const description = document.createElement("p");
-      description.className = "activity-description";
-      description.textContent = activity.description || "";
+  const info = document.createElement("div");
+  info.className = "activity-info";
 
-      const date = document.createElement("span");
-      date.className = "activity-date";
-      date.textContent = new Intl.DateTimeFormat("en-US", {
-        timeZone: "America/Mexico_City",
-        day: "2-digit",
-        month: "short",
-        hour: "2-digit",
-        minute: "2-digit",
-        hour12: false
-      }).format(new Date(activity.created_at));
+  const title = document.createElement("strong");
+  title.className = "activity-title";
+  title.textContent = type.label;
 
-      const xp = document.createElement("strong");
-      xp.className = "activity-xp";
-      xp.textContent = `+${activity.xp_earned ?? 0} XP`;
+  const description = document.createElement("p");
+  description.className = "activity-description";
+  description.textContent = activity.description || "";
 
-      info.append(title, description, date);
-      card.append(info, xp);
+  const activityDate = new Date(activity.created_at);
+  const today = getMexicoDateKey(new Date());
+  const yesterdayDate = new Date();
+  yesterdayDate.setDate(yesterdayDate.getDate() - 1);
 
-      activityList.appendChild(card);
-    });
+  const yesterday = getMexicoDateKey(yesterdayDate);
+  const activityDay = getMexicoDateKey(activityDate);
+
+  let dateLabel = new Intl.DateTimeFormat("en-US", {
+    timeZone: "America/Mexico_City",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false
+  }).format(activityDate);
+
+  if (activityDay === today) {
+    dateLabel = `TODAY · ${dateLabel}`;
+  } else if (activityDay === yesterday) {
+    dateLabel = `YESTERDAY · ${dateLabel}`;
+  } else {
+    dateLabel = new Intl.DateTimeFormat("en-US", {
+      timeZone: "America/Mexico_City",
+      day: "2-digit",
+      month: "short",
+      year: "numeric"
+    }).format(activityDate);
+  }
+
+  const date = document.createElement("span");
+  date.className = "activity-date";
+  date.textContent = dateLabel;
+
+  const xp = document.createElement("strong");
+  xp.className = "activity-xp";
+  xp.textContent = `+${activity.xp_earned ?? 0} XP`;
+
+  info.append(title, description, date);
+  card.append(icon, info, xp);
+
+  activityList.appendChild(card);
+});
   }
 }
     // 9. SYSTEM MESSAGE
