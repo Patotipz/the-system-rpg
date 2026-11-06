@@ -85,12 +85,16 @@ async function loadInventory() {
   }
 const { data: profile, error: profileError } = await supabase
   .from("profiles")
-  .select("display_name, rank, level")
+  .select("display_name, rank, level, coins")
   .eq("user_id", authData.user.id)
   .single();
 
 if (profileError) throw profileError;
+const coinsEl = document.getElementById("inventoryCoins");
 
+if (coinsEl) {
+  coinsEl.textContent = `${Number(profile.coins || 0).toLocaleString()} COINS`;
+}
 const nameEl = document.getElementById("equipmentHunterName");
 const rankEl = document.getElementById("equipmentHunterRank");
 const levelEl = document.getElementById("equipmentHunterLevel");
