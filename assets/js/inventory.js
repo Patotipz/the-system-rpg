@@ -152,6 +152,7 @@ function updateSummary() {
 
 // HUNTER EQUIPMENT DISPLAY
 
+
 function renderEquipment() {
   const slots = document.querySelectorAll(".equipment-slot");
 
@@ -167,25 +168,53 @@ function renderEquipment() {
 
     if (!small) return;
 
-    if (equippedItem) {
-      slot.classList.add("slot-equipped");
+    // Reset slot content
+    slot.classList.toggle("slot-equipped", Boolean(equippedItem));
 
-      small.innerHTML = `
-        <strong class="equipped-item-name">
-          ${escapeHTML(equippedItem.item_name)}
-        </strong>
-        <span class="equipped-item-rarity">
-          ${escapeHTML(equippedItem.rarity.toUpperCase())}
-        </span>
-      `;
+    if (equippedItem) {
+      small.textContent = "";
+
+      const itemName = document.createElement("span");
+      itemName.className = "equipped-item-name";
+      itemName.textContent = equippedItem.item_name;
+
+      const rarity = document.createElement("span");
+      rarity.className = "equipped-item-rarity";
+      rarity.textContent = equippedItem.rarity.toUpperCase();
+
+      small.append(itemName, rarity);
 
       slot.title = equippedItem.item_name;
     } else {
-      slot.classList.remove("slot-equipped");
       small.textContent = "EMPTY";
       slot.title = "Empty equipment slot";
     }
   });
+
+  // CALCULATE TOTAL EQUIPMENT BONUSES
+  const bonusAttributes = {
+    STR: "bonus_str",
+    AGI: "bonus_agi",
+    VIT: "bonus_vit",
+    INT: "bonus_int",
+    PER: "bonus_per",
+    SEN: "bonus_sen"
+  };
+
+  const equippedItems = allItems.filter(item => item.is_equipped);
+
+  Object.entries(bonusAttributes).forEach(([attribute, column]) => {
+    const totalBonus = equippedItems.reduce((total, item) => {
+      return total + Number(item.shop_items?.[column] || 0);
+    }, 0);
+
+    const element = document.getElementById(`bonus${attribute}`);
+
+    if (element) {
+      element.textContent = `+${totalBonus}`;
+    }
+  });
+}
 
   // CALCULATE TOTAL EQUIPMENT BONUSES
   const bonusAttributes = {
