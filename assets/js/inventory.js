@@ -55,7 +55,12 @@ function canEquip(item) {
     item.shop_items?.equipment_slot
   );
 }
+function getEnhancedBonus(item, column) {
+  const baseBonus = Number(item.shop_items?.[column] || 0);
+  const enhancementLevel = Number(item.enhancement_level || 0);
 
+  return Math.round(baseBonus * (1 + 0.10 * enhancementLevel));
+}
 // LOAD INVENTORY AND EQUIPMENT
 async function loadInventory() {
   const { data: authData, error: authError } =
