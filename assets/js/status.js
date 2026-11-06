@@ -28,6 +28,7 @@ function setText(id, value) {
 
 function setBar(id, percentage) {
   const element = document.getElementById(id);
+
   if (element) {
     element.style.width = `${Math.min(100, Math.max(0, percentage))}%`;
   }
@@ -139,6 +140,36 @@ function renderEquipment(items) {
   });
 }
 
+// =========================================
+// RESOURCE DISPLAY
+// =========================================
+
+function renderResources(resources) {
+  const hp = Number(resources.hp ?? 0);
+  const maxHP = Number(resources.max_hp ?? 100);
+
+  const energy = Number(resources.energy ?? 0);
+  const maxEnergy = Number(resources.max_energy ?? 100);
+
+  const hpPercentage = maxHP > 0
+    ? (hp / maxHP) * 100
+    : 0;
+
+  const energyPercentage = maxEnergy > 0
+    ? (energy / maxEnergy) * 100
+    : 0;
+
+  setText("statusHP", `${hp} / ${maxHP}`);
+  setText("statusEnergy", `${energy} / ${maxEnergy}`);
+
+  setBar("statusHPBar", hpPercentage);
+  setBar("statusEnergyBar", energyPercentage);
+}
+
+// =========================================
+// INITIALIZE STATUS
+// =========================================
+
 async function initializeStatus() {
   try {
     // 1. VERIFY SESSION
@@ -217,19 +248,13 @@ async function initializeStatus() {
     const { data: resources, error: resourcesError } =
       await supabase
         .from("player_stats")
-        .select("hp, energy")
+        .select("hp, max_hp, energy, max_energy")
         .eq("user_id", user.id)
         .single();
 
     if (resourcesError) throw resourcesError;
 
-    setText("statusHP", resources.hp ?? 0);
-    setText("statusEnergy", resources.energy ?? 0);
-
-    // The current schema does not define maximum HP or energy.
-    // Bars are displayed as visual placeholders until max values exist.
-    setBar("statusHPBar", resources.hp > 0 ? 100 : 0);
-    setBar("statusEnergyBar", resources.energy > 0 ? 100 : 0);
+    renderResources(resources);
 
     // 5. LOAD ATTRIBUTES
     const { data: hunterStats, error: hunterStatsError } =
