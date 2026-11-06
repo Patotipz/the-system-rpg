@@ -932,3 +932,26 @@
   letter-spacing: 0.8px;
   white-space: nowrap;
 }
+/* ================================
+   INVENTORY COINS
+================================ */
+
+.inventory-coins {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 10px 16px;
+  background: rgba(25, 35, 50, 0.85);
+  border: 1px solid rgba(255, 195, 80, 0.4);
+  border-radius: 6px;
+  color: #ffd477;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  box-shadow: 0 0 12px rgba(255, 195, 80, 0.08);
+}
+
+.coins-icon {
+  font-size: 18px;
+  color: #ffcf60;
+}
