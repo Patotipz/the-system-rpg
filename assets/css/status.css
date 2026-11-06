@@ -1,0 +1,372 @@
+
+/* =================================
+   STATUS PAGE
+================================= */
+
+.status-page {
+  padding-bottom: 60px;
+  min-width: 0;
+}
+
+.status-section {
+  margin-top: 35px;
+}
+
+.status-section > .panel-heading {
+  margin-bottom: 18px;
+}
+
+/* HUNTER PROFILE */
+
+.hunter-profile-panel {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+  padding: 35px;
+  margin-top: 25px;
+  background:
+    linear-gradient(110deg, rgba(40, 113, 190, 0.13), transparent 65%),
+    var(--surface);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--blue);
+}
+
+.hunter-profile-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 125px;
+  height: 125px;
+  background: var(--surface-2);
+  border: 1px solid var(--blue);
+  font-size: 58px;
+  box-shadow: 0 0 25px rgba(76, 165, 255, 0.12);
+}
+
+.hunter-profile-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.hunter-profile-info h2 {
+  margin: 8px 0 14px;
+  font-size: 32px;
+  letter-spacing: 3px;
+  overflow-wrap: anywhere;
+}
+
+.hunter-profile-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.hunter-profile-meta span {
+  padding: 7px 12px;
+  color: var(--blue-light);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1px;
+}
+
+.status-xp-section {
+  margin-top: 25px;
+}
+
+.status-xp-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 15px;
+  margin-bottom: 9px;
+  color: var(--muted);
+  font-size: 11px;
+  letter-spacing: 1px;
+}
+
+.status-xp-header strong {
+  color: var(--blue-light);
+}
+
+/* XP BAR */
+
+.status-xp-section .progress-track,
+.resource-track {
+  width: 100%;
+  height: 10px;
+  overflow: hidden;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+}
+
+.status-xp-section .progress-fill,
+.resource-fill {
+  height: 100%;
+  width: 0%;
+  transition: width 0.4s ease;
+}
+
+.status-xp-section .progress-fill {
+  background: var(--blue);
+  box-shadow: 0 0 12px var(--blue);
+}
+
+#statusXPNext {
+  display: block;
+  margin-top: 8px;
+  font-size: 10px;
+  letter-spacing: 1px;
+}
+
+/* RESOURCES */
+
+.status-resource-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.status-resource-card {
+  padding: 25px;
+}
+
+.status-resource-card > strong {
+  display: block;
+  margin: 12px 0 18px;
+  color: #fff;
+  font-size: 36px;
+  font-weight: 900;
+}
+
+.hp-track .resource-fill {
+  background: #e45d75;
+  box-shadow: 0 0 12px #e45d7555;
+}
+
+.energy-track .resource-fill {
+  background: #42baff;
+  box-shadow: 0 0 12px #42baff66;
+}
+
+/* ATTRIBUTES */
+
+.status-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.status-stat-card {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 12px;
+  padding: 22px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--blue);
+}
+
+.status-stat-name {
+  color: var(--blue-light);
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 3px;
+}
+
+.status-stat-total {
+  color: #fff;
+  font-size: 34px;
+  font-weight: 900;
+  text-align: right;
+  text-shadow: 0 0 15px #4ca5ff55;
+}
+
+.status-stat-breakdown {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 20px;
+}
+
+.status-stat-breakdown span {
+  color: var(--muted);
+  font-size: 10px;
+  letter-spacing: 1px;
+}
+
+.status-stat-breakdown span:last-child {
+  color: var(--blue-light);
+}
+
+/* EQUIPMENT */
+
+.status-equipment-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 15px;
+}
+
+.status-equipment-card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 22px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--blue);
+}
+
+.status-equipment-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
+.status-equipment-slot {
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.status-equipment-rarity {
+  color: var(--blue-light);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.status-equipment-card h3 {
+  margin: 0;
+  color: #fff;
+  font-size: 19px;
+  letter-spacing: 1px;
+}
+
+.status-equipment-enhancement {
+  color: var(--blue-light);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1px;
+}
+
+.status-equipment-bonuses {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.status-equipment-bonuses span {
+  padding: 6px 9px;
+  color: #8bffb0;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.status-empty {
+  grid-column: 1 / -1;
+  padding: 25px;
+  color: var(--muted);
+  background: var(--surface);
+  border: 1px dashed var(--border);
+  text-align: center;
+  font-size: 12px;
+  letter-spacing: 1px;
+}
+
+/* PROGRESSION */
+
+.status-progression-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 15px;
+}
+
+.progression-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 25px;
+}
+
+.progression-card > strong {
+  color: #fff;
+  font-size: 38px;
+  font-weight: 900;
+  text-shadow: 0 0 15px #4ca5ff55;
+}
+
+.progression-card > .muted {
+  font-size: 10px;
+  letter-spacing: 1px;
+}
+
+/* TRAINING */
+
+.training-placeholder {
+  padding: 30px;
+  border: 1px dashed var(--border);
+  background: var(--surface);
+}
+
+.training-placeholder h3 {
+  margin: 15px 0 10px;
+  color: var(--blue-light);
+  font-size: 17px;
+  letter-spacing: 2px;
+}
+
+.training-placeholder p {
+  max-width: 650px;
+  line-height: 1.7;
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 900px) {
+  .status-progression-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 600px) {
+  .hunter-profile-panel {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 22px;
+  }
+
+  .hunter-profile-avatar {
+    width: 90px;
+    height: 90px;
+    font-size: 42px;
+  }
+
+  .hunter-profile-info h2 {
+    font-size: 25px;
+  }
+
+  .status-resource-grid,
+  .status-stats-grid,
+  .status-equipment-grid,
+  .status-progression-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .status-stat-total {
+    font-size: 29px;
+  }
+
+  .status-resource-card,
+  .progression-card {
+    padding: 20px;
+  }
+}
