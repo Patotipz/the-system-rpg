@@ -402,127 +402,132 @@ document.getElementById("weeklyGoalStatus").textContent =
   weeklyCount >= weeklyGoal
     ? "WEEKLY GOAL COMPLETED!"
     : `${Math.round(weeklyProgress)}% COMPLETE · ${weeklyGoal - weeklyCount} MISSIONS REMAINING`;
+ 
     // 9. LOAD RECENT ACTIVITY LOG
-if (activityList) {
-  activityList.replaceChildren();
+    if (activityList) {
+      activityList.replaceChildren();
 
-  const { data: activities, error: activityError } =
-    await supabase
-      .from("activity_log")
-      .select("id, activity_type, description, xp_earned, created_at")
-      .eq("user_id", user.id)
-      .order("created_at", { ascending: false })
-      .limit(7);
+      const { data: activities, error: activityError } =
+        await supabase
+          .from("activity_log")
+          .select("id, activity_type, description, xp_earned, created_at")
+          .eq("user_id", user.id)
+          .order("created_at", { ascending: false })
+          .limit(7);
 
-  if (activityError) {
-    console.error("Activity log error:", activityError);
+      if (activityError) {
+        console.error("Activity log error:", activityError);
 
-    const errorMessage = document.createElement("p");
-    errorMessage.className = "muted";
-    errorMessage.textContent = "Unable to load recent activity.";
+        const errorMessage = document.createElement("p");
+        errorMessage.className = "muted";
+        errorMessage.textContent = "Unable to load recent activity.";
 
-    activityList.appendChild(errorMessage);
-  } else if (!activities || activities.length === 0) {
-    const emptyMessage = document.createElement("p");
-    emptyMessage.className = "muted";
-    emptyMessage.textContent = "No recent activity.";
+        activityList.appendChild(errorMessage);
 
-    activityList.appendChild(emptyMessage);
-  } else {
-    activities.forEach((activity) => {activities.forEach((activity) => {
-  const activityTypes = {
-    quest_completed: {
-      icon: "⚔️",
-      label: "QUEST COMPLETED"
-    },
-    level_up: {
-      icon: "⬆️",
-      label: "LEVEL UP"
-    },
-    rank_up: {
-      icon: "🏆",
-      label: "RANK UP"
-    },
-    item_acquired: {
-      icon: "💎",
-      label: "ITEM ACQUIRED"
-    },
-    item_equipped: {
-      icon: "🛡️",
-      label: "ITEM EQUIPPED"
-    },
-    item_enhanced: {
-      icon: "✨",
-      label: "ITEM ENHANCED"
+      } else if (!activities || activities.length === 0) {
+        const emptyMessage = document.createElement("p");
+        emptyMessage.className = "muted";
+        emptyMessage.textContent = "No recent activity.";
+
+        activityList.appendChild(emptyMessage);
+
+      } else {
+        activities.forEach((activity) => {
+          const activityTypes = {
+            quest_completed: {
+              icon: "⚔️",
+              label: "QUEST COMPLETED"
+            },
+            level_up: {
+              icon: "⬆️",
+              label: "LEVEL UP"
+            },
+            rank_up: {
+              icon: "🏆",
+              label: "RANK UP"
+            },
+            item_acquired: {
+              icon: "💎",
+              label: "ITEM ACQUIRED"
+            },
+            item_equipped: {
+              icon: "🛡️",
+              label: "ITEM EQUIPPED"
+            },
+            item_enhanced: {
+              icon: "✨",
+              label: "ITEM ENHANCED"
+            }
+          };
+
+          const type = activityTypes[activity.activity_type] || {
+            icon: "◈",
+            label: activity.activity_type.replaceAll("_", " ").toUpperCase()
+          };
+
+          const card = document.createElement("div");
+          card.className = "activity-card";
+
+          const icon = document.createElement("div");
+          icon.className = "activity-icon";
+          icon.textContent = type.icon;
+
+          const info = document.createElement("div");
+          info.className = "activity-info";
+
+          const title = document.createElement("strong");
+          title.className = "activity-title";
+          title.textContent = type.label;
+
+          const description = document.createElement("p");
+          description.className = "activity-description";
+          description.textContent = activity.description || "";
+
+          const activityDate = new Date(activity.created_at);
+          const today = getMexicoDateKey(new Date());
+
+          const yesterdayDate = new Date();
+          yesterdayDate.setDate(yesterdayDate.getDate() - 1);
+
+          const yesterday = getMexicoDateKey(yesterdayDate);
+          const activityDay = getMexicoDateKey(activityDate);
+
+          let dateLabel = new Intl.DateTimeFormat("en-US", {
+            timeZone: "America/Mexico_City",
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: false
+          }).format(activityDate);
+
+          if (activityDay === today) {
+            dateLabel = `TODAY · ${dateLabel}`;
+          } else if (activityDay === yesterday) {
+            dateLabel = `YESTERDAY · ${dateLabel}`;
+          } else {
+            dateLabel = new Intl.DateTimeFormat("en-US", {
+              timeZone: "America/Mexico_City",
+              day: "2-digit",
+              month: "short",
+              year: "numeric"
+            }).format(activityDate);
+          }
+
+          const date = document.createElement("span");
+          date.className = "activity-date";
+          date.textContent = dateLabel;
+
+          const xp = document.createElement("strong");
+          xp.className = "activity-xp";
+          xp.textContent = `+${activity.xp_earned ?? 0} XP`;
+
+          info.append(title, description, date);
+          card.append(icon, info, xp);
+
+          activityList.appendChild(card);
+        });
+      }
     }
-  };
 
-  const type = activityTypes[activity.activity_type] || {
-    icon: "◈",
-    label: activity.activity_type.replaceAll("_", " ").toUpperCase()
-  };
-
-  const card = document.createElement("div");
-  card.className = "activity-card";
-
-  const icon = document.createElement("div");
-  icon.className = "activity-icon";
-  icon.textContent = type.icon;
-
-  const info = document.createElement("div");
-  info.className = "activity-info";
-
-  const title = document.createElement("strong");
-  title.className = "activity-title";
-  title.textContent = type.label;
-
-  const description = document.createElement("p");
-  description.className = "activity-description";
-  description.textContent = activity.description || "";
-
-  const activityDate = new Date(activity.created_at);
-  const today = getMexicoDateKey(new Date());
-  const yesterdayDate = new Date();
-  yesterdayDate.setDate(yesterdayDate.getDate() - 1);
-
-  const yesterday = getMexicoDateKey(yesterdayDate);
-  const activityDay = getMexicoDateKey(activityDate);
-
-  let dateLabel = new Intl.DateTimeFormat("en-US", {
-    timeZone: "America/Mexico_City",
-    hour: "2-digit",
-    minute: "2-digit",
-    hour12: false
-  }).format(activityDate);
-
-  if (activityDay === today) {
-    dateLabel = `TODAY · ${dateLabel}`;
-  } else if (activityDay === yesterday) {
-    dateLabel = `YESTERDAY · ${dateLabel}`;
-  } else {
-    dateLabel = new Intl.DateTimeFormat("en-US", {
-      timeZone: "America/Mexico_City",
-      day: "2-digit",
-      month: "short",
-      year: "numeric"
-    }).format(activityDate);
-  }
-
-  const date = document.createElement("span");
-  date.className = "activity-date";
-  date.textContent = dateLabel;
-
-  const xp = document.createElement("strong");
-  xp.className = "activity-xp";
-  xp.textContent = `+${activity.xp_earned ?? 0} XP`;
-
-  info.append(title, description, date);
-  card.append(icon, info, xp);
-
-  activityList.appendChild(card);
-});
-  }
-}
     // 9. SYSTEM MESSAGE
     message.textContent =
       "SYSTEM ONLINE · HUNTER DATA LOADED";
