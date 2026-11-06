@@ -321,13 +321,16 @@ const enhanceButton = canEquip(item) &&
 
 // EQUIP / UNEQUIP ACTIONS
 inventoryContainer.addEventListener("click", async event => {
-  const equipButton = event.target.closest("[data-equip-id]");
-  const unequipButton = event.target.closest("[data-unequip-id]");
+ const equipButton = event.target.closest("[data-equip-id]");
+const unequipButton = event.target.closest("[data-unequip-id]");
+const enhanceButton = event.target.closest("[data-enhance-id]");
 
-  if (!equipButton && !unequipButton) return;
+if (!equipButton && !unequipButton && !enhanceButton) return;
 
-  const button = equipButton || unequipButton;
-  const isEquipping = Boolean(equipButton);
+const button = equipButton || unequipButton || enhanceButton;
+
+const isEnhancing = Boolean(enhanceButton);
+const isEquipping = Boolean(equipButton);
 
   const itemId = Number(
     isEquipping
