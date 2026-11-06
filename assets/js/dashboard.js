@@ -192,27 +192,44 @@ const { data: hunterStats, error: hunterStatsError } =
 if (hunterStatsError) throw hunterStatsError;
 
 const attributes = [
-  ["STR", hunterStats.total_stats.str],
-  ["VIT", hunterStats.total_stats.vit],
-  ["AGI", hunterStats.total_stats.agi],
-  ["INT", hunterStats.total_stats.int],
-  ["PER", hunterStats.total_stats.per],
-  ["SEN", hunterStats.total_stats.sen]
+  { key: "str", label: "STR" },
+  { key: "vit", label: "VIT" },
+  { key: "agi", label: "AGI" },
+  { key: "int", label: "INT" },
+  { key: "per", label: "PER" },
+  { key: "sen", label: "SEN" }
 ];
 
 statsList.replaceChildren();
 
-attributes.forEach(([name, value]) => {
+attributes.forEach(({ key, label }) => {
+  const base = hunterStats.base_stats[key] ?? 0;
+  const bonus = hunterStats.equipment_bonus[key] ?? 0;
+  const total = hunterStats.total_stats[key] ?? 0;
+
   const row = document.createElement("div");
   row.className = "stat-row";
 
-  const label = document.createElement("span");
-  label.textContent = name;
+  const name = document.createElement("span");
+  name.className = "stat-label";
+  name.textContent = label;
 
   const amount = document.createElement("strong");
-  amount.textContent = value;
+  amount.className = "stat-total";
+  amount.textContent = total;
 
-  row.append(label, amount);
+  const breakdown = document.createElement("div");
+  breakdown.className = "stat-breakdown";
+
+  const baseValue = document.createElement("span");
+  baseValue.textContent = `BASE ${base}`;
+
+  const bonusValue = document.createElement("span");
+  bonusValue.textContent = `EQUIPMENT +${bonus}`;
+
+  breakdown.append(baseValue, bonusValue);
+  row.append(name, amount, breakdown);
+
   statsList.appendChild(row);
 });
     // 6. LOAD PLAYER QUESTS
