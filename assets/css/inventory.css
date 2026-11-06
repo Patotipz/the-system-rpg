@@ -1077,3 +1077,8 @@
     font-size: 11px;
   }
 }
+#inventoryItems .inventory-action.enhance-button {
+  outline: 4px solid red !important;
+  background: yellow !important;
+  color: black !important;
+}
