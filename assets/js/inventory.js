@@ -293,7 +293,9 @@ const enhanceButton = canEquip(item) &&
 
         <div class="inventory-item-footer">
           <span>QUANTITY: ${item.quantity}</span>
-          <span>+${item.enhancement_level || 0} ENH</span>
+          <span class="enhancement-level-badge">
+  ✦ +${item.enhancement_level || 0}
+</span>
         </div>
 
         ${
