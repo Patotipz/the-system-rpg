@@ -55,12 +55,31 @@ function canEquip(item) {
     item.shop_items?.equipment_slot
   );
 }
+
 function getEnhancedBonus(item, column) {
   const baseBonus = Number(item.shop_items?.[column] || 0);
   const enhancementLevel = Number(item.enhancement_level || 0);
 
   return Math.round(baseBonus * (1 + 0.10 * enhancementLevel));
 }
+
+function canConsume(item) {
+  const shopItem = item.shop_items || {};
+
+  return (
+    item.item_type === "consumable" &&
+    (
+      Number(shopItem.hp_restore || 0) > 0 ||
+      Number(shopItem.energy_restore || 0) > 0 ||
+      (
+        Boolean(shopItem.effect_type) &&
+        Number(shopItem.effect_value || 0) > 0 &&
+        Number(shopItem.duration_seconds || 0) > 0
+      )
+    )
+  );
+}
+
 // LOAD INVENTORY AND EQUIPMENT
 async function loadInventory() {
   const { data: authData, error: authError } =
@@ -83,25 +102,30 @@ async function loadInventory() {
     window.location.href = "index.html";
     return false;
   }
-const { data: profile, error: profileError } = await supabase
-  .from("profiles")
-  .select("display_name, rank, level, coins")
-  .eq("user_id", authData.user.id)
-  .single();
 
-if (profileError) throw profileError;
-const coinsEl = document.getElementById("inventoryCoins");
+  const { data: profile, error: profileError } = await supabase
+    .from("profiles")
+    .select("display_name, rank, level, coins")
+    .eq("user_id", authData.user.id)
+    .single();
 
-if (coinsEl) {
-  coinsEl.textContent = `${Number(profile.coins || 0).toLocaleString()} COINS`;
-}
-const nameEl = document.getElementById("equipmentHunterName");
-const rankEl = document.getElementById("equipmentHunterRank");
-const levelEl = document.getElementById("equipmentHunterLevel");
+  if (profileError) throw profileError;
 
-if (nameEl) nameEl.textContent = profile.display_name || "HUNTER";
-if (rankEl) rankEl.textContent = `RANK ${profile.rank || "E"}`;
-if (levelEl) levelEl.textContent = `LV. ${profile.level ?? 1}`;
+  const coinsEl = document.getElementById("inventoryCoins");
+
+  if (coinsEl) {
+    coinsEl.textContent =
+      `${Number(profile.coins || 0).toLocaleString()} COINS`;
+  }
+
+  const nameEl = document.getElementById("equipmentHunterName");
+  const rankEl = document.getElementById("equipmentHunterRank");
+  const levelEl = document.getElementById("equipmentHunterLevel");
+
+  if (nameEl) nameEl.textContent = profile.display_name || "HUNTER";
+  if (rankEl) rankEl.textContent = `RANK ${profile.rank || "E"}`;
+  if (levelEl) levelEl.textContent = `LV. ${profile.level ?? 1}`;
+
   const { data, error } = await supabase
     .from("inventory")
     .select(`
@@ -123,7 +147,10 @@ if (levelEl) levelEl.textContent = `LV. ${profile.level ?? 1}`;
         bonus_per,
         bonus_sen,
         hp_restore,
-        energy_restore
+        energy_restore,
+        effect_type,
+        effect_value,
+        duration_seconds
       )
     `)
     .order("obtained_at", { ascending: false });
@@ -142,7 +169,7 @@ if (levelEl) levelEl.textContent = `LV. ${profile.level ?? 1}`;
 // SUMMARY COUNTERS
 function updateSummary() {
   inventoryTotal.textContent = allItems.reduce(
-    (total, item) => total + item.quantity,
+    (total, item) => total + Number(item.quantity || 0),
     0
   );
 
@@ -160,8 +187,6 @@ function updateSummary() {
 }
 
 // HUNTER EQUIPMENT DISPLAY
-
-
 function renderEquipment() {
   const slots = document.querySelectorAll(".equipment-slot");
 
@@ -177,7 +202,6 @@ function renderEquipment() {
 
     if (!small) return;
 
-    // Reset slot content
     slot.classList.toggle("slot-equipped", Boolean(equippedItem));
 
     if (equippedItem) {
@@ -200,7 +224,6 @@ function renderEquipment() {
     }
   });
 
-  // CALCULATE TOTAL EQUIPMENT BONUSES
   const bonusAttributes = {
     STR: "bonus_str",
     AGI: "bonus_agi",
@@ -213,9 +236,9 @@ function renderEquipment() {
   const equippedItems = allItems.filter(item => item.is_equipped);
 
   Object.entries(bonusAttributes).forEach(([attribute, column]) => {
-   const totalBonus = equippedItems.reduce((total, item) => {
-  return total + getEnhancedBonus(item, column);
-}, 0);
+    const totalBonus = equippedItems.reduce((total, item) => {
+      return total + getEnhancedBonus(item, column);
+    }, 0);
 
     const element = document.getElementById(`bonus${attribute}`);
 
@@ -224,7 +247,6 @@ function renderEquipment() {
     }
   });
 }
-
 
 // INVENTORY CARDS
 function renderInventory() {
@@ -246,16 +268,15 @@ function renderInventory() {
 
   inventoryContainer.innerHTML = filteredItems.map(item => {
     const icon = itemIcons[item.item_type] || "📦";
-    const equipment = item.shop_items || {};
 
     const stats = [
-  ["STR", getEnhancedBonus(item, "bonus_str")],
-  ["AGI", getEnhancedBonus(item, "bonus_agi")],
-  ["VIT", getEnhancedBonus(item, "bonus_vit")],
-  ["INT", getEnhancedBonus(item, "bonus_int")],
-  ["PER", getEnhancedBonus(item, "bonus_per")],
-  ["SEN", getEnhancedBonus(item, "bonus_sen")]
-].filter(([, value]) => value > 0);
+      ["STR", getEnhancedBonus(item, "bonus_str")],
+      ["AGI", getEnhancedBonus(item, "bonus_agi")],
+      ["VIT", getEnhancedBonus(item, "bonus_vit")],
+      ["INT", getEnhancedBonus(item, "bonus_int")],
+      ["PER", getEnhancedBonus(item, "bonus_per")],
+      ["SEN", getEnhancedBonus(item, "bonus_sen")]
+    ].filter(([, value]) => value > 0);
 
     const equipButton = canEquip(item)
       ? item.is_equipped
@@ -268,22 +289,37 @@ function renderInventory() {
              EQUIP
            </button>`
       : "";
-const enhancementCosts = [
-  100, 200, 350, 500, 700,
-  900, 1200, 1500, 1900, 2500
-];
 
-const currentLevel = Number(item.enhancement_level || 0);
-const nextEnhancementCost = enhancementCosts[currentLevel];
+    const enhancementCosts = [
+      100, 200, 350, 500, 700,
+      900, 1200, 1500, 1900, 2500
+    ];
 
-const enhanceButton = canEquip(item) && currentLevel < 10
-  ? `<button class="inventory-action enhance-button"
-       data-enhance-id="${item.id}">
-       <span class="enhance-icon">✦</span>
-       ENHANCE
-       <span class="enhance-cost">${nextEnhancementCost} COINS</span>
-     </button>`
-  : "";
+    const currentLevel = Number(item.enhancement_level || 0);
+    const nextEnhancementCost = enhancementCosts[currentLevel];
+
+    const enhanceButton = canEquip(item) && currentLevel < 10
+      ? `<button class="inventory-action enhance-button"
+           data-enhance-id="${item.id}">
+           <span class="enhance-icon">✦</span>
+           ENHANCE
+           <span class="enhance-cost">${nextEnhancementCost} COINS</span>
+         </button>`
+      : "";
+
+    const useButton = item.item_type === "consumable"
+      ? canConsume(item)
+        ? `<button class="inventory-action use-button"
+             data-use-id="${item.id}">
+             USE
+           </button>`
+        : `<button class="inventory-action use-button"
+             disabled
+             title="This item has no configured effect">
+             NOT AVAILABLE
+           </button>`
+      : "";
+
     return `
       <article class="inventory-item rarity-${escapeHTML(item.rarity)}">
 
@@ -300,14 +336,14 @@ const enhanceButton = canEquip(item) && currentLevel < 10
         </p>
 
         <span class="inventory-item-rarity">
-          ${escapeHTML(item.rarity.toUpperCase())}
+          ${escapeHTML((item.rarity || "common").toUpperCase())}
         </span>
 
         <div class="inventory-item-footer">
-          <span>QUANTITY: ${item.quantity}</span>
+          <span>QUANTITY: ${Number(item.quantity || 0)}</span>
           <span class="enhancement-level-badge">
-  ✦ +${item.enhancement_level || 0}
-</span>
+            ✦ +${Number(item.enhancement_level || 0)}
+          </span>
         </div>
 
         ${
@@ -328,78 +364,148 @@ const enhanceButton = canEquip(item) && currentLevel < 10
 
         ${equipButton}
         ${enhanceButton}
+        ${useButton}
 
       </article>
     `;
   }).join("");
 }
 
-// EQUIP / UNEQUIP ACTIONS
+// CONSUMABLE ACTION
+async function useConsumable(button, itemId) {
+  button.disabled = true;
+  button.textContent = "USING...";
+
+  try {
+    const { data, error } = await supabase.rpc("use_consumable", {
+      p_inventory_id: itemId
+    });
+
+    if (error) throw error;
+
+    if (!data?.success) {
+      throw new Error(data?.message || "CONSUMABLE USE FAILED.");
+    }
+
+    const messages = [];
+
+    if (Number(data.hp_restored) > 0) {
+      messages.push(`HP +${data.hp_restored}`);
+    }
+
+    if (Number(data.energy_restored) > 0) {
+      messages.push(`ENERGY +${data.energy_restored}`);
+    }
+
+    if (data.effect_type) {
+      const effectNames = {
+        bonus_str: "STRENGTH",
+        bonus_vit: "VITALITY",
+        bonus_int: "INTELLIGENCE",
+        focus: "FOCUS",
+        stamina: "STAMINA"
+      };
+
+      const effectName =
+        effectNames[data.effect_type] || data.effect_type.toUpperCase();
+
+      messages.push(`${effectName} EFFECT ACTIVATED`);
+    }
+
+    inventoryMessage.textContent =
+      `${data.item_name.toUpperCase()} USED SUCCESSFULLY! ` +
+      messages.join(" · ");
+
+    await loadInventory();
+
+  } catch (error) {
+    console.error("Consumable error:", error);
+
+    inventoryMessage.textContent =
+      error.message || "CONSUMABLE USE FAILED.";
+
+    await loadInventory();
+  }
+}
+
+// EQUIP / UNEQUIP / ENHANCE / USE ACTIONS
 inventoryContainer.addEventListener("click", async event => {
- const equipButton = event.target.closest("[data-equip-id]");
-const unequipButton = event.target.closest("[data-unequip-id]");
-const enhanceButton = event.target.closest("[data-enhance-id]");
+  const equipButton = event.target.closest("[data-equip-id]");
+  const unequipButton = event.target.closest("[data-unequip-id]");
+  const enhanceButton = event.target.closest("[data-enhance-id]");
+  const useButton = event.target.closest("[data-use-id]");
 
-if (!equipButton && !unequipButton && !enhanceButton) return;
+  if (!equipButton && !unequipButton && !enhanceButton && !useButton) {
+    return;
+  }
 
-const button = equipButton || unequipButton || enhanceButton;
+  if (useButton) {
+    const itemId = Number(useButton.dataset.useId);
+    await useConsumable(useButton, itemId);
+    return;
+  }
 
-const isEnhancing = Boolean(enhanceButton);
-const isEquipping = Boolean(equipButton);
+  const button = equipButton || unequipButton || enhanceButton;
+
+  const isEnhancing = Boolean(enhanceButton);
+  const isEquipping = Boolean(equipButton);
 
   const itemId = Number(
-  isEnhancing
-    ? enhanceButton.dataset.enhanceId
-    : isEquipping
-      ? equipButton.dataset.equipId
-      : unequipButton.dataset.unequipId
-);
+    isEnhancing
+      ? enhanceButton.dataset.enhanceId
+      : isEquipping
+        ? equipButton.dataset.equipId
+        : unequipButton.dataset.unequipId
+  );
 
   button.disabled = true;
   button.textContent = "PROCESSING...";
 
   try {
     const rpcName = isEnhancing
-  ? "enhance_inventory_item"
-  : isEquipping
-    ? "equip_inventory_item"
-    : "unequip_inventory_item";
+      ? "enhance_inventory_item"
+      : isEquipping
+        ? "equip_inventory_item"
+        : "unequip_inventory_item";
 
-const { data, error } = await supabase.rpc(
-  rpcName,
-  { p_inventory_id: itemId }
-);
+    const { data, error } = await supabase.rpc(
+      rpcName,
+      { p_inventory_id: itemId }
+    );
 
     if (error) throw error;
 
     if (!data.success) {
-  inventoryMessage.textContent = data.message || "ACTION FAILED.";
-  await loadInventory();
-  return;
-}
+      inventoryMessage.textContent =
+        data.message || "ACTION FAILED.";
 
-if (isEnhancing) {
-  inventoryMessage.textContent =
-    `${data.item_name.toUpperCase()} ENHANCED TO +${data.enhancement_level}! ` +
-    `${data.cost} COINS SPENT. ${data.remaining_coins} COINS REMAINING.`;
+      await loadInventory();
+      return;
+    }
 
-} else if (isEquipping) {
-  inventoryMessage.textContent =
-    `${data.item_name.toUpperCase()} EQUIPPED SUCCESSFULLY!`;
+    if (isEnhancing) {
+      inventoryMessage.textContent =
+        `${data.item_name.toUpperCase()} ENHANCED TO +${data.enhancement_level}! ` +
+        `${data.cost} COINS SPENT. ${data.remaining_coins} COINS REMAINING.`;
 
-} else {
-  inventoryMessage.textContent =
-    `${data.item_name.toUpperCase()} UNEQUIPPED SUCCESSFULLY!`;
-}
+    } else if (isEquipping) {
+      inventoryMessage.textContent =
+        `${data.item_name.toUpperCase()} EQUIPPED SUCCESSFULLY!`;
+
+    } else {
+      inventoryMessage.textContent =
+        `${data.item_name.toUpperCase()} UNEQUIPPED SUCCESSFULLY!`;
+    }
 
     await loadInventory();
 
   } catch (error) {
     console.error(error);
-    inventoryMessage.textContent =
-      error.message || "EQUIPMENT UPDATE FAILED.";
 
-    renderInventory();
+    inventoryMessage.textContent =
+      error.message || "INVENTORY ACTION FAILED.";
+
+    await loadInventory();
   }
 });
 
@@ -432,6 +538,7 @@ async function initializeInventory() {
     }
   } catch (error) {
     console.error(error);
+
     inventoryMessage.textContent =
       error.message || "SYSTEM CONNECTION ERROR.";
   }
