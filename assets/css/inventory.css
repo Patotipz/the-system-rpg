@@ -865,3 +865,204 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
+
+/* ========================================
+   MY ITEMS - ACTIONS & ENHANCEMENT
+======================================== */
+
+/* ITEM CARD LAYOUT */
+
+#inventoryItems .inventory-item {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  height: 100%;
+  box-sizing: border-box;
+}
+
+#inventoryItems .inventory-item h3 {
+  margin: 10px 0;
+  color: #eaf6ff;
+  font-size: 16px;
+}
+
+#inventoryItems .inventory-item-description {
+  flex: 1;
+  min-height: 45px;
+  margin-bottom: 12px;
+}
+
+/* ITEM FOOTER */
+
+#inventoryItems .inventory-item-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 15px;
+  padding-top: 13px;
+  border-top: 1px solid #233d55;
+}
+
+/* ITEM ENHANCEMENT LEVEL */
+
+#inventoryItems .enhancement-level-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  width: fit-content;
+  margin-top: 12px;
+  padding: 6px 11px;
+  background: rgba(116, 76, 190, 0.16);
+  border: 1px solid rgba(157, 119, 232, 0.5);
+  border-radius: 5px;
+  color: #c7a8ff;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  text-shadow: 0 0 8px rgba(157, 119, 232, 0.3);
+}
+
+/* ITEM ENHANCEMENT COST */
+
+#inventoryItems .enhance-cost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: fit-content;
+  margin: 10px 0 0;
+  padding: 6px 9px;
+  background: rgba(255, 196, 92, 0.08);
+  border: 1px solid rgba(255, 196, 92, 0.3);
+  border-radius: 5px;
+  color: #ffd477;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+}
+
+/* ALL ITEM ACTION BUTTONS */
+
+#inventoryItems .inventory-action {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 42px;
+  box-sizing: border-box;
+  margin-top: 15px;
+  padding: 11px 14px;
+  border-radius: 5px;
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+/* EQUIP */
+
+#inventoryItems .equip-button {
+  background: rgba(57, 186, 255, 0.12);
+  border: 1px solid #39baff;
+  color: #65caff;
+}
+
+#inventoryItems .equip-button:hover {
+  background: #1689c5;
+  color: #ffffff;
+  box-shadow: 0 0 15px rgba(57, 186, 255, 0.3);
+}
+
+/* UNEQUIP */
+
+#inventoryItems .unequip-button {
+  background: rgba(255, 196, 92, 0.10);
+  border: 1px solid #c58b32;
+  color: #ffc45c;
+}
+
+#inventoryItems .unequip-button:hover {
+  background: #a87524;
+  color: #ffffff;
+  box-shadow: 0 0 15px rgba(255, 196, 92, 0.25);
+}
+
+/* ENHANCE */
+
+#inventoryItems .enhance-button {
+  background: linear-gradient(135deg, #392b70, #6546a5);
+  border: 1px solid #9878e8;
+  color: #ffffff;
+  box-shadow: 0 0 12px rgba(101, 70, 165, 0.2);
+}
+
+#inventoryItems .enhance-button:hover {
+  background: linear-gradient(135deg, #503a91, #8060c9);
+  border-color: #c7a8ff;
+  box-shadow: 0 0 18px rgba(128, 96, 201, 0.4);
+  transform: translateY(-2px);
+}
+
+/* DISABLED BUTTONS */
+
+#inventoryItems .inventory-action:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* EQUIPPED LABEL */
+
+#inventoryItems .inventory-equipped {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: fit-content;
+  margin-top: 12px;
+  padding: 6px 10px;
+  background: rgba(255, 196, 92, 0.12);
+  border: 1px solid #c58b32;
+  color: #ffc45c;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+}
+
+/* ITEM STATS */
+
+#inventoryItems .inventory-item-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-top: 13px;
+}
+
+#inventoryItems .inventory-item-stats span {
+  padding: 5px 9px;
+  background: rgba(57, 186, 255, 0.10);
+  border: 1px solid rgba(57, 186, 255, 0.3);
+  border-radius: 4px;
+  color: #65caff;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 600px) {
+  #inventoryItems .inventory-action {
+    min-height: 44px;
+  }
+
+  #inventoryItems .inventory-item-footer {
+    font-size: 11px;
+  }
+}
