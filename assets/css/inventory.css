@@ -619,3 +619,38 @@
   width: 220px;
   max-width: 100%;
 }
+/* INVENTORY PAGE - MAIN VERTICAL LAYOUT */
+
+.inventory-page {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  width: 100%;
+}
+
+.inventory-page > .inventory-summary,
+.inventory-page > .equipment-section,
+.inventory-page > .equipment-bonus-panel,
+.inventory-page > .inventory-section {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  flex: 0 0 auto;
+}
+
+.inventory-page > .inventory-summary {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.inventory-page > .equipment-section {
+  margin-top: 35px;
+}
+
+.inventory-page > .equipment-bonus-panel {
+  margin-top: 20px;
+}
+
+.inventory-page > .inventory-section {
+  margin-top: 30px;
+}
