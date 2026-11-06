@@ -264,7 +264,13 @@ function renderInventory() {
              EQUIP
            </button>`
       : "";
-
+const enhanceButton = canEquip(item) &&
+  Number(item.enhancement_level || 0) < 10
+    ? `<button class="inventory-action enhance-button"
+         data-enhance-id="${item.id}">
+         ENHANCE
+       </button>`
+    : "";
     return `
       <article class="inventory-item rarity-${escapeHTML(item.rarity)}">
 
@@ -306,6 +312,7 @@ function renderInventory() {
         }
 
         ${equipButton}
+        ${enhanceButton}
 
       </article>
     `;
