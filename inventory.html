@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -37,6 +38,7 @@
 
     <main class="main-content inventory-page">
 
+      <!-- INVENTORY HEADER -->
       <header class="inventory-header">
         <div>
           <span class="eyebrow">HUNTER RESOURCES</span>
@@ -50,7 +52,9 @@
         </div>
       </header>
 
+      <!-- INVENTORY SUMMARY -->
       <section class="inventory-summary">
+
         <div class="inventory-stat">
           <span>WEAPONS</span>
           <strong id="weaponCount">0</strong>
@@ -70,8 +74,127 @@
           <span>MATERIALS</span>
           <strong id="materialCount">0</strong>
         </div>
+
       </section>
 
+      <!-- HUNTER EQUIPMENT -->
+      <section class="equipment-section">
+
+        <div class="section-heading">
+          <h2>HUNTER EQUIPMENT</h2>
+          <span>[ EQUIPMENT STATUS ]</span>
+        </div>
+
+        <div class="equipment-layout">
+
+          <!-- LEFT SLOTS -->
+          <div class="equipment-column equipment-left">
+
+            <div class="equipment-slot" data-slot="weapon">
+              <span>⚔️</span>
+              <strong>WEAPON</strong>
+              <small>EMPTY</small>
+            </div>
+
+            <div class="equipment-slot" data-slot="head">
+              <span>🪖</span>
+              <strong>HEAD</strong>
+              <small>EMPTY</small>
+            </div>
+
+            <div class="equipment-slot" data-slot="chest">
+              <span>🛡️</span>
+              <strong>CHEST</strong>
+              <small>EMPTY</small>
+            </div>
+
+            <div class="equipment-slot" data-slot="hands">
+              <span>🧤</span>
+              <strong>HANDS</strong>
+              <small>EMPTY</small>
+            </div>
+
+          </div>
+
+          <!-- CENTER PORTRAIT -->
+          <div class="hunter-portrait-container">
+
+            <div class="hunter-portrait-frame">
+              <img
+                src="images/hunter-portrait.png"
+                alt="Hunter Portrait"
+                class="hunter-portrait"
+              />
+              <div class="hunter-aura"></div>
+            </div>
+
+            <div class="hunter-portrait-info">
+              <span>AWAKENED HUNTER</span>
+              <h2 id="equipmentHunterName">HUNTER</h2>
+              <p>
+                <span id="equipmentHunterRank">RANK E</span>
+                ·
+                <span id="equipmentHunterLevel">LV. 1</span>
+              </p>
+            </div>
+
+          </div>
+
+          <!-- RIGHT SLOTS -->
+          <div class="equipment-column equipment-right">
+
+            <div class="equipment-slot" data-slot="legs">
+              <span>👖</span>
+              <strong>LEGS</strong>
+              <small>EMPTY</small>
+            </div>
+
+            <div class="equipment-slot" data-slot="feet">
+              <span>🥾</span>
+              <strong>FEET</strong>
+              <small>EMPTY</small>
+            </div>
+
+            <div class="equipment-slot" data-slot="ring">
+              <span>💍</span>
+              <strong>RING</strong>
+              <small>EMPTY</small>
+            </div>
+
+            <div class="equipment-slot" data-slot="neck">
+              <span>📿</span>
+              <strong>NECK</strong>
+              <small>EMPTY</small>
+            </div>
+
+            <div class="equipment-slot" data-slot="charm">
+              <span>🔮</span>
+              <strong>CHARM</strong>
+              <small>EMPTY</small>
+            </div>
+
+          </div>
+
+        </div>
+      </section>
+
+      <!-- EQUIPMENT BONUS -->
+      <div class="equipment-bonus-panel">
+
+        <h3>EQUIPMENT BONUS</h3>
+
+        <div class="equipment-bonus-grid">
+          <div><span>STR</span><strong id="bonusSTR">+0</strong></div>
+          <div><span>AGI</span><strong id="bonusAGI">+0</strong></div>
+          <div><span>VIT</span><strong id="bonusVIT">+0</strong></div>
+          <div><span>INT</span><strong id="bonusINT">+0</strong></div>
+          <div><span>PER</span><strong id="bonusPER">+0</strong></div>
+          <div><span>SEN</span><strong id="bonusSEN">+0</strong></div>
+        </div>
+
+      </div>
+
+      <!-- INVENTORY ITEMS -->
       <section class="inventory-section">
 
         <div class="inventory-toolbar">
@@ -79,139 +202,29 @@
             <h2>MY ITEMS</h2>
             <span>YOUR ACQUIRED RESOURCES</span>
           </div>
+        </div>
 
+        <div class="inventory-filter-container">
+          <select id="inventoryFilter">
+            <option value="all">ALL ITEMS</option>
+            <option value="weapon">WEAPONS</option>
+            <option value="armor">ARMOR</option>
+            <option value="accessory">ACCESSORIES</option>
+            <option value="consumable">CONSUMABLES</option>
+            <option value="material">MATERIALS</option>
+            <option value="boost">BOOSTS</option>
+            <option value="skill_item">SKILL ITEMS</option>
+            <option value="cosmetic">COSMETICS</option>
+          </select>
+        </div>
 
-<!-- HUNTER EQUIPMENT -->
-<section class="equipment-section">
+        <p id="inventoryMessage">CONNECTING TO SYSTEM...</p>
 
-  <div class="section-heading">
-    <h2>HUNTER EQUIPMENT</h2>
-    <span>[ EQUIPMENT STATUS ]</span>
-  </div>
+        <div id="inventoryItems" class="inventory-grid">
+          <p>Loading inventory...</p>
+        </div>
 
-  <div class="equipment-layout">
-
-    <div class="equipment-column equipment-left">
-      <div class="equipment-slot" data-slot="weapon">
-        <span>⚔️</span>
-        <strong>WEAPON</strong>
-        <small>EMPTY</small>
-      </div>
-      <div class="equipment-slot" data-slot="head">
-        <span>🪖</span>
-        <strong>HEAD</strong>
-        <small>EMPTY</small>
-      </div>
-      <div class="equipment-slot" data-slot="chest">
-        <span>🛡️</span>
-        <strong>CHEST</strong>
-        <small>EMPTY</small>
-      </div>
-      <div class="equipment-slot" data-slot="hands">
-        <span>🧤</span>
-        <strong>HANDS</strong>
-        <small>EMPTY</small>
-      </div>
-    </div>
-
-    <div class="hunter-portrait-container">
-      <div class="hunter-portrait-frame">
-        <img
-          src="images/hunter-portrait.png"
-          alt="Hunter Portrait"
-          class="hunter-portrait"
-        />
-        <div class="hunter-aura"></div>
-      </div>
-
-      <div class="hunter-portrait-info">
-        <span>AWAKENED HUNTER</span>
-        <h2 id="equipmentHunterName">HUNTER</h2>
-        <p>
-          <span id="equipmentHunterRank">RANK E</span>
-          ·
-          <span id="equipmentHunterLevel">LV. 1</span>
-        </p>
-      </div>
-    </div>
-
-    <div class="equipment-column equipment-right">
-      <div class="equipment-slot" data-slot="legs">
-        <span>👖</span>
-        <strong>LEGS</strong>
-        <small>EMPTY</small>
-      </div>
-      <div class="equipment-slot" data-slot="feet">
-        <span>🥾</span>
-        <strong>FEET</strong>
-        <small>EMPTY</small>
-      </div>
-      <div class="equipment-slot" data-slot="ring">
-        <span>💍</span>
-        <strong>RING</strong>
-        <small>EMPTY</small>
-      </div>
-      <div class="equipment-slot" data-slot="neck">
-        <span>📿</span>
-        <strong>NECK</strong>
-        <small>EMPTY</small>
-      </div>
-      <div class="equipment-slot" data-slot="charm">
-        <span>🔮</span>
-        <strong>CHARM</strong>
-        <small>EMPTY</small>
-      </div>
-    </div>
-
-  </div>
-</section>
-
-<!-- EQUIPMENT BONUS -->
-<div class="equipment-bonus-panel">
-  <h3>EQUIPMENT BONUS</h3>
-
-  <div class="equipment-bonus-grid">
-    <div><span>STR</span><strong id="bonusSTR">+0</strong></div>
-    <div><span>AGI</span><strong id="bonusAGI">+0</strong></div>
-    <div><span>VIT</span><strong id="bonusVIT">+0</strong></div>
-    <div><span>INT</span><strong id="bonusINT">+0</strong></div>
-    <div><span>PER</span><strong id="bonusPER">+0</strong></div>
-    <div><span>SEN</span><strong id="bonusSEN">+0</strong></div>
-  </div>
-</div>
-
-<!-- INVENTORY ITEMS -->
-<section class="inventory-section">
-
-  <div class="inventory-toolbar">
-    <div>
-      <h2>MY ITEMS</h2>
-      <span>YOUR ACQUIRED RESOURCES</span>
-    </div>
-  </div>
-
-  <div class="inventory-filter-container">
-    <select id="inventoryFilter">
-      <option value="all">ALL ITEMS</option>
-      <option value="weapon">WEAPONS</option>
-      <option value="armor">ARMOR</option>
-      <option value="accessory">ACCESSORIES</option>
-      <option value="consumable">CONSUMABLES</option>
-      <option value="material">MATERIALS</option>
-      <option value="boost">BOOSTS</option>
-      <option value="skill_item">SKILL ITEMS</option>
-      <option value="cosmetic">COSMETICS</option>
-    </select>
-  </div>
-
-  <p id="inventoryMessage">CONNECTING TO SYSTEM...</p>
-
-  <div id="inventoryItems" class="inventory-grid">
-    <p>Loading inventory...</p>
-  </div>
-
-</section>
-
+      </section>
 
     </main>
   </div>
