@@ -780,3 +780,31 @@
     grid-template-columns: repeat(2, 1fr);
   }
 }
+/* CONTROL DE CAPAS DEL EQUIPMENT */
+.equipment-layout {
+  position: relative;
+  isolation: isolate;
+}
+
+.equipment-column {
+  position: relative;
+  z-index: 1;
+  min-width: 0;
+}
+
+.equipment-left {
+  z-index: 2;
+}
+
+.equipment-right {
+  z-index: 1;
+}
+
+.equipment-slot {
+  position: relative;
+  z-index: 1;
+}
+
+.equipment-slot:hover {
+  z-index: 2;
+}
