@@ -3,6 +3,7 @@ import { supabase } from "./config.js";
 const message = document.getElementById("dashboardMessage");
 const statsList = document.getElementById("statsList");
 const questsList = document.getElementById("questsList");
+const activityList = document.getElementById("activityList");
 
 const avatarMap = {
   "hunter-01": "⚔️",
@@ -401,6 +402,74 @@ document.getElementById("weeklyGoalStatus").textContent =
   weeklyCount >= weeklyGoal
     ? "WEEKLY GOAL COMPLETED!"
     : `${Math.round(weeklyProgress)}% COMPLETE · ${weeklyGoal - weeklyCount} MISSIONS REMAINING`;
+    // 9. LOAD RECENT ACTIVITY LOG
+if (activityList) {
+  activityList.replaceChildren();
+
+  const { data: activities, error: activityError } =
+    await supabase
+      .from("activity_log")
+      .select("id, activity_type, description, xp_earned, created_at")
+      .eq("user_id", user.id)
+      .order("created_at", { ascending: false })
+      .limit(7);
+
+  if (activityError) {
+    console.error("Activity log error:", activityError);
+
+    const errorMessage = document.createElement("p");
+    errorMessage.className = "muted";
+    errorMessage.textContent = "Unable to load recent activity.";
+
+    activityList.appendChild(errorMessage);
+  } else if (!activities || activities.length === 0) {
+    const emptyMessage = document.createElement("p");
+    emptyMessage.className = "muted";
+    emptyMessage.textContent = "No recent activity.";
+
+    activityList.appendChild(emptyMessage);
+  } else {
+    activities.forEach((activity) => {
+      const card = document.createElement("div");
+      card.className = "activity-card";
+
+      const info = document.createElement("div");
+      info.className = "activity-info";
+
+      const title = document.createElement("strong");
+      title.className = "activity-title";
+
+      title.textContent =
+        activity.activity_type === "quest_completed"
+          ? "QUEST COMPLETED"
+          : activity.activity_type.replaceAll("_", " ").toUpperCase();
+
+      const description = document.createElement("p");
+      description.className = "activity-description";
+      description.textContent = activity.description || "";
+
+      const date = document.createElement("span");
+      date.className = "activity-date";
+      date.textContent = new Intl.DateTimeFormat("en-US", {
+        timeZone: "America/Mexico_City",
+        day: "2-digit",
+        month: "short",
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: false
+      }).format(new Date(activity.created_at));
+
+      const xp = document.createElement("strong");
+      xp.className = "activity-xp";
+      xp.textContent = `+${activity.xp_earned ?? 0} XP`;
+
+      info.append(title, description, date);
+      card.append(info, xp);
+
+      activityList.appendChild(card);
+    });
+  }
+}
     // 9. SYSTEM MESSAGE
     message.textContent =
       "SYSTEM ONLINE · HUNTER DATA LOADED";
