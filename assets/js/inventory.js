@@ -209,9 +209,9 @@ function renderEquipment() {
   const equippedItems = allItems.filter(item => item.is_equipped);
 
   Object.entries(bonusAttributes).forEach(([attribute, column]) => {
-    const totalBonus = equippedItems.reduce((total, item) => {
-      return total + Number(item.shop_items?.[column] || 0);
-    }, 0);
+   const totalBonus = equippedItems.reduce((total, item) => {
+  return total + getEnhancedBonus(item, column);
+}, 0);
 
     const element = document.getElementById(`bonus${attribute}`);
 
