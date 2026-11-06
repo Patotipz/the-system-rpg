@@ -723,3 +723,59 @@ button:disabled {
     margin-left: 0;
   }
 }
+/* =========================================
+   STATUS WINDOW - ATTRIBUTE DISPLAY
+========================================= */
+
+.stat-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 8px 15px;
+  padding: 18px 20px;
+  background: var(--surface-2);
+  border-left: 3px solid var(--blue);
+  border-bottom: 1px solid var(--border);
+}
+
+.stat-label {
+  color: var(--blue-light);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 3px;
+}
+
+.stat-total {
+  color: #ffffff;
+  font-size: 32px;
+  font-weight: 900;
+  text-shadow: 0 0 15px #4ca5ff55;
+  text-align: right;
+}
+
+.stat-breakdown {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 24px;
+}
+
+.stat-breakdown span {
+  color: var(--muted);
+  font-size: 10px;
+  letter-spacing: 1px;
+}
+
+.stat-breakdown span:last-child {
+  color: var(--blue-light);
+}
+
+@media (max-width: 600px) {
+  .stat-total {
+    font-size: 28px;
+  }
+
+  .stat-row {
+    padding: 15px;
+  }
+}
