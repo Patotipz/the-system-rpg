@@ -1,8 +1,14 @@
+
 /* ================================
    INVENTORY PAGE
 ================================ */
 
 .inventory-page {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  width: 100%;
+  min-width: 0;
   padding-bottom: 50px;
 }
 
@@ -31,6 +37,30 @@
   color: #39baff;
   font-size: 11px;
   letter-spacing: 3px;
+}
+
+/* ================================
+   INVENTORY COINS
+================================ */
+
+.inventory-coins {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 10px 16px;
+  background: rgba(25, 35, 50, 0.85);
+  border: 1px solid rgba(255, 195, 80, 0.4);
+  border-radius: 6px;
+  color: #ffd477;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  box-shadow: 0 0 12px rgba(255, 195, 80, 0.08);
+}
+
+.coins-icon {
+  font-size: 18px;
+  color: #ffcf60;
 }
 
 .inventory-count {
@@ -63,11 +93,13 @@
    INVENTORY SUMMARY
 ================================ */
 
-.inventory-summary {
+.inventory-page > .inventory-summary {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 15px;
   margin-bottom: 35px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .inventory-stat {
@@ -78,6 +110,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  min-width: 0;
 }
 
 .inventory-stat span {
@@ -96,10 +129,16 @@
 ================================ */
 
 .inventory-section {
+  display: block;
+  align-self: stretch;
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  margin-top: 30px;
+  padding: 25px;
   background: #0a1928;
   border: 1px solid #1b3851;
   border-radius: 10px;
-  padding: 25px;
 }
 
 .inventory-toolbar {
@@ -108,6 +147,7 @@
   align-items: center;
   gap: 20px;
   margin-bottom: 20px;
+  width: 100%;
 }
 
 .inventory-toolbar h2 {
@@ -131,6 +171,8 @@
   padding: 11px 14px;
   outline: none;
   cursor: pointer;
+  width: 220px;
+  max-width: 100%;
 }
 
 #inventoryFilter:focus {
@@ -145,13 +187,34 @@
 }
 
 /* ================================
+   INVENTORY FILTER
+================================ */
+
+.inventory-filter-container {
+  display: flex;
+  justify-content: flex-start;
+  width: 100%;
+  margin: 20px 0;
+}
+
+/* ================================
    INVENTORY GRID
 ================================ */
 
+.inventory-section #inventoryItems,
 .inventory-grid {
   display: grid;
+  width: 100%;
+  min-width: 0;
   grid-template-columns: repeat(3, minmax(0, 1fr));
+  justify-content: stretch;
+  justify-items: stretch;
+  align-items: stretch;
   gap: 18px;
+
+  /* Isolate hover effects inside the grid */
+  position: relative;
+  isolation: isolate;
 }
 
 .inventory-empty {
@@ -167,20 +230,33 @@
    INVENTORY ITEM CARD
 ================================ */
 
-.inventory-item {
+.inventory-section #inventoryItems .inventory-item,
+.inventory-grid .inventory-item {
   position: relative;
+  z-index: 0;
+  width: auto;
+  min-width: 0;
+  min-height: 100%;
+  box-sizing: border-box;
   padding: 20px;
   background: linear-gradient(145deg, #11273b, #091725);
   border: 1px solid #29445d;
   border-radius: 9px;
-  transition: 0.25s ease;
   overflow: hidden;
+
+  transition:
+    transform 0.25s ease,
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
 }
 
-.inventory-item:hover {
+/* Main hover correction */
+.inventory-section #inventoryItems .inventory-item:hover,
+.inventory-grid .inventory-item:hover {
+  z-index: 2;
   transform: translateY(-4px);
   border-color: #39baff;
-  box-shadow: 0 8px 25px rgba(0, 145, 255, 0.12);
+  box-shadow: 0 8px 25px rgba(0, 145, 255, 0.18);
 }
 
 .inventory-item-icon {
@@ -199,6 +275,7 @@
   color: #eaf6ff;
   font-size: 16px;
   margin: 10px 0;
+  overflow-wrap: anywhere;
 }
 
 .inventory-item-description {
@@ -206,6 +283,7 @@
   font-size: 12px;
   line-height: 1.6;
   min-height: 38px;
+  overflow-wrap: anywhere;
 }
 
 .inventory-item-category {
@@ -226,6 +304,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 10px;
   margin-top: 18px;
   padding-top: 14px;
   border-top: 1px solid #233d55;
@@ -296,60 +375,7 @@
 }
 
 /* ================================
-   RESPONSIVE
-================================ */
-
-@media (max-width: 1000px) {
-  .inventory-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .inventory-summary {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (max-width: 600px) {
-  .inventory-header {
-    align-items: flex-start;
-    flex-direction: column;
-  }
-
-  .inventory-header h1 {
-    font-size: 27px;
-  }
-
-  .inventory-toolbar {
-    align-items: flex-start;
-    flex-direction: column;
-  }
-
-  #inventoryFilter {
-    width: 100%;
-  }
-
-  .inventory-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .inventory-summary {
-    gap: 10px;
-  }
-
-  .inventory-stat {
-    padding: 14px;
-  }
-
-  .inventory-stat span {
-    font-size: 9px;
-  }
-
-  .inventory-section {
-    padding: 16px;
-  }
-}
-/* ================================
-   EQUIPMENT SYSTEM
+   ITEM STATS
 ================================ */
 
 .inventory-item-stats {
@@ -370,6 +396,10 @@
   letter-spacing: 1px;
 }
 
+/* ================================
+   EQUIPPED STATUS
+================================ */
+
 .inventory-equipped {
   display: inline-block;
   margin-top: 15px;
@@ -383,8 +413,14 @@
   letter-spacing: 1.5px;
 }
 
+/* ================================
+   INVENTORY ACTION BUTTONS
+================================ */
+
 .inventory-action {
+  display: block;
   width: 100%;
+  box-sizing: border-box;
   margin-top: 15px;
   padding: 11px;
   border-radius: 5px;
@@ -424,11 +460,70 @@
   cursor: not-allowed;
 }
 
-/* ========================================
+/* ================================
+   ENHANCEMENT BUTTON
+================================ */
+
+.inventory-action.enhance-button {
+  background: linear-gradient(135deg, #392b70, #6546a5);
+  border: 1px solid #9878e8;
+  color: #ffffff;
+  box-shadow: 0 0 10px rgba(101, 70, 165, 0.25);
+}
+
+.inventory-action.enhance-button:hover {
+  background: linear-gradient(135deg, #503a91, #8060c9);
+  border-color: #b99aff;
+  box-shadow: 0 0 16px rgba(128, 96, 201, 0.45);
+  transform: translateY(-2px);
+}
+
+.inventory-action.enhance-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.enhance-cost {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 4px 7px;
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(197, 165, 255, 0.25);
+  border-radius: 4px;
+  color: #e2d4ff;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  white-space: nowrap;
+}
+
+/* ================================
+   ENHANCEMENT LEVEL BADGE
+================================ */
+
+.enhancement-level-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 10px;
+  border-radius: 4px;
+  background: rgba(116, 76, 190, 0.16);
+  border: 1px solid rgba(157, 119, 232, 0.5);
+  color: #c7a8ff;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  text-shadow: 0 0 8px rgba(157, 119, 232, 0.4);
+}
+
+/* ================================
    HUNTER EQUIPMENT - RPG DISPLAY
-======================================== */
+================================ */
 
 .equipment-section {
+  width: 100%;
+  box-sizing: border-box;
   margin-top: 35px;
   padding: 25px;
   background: #0a1928;
@@ -438,17 +533,21 @@
 
 .equipment-layout {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(230px, 1.1fr) minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr) 230px minmax(0, 1fr);
   align-items: center;
   gap: 22px;
+  width: 100%;
   max-width: 1000px;
   margin: 30px auto;
+  position: relative;
 }
 
 .equipment-column {
   display: flex;
   flex-direction: column;
   gap: 14px;
+  width: 100%;
+  min-width: 0;
 }
 
 .equipment-left {
@@ -460,19 +559,35 @@
 }
 
 .equipment-layout .equipment-slot {
-  width: 100%;
-  max-width: 210px;
-  min-height: 82px;
-  box-sizing: border-box;
-  padding: 12px 15px;
+  position: relative;
   display: flex;
   flex-direction: column;
   justify-content: center;
   gap: 5px;
+  width: 100%;
+  max-width: 210px;
+  min-width: 0;
+  min-height: 82px;
+  box-sizing: border-box;
+  padding: 12px 15px;
+  overflow: hidden;
   background: linear-gradient(145deg, #112b40, #091725);
   border: 1px solid #29445d;
   border-radius: 8px;
-  transition: 0.25s ease;
+  transform: none !important;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.equipment-layout .equipment-slot:hover {
+  transform: none !important;
+  border-color: #39baff;
+  box-shadow: 0 0 15px rgba(57, 186, 255, 0.2);
+}
+
+.equipment-slot * {
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow-wrap: anywhere;
 }
 
 .equipment-layout .equipment-slot > span {
@@ -490,7 +605,37 @@
   font-size: 10px;
 }
 
+.equipment-slot small {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.equipped-item-name {
+  color: #eaf6ff;
+  font-size: 11px;
+  font-weight: bold;
+}
+
+.equipped-item-rarity {
+  color: #65caff;
+  font-size: 9px;
+  letter-spacing: 1px;
+}
+
+.equipment-slot.slot-equipped {
+  border-color: #39baff;
+  background: linear-gradient(145deg, #163b55, #091725);
+}
+
+/* ================================
+   HUNTER PORTRAIT
+================================ */
+
 .equipment-layout .hunter-portrait-container {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -511,13 +656,13 @@
 }
 
 .equipment-layout .hunter-portrait {
+  position: relative;
+  z-index: 1;
   width: 100%;
   height: 100%;
   object-fit: cover;
   object-position: center top;
   border-radius: 8px;
-  position: relative;
-  z-index: 1;
 }
 
 .equipment-layout .hunter-aura {
@@ -541,6 +686,7 @@
     opacity: 0.4;
     transform: scale(0.92);
   }
+
   to {
     opacity: 0.9;
     transform: scale(1.1);
@@ -570,151 +716,9 @@
   letter-spacing: 2px;
 }
 
-@media (max-width: 750px) {
-  .equipment-layout {
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-  }
-
-  .equipment-layout .hunter-portrait-container {
-    grid-column: 1 / -1;
-    grid-row: 1;
-  }
-
-  .equipment-left,
-  .equipment-right {
-    align-items: stretch;
-  }
-
-  .equipment-layout .equipment-slot {
-    max-width: none;
-  }
-}
-
-@media (max-width: 480px) {
-  .equipment-layout .hunter-portrait-frame {
-    width: 190px;
-    height: 245px;
-  }
-
-  .equipment-layout .equipment-slot {
-    min-height: 75px;
-    padding: 9px;
-  }
-}
-.inventory-filter-container {
-  display: flex;
-  justify-content: flex-start;
-  width: 100%;
-  margin: 20px 0;
-}
-
-.inventory-filter-container select {
-  width: 220px;
-  max-width: 100%;
-}
-/* INVENTORY PAGE - MAIN VERTICAL LAYOUT */
-
-/* ========================================
-   INVENTORY PAGE - FINAL LAYOUT
-======================================== */
-
-.inventory-page {
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  width: 100%;
-  min-width: 0;
-  padding-bottom: 50px;
-}
-
-.inventory-page > .inventory-header,
-.inventory-page > .inventory-summary,
-.inventory-page > .equipment-section,
-.inventory-page > .equipment-bonus-panel,
-.inventory-page > .inventory-section {
-  flex: 0 0 auto;
-  width: 100%;
-  min-width: 0;
-  box-sizing: border-box;
-}
-
-.inventory-page > .inventory-summary {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-}
-
-.inventory-page > .equipment-section {
-  margin-top: 35px;
-}
-
-.inventory-page > .equipment-bonus-panel {
-  margin-top: 20px;
-}
-
-.inventory-page > .inventory-section {
-  display: block;
-  margin-top: 30px;
-  align-self: stretch;
-}
-
-/* ITEMS: FULL WIDTH GRID */
-
-.inventory-section .inventory-toolbar {
-  width: 100%;
-}
-
-.inventory-section .inventory-filter-container {
-  display: flex;
-  justify-content: flex-start;
-  width: 100%;
-  margin: 20px 0;
-}
-
-.inventory-section #inventoryFilter {
-  width: 220px;
-  max-width: 100%;
-}
-
-.inventory-section #inventoryItems {
-  display: grid;
-  width: 100%;
-  min-width: 0;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  justify-content: stretch;
-  justify-items: stretch;
-  gap: 18px;
-}
-
-.inventory-section #inventoryItems .inventory-item {
-  width: auto;
-  min-width: 0;
-  box-sizing: border-box;
-}
-
-@media (max-width: 1000px) {
-  .inventory-section #inventoryItems {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-
-@media (max-width: 600px) {
-  .inventory-page > .inventory-summary {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .inventory-section #inventoryItems {
-    grid-template-columns: 1fr;
-  }
-
-  .inventory-section #inventoryFilter {
-    width: 100%;
-  }
-}
-
-/* ========================================
+/* ================================
    EQUIPMENT BONUS PANEL
-======================================== */
+================================ */
 
 .equipment-bonus-panel {
   width: 100%;
@@ -763,82 +767,28 @@
   text-shadow: 0 0 10px rgba(57, 186, 255, 0.25);
 }
 
-@media (max-width: 750px) {
-  .equipment-bonus-grid {
-    grid-template-columns: repeat(3, 1fr);
+/* ================================
+   RESPONSIVE
+================================ */
+
+@media (max-width: 1000px) {
+  .inventory-section #inventoryItems,
+  .inventory-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
-}
 
-@media (max-width: 400px) {
-  .equipment-bonus-grid {
-    grid-template-columns: repeat(2, 1fr);
+  .inventory-page > .inventory-summary {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
-}
-/* ========================================
-   EQUIPMENT - COLUMN ISOLATION FIX
-======================================== */
-
-.equipment-layout {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 230px minmax(0, 1fr);
-  align-items: center;
-  gap: 22px;
-  width: 100%;
-  max-width: 1000px;
-  margin: 30px auto;
-  position: relative;
-}
-
-.equipment-column {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-  width: 100%;
-  min-width: 0;
-}
-
-.equipment-left {
-  align-items: flex-end;
-}
-
-.equipment-right {
-  align-items: flex-start;
-}
-
-.equipment-slot {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  width: 100%;
-  max-width: 210px;
-  min-width: 0;
-  min-height: 82px;
-  box-sizing: border-box;
-  padding: 12px 15px;
-  overflow: hidden;
-  transform: none !important;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
-}
-
-.equipment-slot:hover {
-  transform: none !important;
-  border-color: #39baff;
-  box-shadow: 0 0 15px rgba(57, 186, 255, 0.2);
-}
-
-.equipment-slot * {
-  max-width: 100%;
-  box-sizing: border-box;
-  overflow-wrap: anywhere;
 }
 
 @media (max-width: 750px) {
   .equipment-layout {
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 12px;
   }
 
-  .hunter-portrait-container {
+  .equipment-layout .hunter-portrait-container {
     grid-column: 1 / -1;
     grid-row: 1;
   }
@@ -848,110 +798,70 @@
     align-items: stretch;
   }
 
-  .equipment-slot {
+  .equipment-layout .equipment-slot {
     max-width: none;
   }
-}
-/* EQUIPPED ITEM TEXT */
 
-.equipment-slot small {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-  min-width: 0;
-  overflow-wrap: anywhere;
+  .equipment-bonus-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
 }
 
-.equipped-item-name {
-  color: #eaf6ff;
-  font-size: 11px;
-  font-weight: bold;
+@media (max-width: 600px) {
+  .inventory-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .inventory-header h1 {
+    font-size: 27px;
+  }
+
+  .inventory-toolbar {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  #inventoryFilter {
+    width: 100%;
+  }
+
+  .inventory-section #inventoryItems,
+  .inventory-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .inventory-page > .inventory-summary {
+    gap: 10px;
+  }
+
+  .inventory-stat {
+    padding: 14px;
+  }
+
+  .inventory-stat span {
+    font-size: 9px;
+  }
+
+  .inventory-section {
+    padding: 16px;
+  }
 }
 
-.equipped-item-rarity {
-  color: #65caff;
-  font-size: 9px;
-  letter-spacing: 1px;
+@media (max-width: 480px) {
+  .equipment-layout .hunter-portrait-frame {
+    width: 190px;
+    height: 245px;
+  }
+
+  .equipment-layout .equipment-slot {
+    min-height: 75px;
+    padding: 9px;
+  }
 }
 
-.equipment-slot.slot-equipped {
-  border-color: #39baff;
-  background: linear-gradient(145deg, #163b55, #091725);
-}
-
-/* ENHANCEMENT BUTTON */
-.inventory-action.enhance-button {
-  background: linear-gradient(135deg, #392b70, #6546a5);
-  border: 1px solid #9878e8;
-  color: #ffffff;
-  box-shadow: 0 0 10px rgba(101, 70, 165, 0.25);
-}
-
-.inventory-action.enhance-button:hover {
-  background: linear-gradient(135deg, #503a91, #8060c9);
-  box-shadow: 0 0 16px rgba(128, 96, 201, 0.45);
-  transform: translateY(-2px);
-}
-
-.inventory-action.enhance-button:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-  transform: none;
-}
-
-/* ENHANCEMENT LEVEL BADGE */
-
-.enhancement-level-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  padding: 5px 10px;
-  border-radius: 4px;
-  background: rgba(116, 76, 190, 0.16);
-  border: 1px solid rgba(157, 119, 232, 0.5);
-  color: #c7a8ff;
-  font-size: 11px;
-  font-weight: 800;
-  letter-spacing: 1px;
-  text-shadow: 0 0 8px rgba(157, 119, 232, 0.4);
-}
-/* ================================
-   ENHANCEMENT COST
-================================ */
-
-.enhance-cost {
-  display: inline-block;
-  margin-left: 8px;
-  padding: 4px 7px;
-  background: rgba(0, 0, 0, 0.25);
-  border: 1px solid rgba(197, 165, 255, 0.25);
-  border-radius: 4px;
-  color: #e2d4ff;
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.8px;
-  white-space: nowrap;
-}
-/* ================================
-   INVENTORY COINS
-================================ */
-
-.inventory-coins {
-  display: inline-flex;
-  align-items: center;
-  gap: 9px;
-  padding: 10px 16px;
-  background: rgba(25, 35, 50, 0.85);
-  border: 1px solid rgba(255, 195, 80, 0.4);
-  border-radius: 6px;
-  color: #ffd477;
-  font-size: 13px;
-  font-weight: 800;
-  letter-spacing: 1px;
-  box-shadow: 0 0 12px rgba(255, 195, 80, 0.08);
-}
-
-.coins-icon {
-  font-size: 18px;
-  color: #ffcf60;
+@media (max-width: 400px) {
+  .equipment-bonus-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
