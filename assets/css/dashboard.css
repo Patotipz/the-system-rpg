@@ -692,3 +692,34 @@ button:disabled {
     flex-wrap: wrap;
   }
 }
+/* =========================================
+   INVENTORY - MAIN LAYOUT FIX
+========================================= */
+
+.dashboard-layout {
+  width: 100%;
+  min-width: 0;
+}
+
+.dashboard-layout > .main-content {
+  width: calc(100% - 250px);
+  max-width: none;
+  min-width: 0;
+  margin-left: 250px;
+}
+
+/* TABLET */
+@media (max-width: 900px) {
+  .dashboard-layout > .main-content {
+    width: calc(100% - 190px);
+    margin-left: 190px;
+  }
+}
+
+/* MOBILE */
+@media (max-width: 600px) {
+  .dashboard-layout > .main-content {
+    width: 100%;
+    margin-left: 0;
+  }
+}
