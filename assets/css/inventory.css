@@ -775,23 +775,26 @@
   }
 }
 /* ========================================
-   EQUIPMENT - FIX OVERLAPPING
+   EQUIPMENT - COLUMN ISOLATION FIX
 ======================================== */
 
 .equipment-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 230px minmax(0, 1fr);
+  align-items: center;
+  gap: 22px;
+  width: 100%;
+  max-width: 1000px;
+  margin: 30px auto;
   position: relative;
-  isolation: isolate;
-  overflow: hidden;
 }
 
 .equipment-column {
   display: flex;
   flex-direction: column;
   gap: 14px;
+  width: 100%;
   min-width: 0;
-  position: relative;
-  isolation: isolate;
-  overflow: hidden;
 }
 
 .equipment-left {
@@ -802,26 +805,50 @@
   align-items: flex-start;
 }
 
-.equipment-layout .equipment-slot {
+.equipment-slot {
   position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
   width: 100%;
   max-width: 210px;
   min-width: 0;
+  min-height: 82px;
   box-sizing: border-box;
+  padding: 12px 15px;
   overflow: hidden;
-  transform: none;
-  z-index: auto;
+  transform: none !important;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
-.equipment-layout .equipment-slot:hover {
-  transform: none;
-  z-index: auto;
+.equipment-slot:hover {
+  transform: none !important;
   border-color: #39baff;
-  box-shadow: 0 0 12px rgba(57, 186, 255, 0.15);
+  box-shadow: 0 0 15px rgba(57, 186, 255, 0.2);
 }
 
-.equipment-layout .equipment-slot strong,
-.equipment-layout .equipment-slot small {
+.equipment-slot * {
   max-width: 100%;
+  box-sizing: border-box;
   overflow-wrap: anywhere;
+}
+
+@media (max-width: 750px) {
+  .equipment-layout {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+
+  .hunter-portrait-container {
+    grid-column: 1 / -1;
+    grid-row: 1;
+  }
+
+  .equipment-left,
+  .equipment-right {
+    align-items: stretch;
+  }
+
+  .equipment-slot {
+    max-width: none;
+  }
 }
