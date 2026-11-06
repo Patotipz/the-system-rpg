@@ -475,12 +475,6 @@
   transition: 0.25s ease;
 }
 
-.equipment-layout .equipment-slot:hover {
-  border-color: #39baff;
-  box-shadow: 0 0 15px rgba(57, 186, 255, 0.2);
-  transform: translateY(-2px);
-}
-
 .equipment-layout .equipment-slot > span {
   font-size: 19px;
 }
@@ -780,31 +774,54 @@
     grid-template-columns: repeat(2, 1fr);
   }
 }
-/* CONTROL DE CAPAS DEL EQUIPMENT */
+/* ========================================
+   EQUIPMENT - FIX OVERLAPPING
+======================================== */
+
 .equipment-layout {
   position: relative;
   isolation: isolate;
+  overflow: hidden;
 }
 
 .equipment-column {
-  position: relative;
-  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
   min-width: 0;
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
 }
 
 .equipment-left {
-  z-index: 2;
+  align-items: flex-end;
 }
 
 .equipment-right {
-  z-index: 1;
+  align-items: flex-start;
 }
 
-.equipment-slot {
+.equipment-layout .equipment-slot {
   position: relative;
-  z-index: 1;
+  width: 100%;
+  max-width: 210px;
+  min-width: 0;
+  box-sizing: border-box;
+  overflow: hidden;
+  transform: none;
+  z-index: auto;
 }
 
-.equipment-slot:hover {
-  z-index: 2;
+.equipment-layout .equipment-slot:hover {
+  transform: none;
+  z-index: auto;
+  border-color: #39baff;
+  box-shadow: 0 0 12px rgba(57, 186, 255, 0.15);
+}
+
+.equipment-layout .equipment-slot strong,
+.equipment-layout .equipment-slot small {
+  max-width: 100%;
+  overflow-wrap: anywhere;
 }
