@@ -423,380 +423,108 @@
   opacity: 0.5;
   cursor: not-allowed;
 }
+
 <section class="equipment-section">
+
   <div class="section-heading">
     <h2>HUNTER EQUIPMENT</h2>
     <span>[ EQUIPMENT STATUS ]</span>
   </div>
 
-  <div class="equipment-grid">
-    <div class="equipment-slot" data-slot="weapon">
-      <span>⚔️</span>
-      <strong>WEAPON</strong>
-      <small>EMPTY</small>
+  <div class="equipment-layout">
+
+    <!-- LEFT SLOTS -->
+    <div class="equipment-column equipment-left">
+
+      <div class="equipment-slot" data-slot="weapon">
+        <span>⚔️</span>
+        <strong>WEAPON</strong>
+        <small>EMPTY</small>
+      </div>
+
+      <div class="equipment-slot" data-slot="head">
+        <span>🪖</span>
+        <strong>HEAD</strong>
+        <small>EMPTY</small>
+      </div>
+
+      <div class="equipment-slot" data-slot="chest">
+        <span>🛡️</span>
+        <strong>CHEST</strong>
+        <small>EMPTY</small>
+      </div>
+
+      <div class="equipment-slot" data-slot="hands">
+        <span>🧤</span>
+        <strong>HANDS</strong>
+        <small>EMPTY</small>
+      </div>
+
     </div>
 
-    <div class="equipment-slot" data-slot="head">
-      <span>🪖</span>
-      <strong>HEAD</strong>
-      <small>EMPTY</small>
+    <!-- CENTER PORTRAIT -->
+    <div class="hunter-portrait-container">
+
+      <div class="hunter-portrait-frame">
+
+        <img
+          src="images/hunter-portrait.png"
+          alt="Hunter Portrait"
+          class="hunter-portrait"
+        />
+
+        <div class="hunter-aura"></div>
+
+      </div>
+
+      <div class="hunter-portrait-info">
+        <span>AWAKENED HUNTER</span>
+        <h2 id="equipmentHunterName">HUNTER</h2>
+
+        <p>
+          <span id="equipmentHunterRank">RANK E</span>
+          ·
+          <span id="equipmentHunterLevel">LV. 1</span>
+        </p>
+      </div>
+
     </div>
 
-    <div class="equipment-slot" data-slot="chest">
-      <span>🛡️</span>
-      <strong>CHEST</strong>
-      <small>EMPTY</small>
+    <!-- RIGHT SLOTS -->
+    <div class="equipment-column equipment-right">
+
+      <div class="equipment-slot" data-slot="legs">
+        <span>👖</span>
+        <strong>LEGS</strong>
+        <small>EMPTY</small>
+      </div>
+
+      <div class="equipment-slot" data-slot="feet">
+        <span>🥾</span>
+        <strong>FEET</strong>
+        <small>EMPTY</small>
+      </div>
+
+      <div class="equipment-slot" data-slot="ring">
+        <span>💍</span>
+        <strong>RING</strong>
+        <small>EMPTY</small>
+      </div>
+
+      <div class="equipment-slot" data-slot="neck">
+        <span>📿</span>
+        <strong>NECK</strong>
+        <small>EMPTY</small>
+      </div>
+
+      <div class="equipment-slot" data-slot="charm">
+        <span>🔮</span>
+        <strong>CHARM</strong>
+        <small>EMPTY</small>
+      </div>
+
     </div>
 
-    <div class="equipment-slot" data-slot="hands">
-      <span>🧤</span>
-      <strong>HANDS</strong>
-      <small>EMPTY</small>
-    </div>
-
-    <div class="equipment-slot" data-slot="legs">
-      <span>👖</span>
-      <strong>LEGS</strong>
-      <small>EMPTY</small>
-    </div>
-
-    <div class="equipment-slot" data-slot="feet">
-      <span>🥾</span>
-      <strong>FEET</strong>
-      <small>EMPTY</small>
-    </div>
-
-    <div class="equipment-slot" data-slot="ring">
-      <span>💍</span>
-      <strong>RING</strong>
-      <small>EMPTY</small>
-    </div>
-
-    <div class="equipment-slot" data-slot="neck">
-      <span>📿</span>
-      <strong>NECK</strong>
-      <small>EMPTY</small>
-    </div>
-
-    <div class="equipment-slot" data-slot="charm">
-      <span>🔮</span>
-      <strong>CHARM</strong>
-      <small>EMPTY</small>
-    </div>
   </div>
+
 </section>
-/* EQUIPPED SLOT STATUS */
-
-.equipment-slot.slot-equipped {
-  background: linear-gradient(
-    145deg,
-    rgba(20, 75, 110, 0.45),
-    rgba(12, 30, 55, 0.9)
-  );
-  border: 1px solid #39baff;
-  box-shadow:
-    inset 0 0 18px rgba(57, 186, 255, 0.08),
-    0 0 12px rgba(57, 186, 255, 0.12);
-}
-
-.equipment-slot.slot-equipped > strong {
-  color: #65caff;
-}
-
-.equipment-slot .equipped-item-name {
-  display: block;
-  color: #ffffff;
-  font-size: 11px;
-  line-height: 1.4;
-  overflow-wrap: anywhere;
-}
-
-.equipment-slot .equipped-item-rarity {
-  display: block;
-  margin-top: 5px;
-  color: #65caff;
-  font-size: 9px;
-  letter-spacing: 1.5px;
-}
-
-.equipment-slot:not(.slot-equipped) {
-  opacity: 0.65;
-}
-/* HUNTER PORTRAIT */
-
-.hunter-portrait-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 30px 15px;
-  margin-bottom: 25px;
-  text-align: center;
-  position: relative;
-}
-
-.hunter-portrait-frame {
-  position: relative;
-  width: 230px;
-  height: 290px;
-  border: 1px solid rgba(57, 186, 255, 0.6);
-  border-radius: 8px;
-  overflow: hidden;
-  background: radial-gradient(
-    circle,
-    #173c62 0%,
-    #071426 70%,
-    #030914 100%
-  );
-  box-shadow:
-    0 0 20px rgba(57, 186, 255, 0.2),
-    inset 0 0 25px rgba(57, 186, 255, 0.1);
-}
-
-.hunter-portrait {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center top;
-  position: relative;
-  z-index: 1;
-}
-
-.hunter-aura {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  z-index: 2;
-  box-shadow: inset 0 0 30px rgba(57, 186, 255, 0.2);
-}
-
-.hunter-portrait-info {
-  margin-top: 18px;
-}
-
-.hunter-portrait-info > span {
-  color: #65caff;
-  font-size: 10px;
-  letter-spacing: 3px;
-}
-
-.hunter-portrait-info h2 {
-  color: #ffffff;
-  font-size: 22px;
-  letter-spacing: 3px;
-  margin: 8px 0;
-  text-shadow: 0 0 12px rgba(57, 186, 255, 0.5);
-}
-
-.hunter-portrait-info p {
-  color: #8caac5;
-  font-size: 12px;
-  letter-spacing: 2px;
-}
-
-.hunter-portrait-info p span {
-  color: #65caff;
-}
-
-/* ========================================
-   HUNTER EQUIPMENT RPG LAYOUT
-======================================== */
-
-.equipment-layout {
-  display: grid;
-  grid-template-columns: minmax(150px, 1fr) minmax(230px, 1.2fr) minmax(150px, 1fr);
-  align-items: center;
-  gap: 35px;
-  max-width: 1050px;
-  margin: 35px auto 20px;
-}
-
-.equipment-column {
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
-}
-
-.equipment-left {
-  align-items: flex-end;
-}
-
-.equipment-right {
-  align-items: flex-start;
-}
-
-/* EQUIPMENT SLOTS */
-
-.equipment-layout .equipment-slot {
-  width: 100%;
-  max-width: 230px;
-  min-height: 85px;
-  box-sizing: border-box;
-  padding: 15px;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: center;
-  gap: 5px;
-
-  background: linear-gradient(145deg, #10263a, #091725);
-  border: 1px solid rgba(65, 170, 230, 0.25);
-  border-radius: 9px;
-
-  transition: all 0.25s ease;
-}
-
-.equipment-layout .equipment-slot:hover {
-  border-color: #39bfff;
-  box-shadow: 0 0 18px rgba(35, 170, 255, 0.2);
-  transform: translateY(-3px);
-}
-
-.equipment-layout .equipment-slot > span {
-  font-size: 20px;
-}
-
-.equipment-layout .equipment-slot strong {
-  color: #55c7ff;
-  font-size: 13px;
-  letter-spacing: 1px;
-}
-
-.equipment-layout .equipment-slot small {
-  color: #91a8bb;
-  font-size: 11px;
-}
-
-/* HUNTER PORTRAIT CENTER */
-
-.equipment-layout .hunter-portrait-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  min-width: 0;
-}
-
-.equipment-layout .hunter-portrait-frame {
-  position: relative;
-  isolation: isolate;
-  width: 230px;
-  height: 290px;
-  border-radius: 12px;
-  overflow: visible;
-  border: 1px solid #249bd8;
-  box-shadow: 0 0 20px rgba(0, 160, 255, 0.2);
-}
-
-.equipment-layout .hunter-portrait {
-  position: relative;
-  z-index: 1;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: 11px;
-}
-
-/* ANIMATED HUNTER AURA */
-
-.equipment-layout .hunter-aura {
-  position: absolute;
-  z-index: 0;
-  inset: -22px;
-  border-radius: 50%;
-
-  background: radial-gradient(
-    ellipse,
-    rgba(0, 174, 255, 0.55) 0%,
-    rgba(0, 100, 255, 0.25) 40%,
-    transparent 72%
-  );
-
-  filter: blur(22px);
-  opacity: 0.75;
-  animation: hunterEnergy 3s ease-in-out infinite alternate;
-  pointer-events: none;
-}
-
-@keyframes hunterEnergy {
-  0% {
-    opacity: 0.45;
-    transform: scale(0.92);
-    filter: blur(20px);
-  }
-
-  100% {
-    opacity: 0.95;
-    transform: scale(1.12);
-    filter: blur(28px);
-  }
-}
-
-/* HUNTER INFORMATION */
-
-.equipment-layout .hunter-portrait-info {
-  margin-top: 22px;
-}
-
-.equipment-layout .hunter-portrait-info > span {
-  color: #4fc5ff;
-  font-size: 11px;
-  letter-spacing: 4px;
-}
-
-.equipment-layout .hunter-portrait-info h2 {
-  margin: 10px 0;
-  color: #eaf5ff;
-  font-size: 25px;
-  letter-spacing: 2px;
-  text-shadow: 0 0 12px rgba(0, 170, 255, 0.4);
-}
-
-.equipment-layout .hunter-portrait-info p {
-  color: #55c7ff;
-  font-size: 12px;
-  letter-spacing: 2px;
-}
-
-/* RESPONSIVE */
-
-@media (max-width: 850px) {
-  .equipment-layout {
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
-  }
-
-  .equipment-layout .hunter-portrait-container {
-    grid-column: 1 / -1;
-    grid-row: 1;
-  }
-
-  .equipment-left {
-    align-items: stretch;
-  }
-
-  .equipment-right {
-    align-items: stretch;
-  }
-
-  .equipment-layout .equipment-slot {
-    max-width: none;
-  }
-}
-
-@media (max-width: 480px) {
-  .equipment-layout {
-    gap: 12px;
-  }
-
-  .equipment-layout .hunter-portrait-frame {
-    width: 190px;
-    height: 245px;
-  }
-
-  .equipment-layout .equipment-slot {
-    min-height: 75px;
-    padding: 10px;
-  }
-}
