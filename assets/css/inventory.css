@@ -866,6 +866,7 @@
   }
 }
 
+
 /* ========================================
    MY ITEMS - ACTIONS & ENHANCEMENT
 ======================================== */
@@ -875,6 +876,7 @@
 #inventoryItems .inventory-item {
   display: flex;
   flex-direction: column;
+  align-items: stretch;
   min-width: 0;
   height: 100%;
   box-sizing: border-box;
@@ -905,15 +907,14 @@
   border-top: 1px solid #233d55;
 }
 
-/* ITEM ENHANCEMENT LEVEL */
+/* ENHANCEMENT LEVEL */
 
 #inventoryItems .enhancement-level-badge {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 5px;
   width: fit-content;
-  margin-top: 12px;
+  margin: 0;
   padding: 6px 11px;
   background: rgba(116, 76, 190, 0.16);
   border: 1px solid rgba(157, 119, 232, 0.5);
@@ -922,28 +923,9 @@
   font-size: 11px;
   font-weight: 800;
   letter-spacing: 1px;
-  text-shadow: 0 0 8px rgba(157, 119, 232, 0.3);
 }
 
-/* ITEM ENHANCEMENT COST */
-
-#inventoryItems .enhance-cost {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: fit-content;
-  margin: 10px 0 0;
-  padding: 6px 9px;
-  background: rgba(255, 196, 92, 0.08);
-  border: 1px solid rgba(255, 196, 92, 0.3);
-  border-radius: 5px;
-  color: #ffd477;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.8px;
-}
-
-/* ALL ITEM ACTION BUTTONS */
+/* ALL ACTION BUTTONS */
 
 #inventoryItems .inventory-action {
   display: flex;
@@ -952,7 +934,7 @@
   width: 100%;
   min-height: 42px;
   box-sizing: border-box;
-  margin-top: 15px;
+  margin-top: 12px;
   padding: 11px 14px;
   border-radius: 5px;
   font-family: inherit;
@@ -974,7 +956,7 @@
 
 #inventoryItems .equip-button:hover {
   background: #1689c5;
-  color: #ffffff;
+  color: #fff;
   box-shadow: 0 0 15px rgba(57, 186, 255, 0.3);
 }
 
@@ -988,27 +970,56 @@
 
 #inventoryItems .unequip-button:hover {
   background: #a87524;
-  color: #ffffff;
+  color: #fff;
   box-shadow: 0 0 15px rgba(255, 196, 92, 0.25);
 }
 
 /* ENHANCE */
 
-#inventoryItems .enhance-button {
+#inventoryItems .inventory-action.enhance-button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-height: 68px;
+  padding: 10px;
   background: linear-gradient(135deg, #392b70, #6546a5);
   border: 1px solid #9878e8;
-  color: #ffffff;
+  color: #fff;
   box-shadow: 0 0 12px rgba(101, 70, 165, 0.2);
 }
 
-#inventoryItems .enhance-button:hover {
+#inventoryItems .inventory-action.enhance-button:hover {
   background: linear-gradient(135deg, #503a91, #8060c9);
   border-color: #c7a8ff;
   box-shadow: 0 0 18px rgba(128, 96, 201, 0.4);
   transform: translateY(-2px);
 }
 
-/* DISABLED BUTTONS */
+#inventoryItems .enhance-icon {
+  color: #e0caff;
+  font-size: 14px;
+}
+
+#inventoryItems .enhance-cost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: fit-content;
+  margin: 0;
+  padding: 4px 9px;
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(197, 165, 255, 0.3);
+  border-radius: 4px;
+  color: #e2d4ff;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  white-space: nowrap;
+}
+
+/* DISABLED */
 
 #inventoryItems .inventory-action:disabled {
   opacity: 0.45;
