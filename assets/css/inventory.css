@@ -424,107 +424,188 @@
   cursor: not-allowed;
 }
 
-<section class="equipment-section">
+/* ========================================
+   HUNTER EQUIPMENT - RPG DISPLAY
+======================================== */
 
-  <div class="section-heading">
-    <h2>HUNTER EQUIPMENT</h2>
-    <span>[ EQUIPMENT STATUS ]</span>
-  </div>
+.equipment-section {
+  margin-top: 35px;
+  padding: 25px;
+  background: #0a1928;
+  border: 1px solid #1b3851;
+  border-radius: 10px;
+}
 
-  <div class="equipment-layout">
+.equipment-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(230px, 1.1fr) minmax(0, 1fr);
+  align-items: center;
+  gap: 22px;
+  max-width: 1000px;
+  margin: 30px auto;
+}
 
-    <!-- LEFT SLOTS -->
-    <div class="equipment-column equipment-left">
+.equipment-column {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
 
-      <div class="equipment-slot" data-slot="weapon">
-        <span>⚔️</span>
-        <strong>WEAPON</strong>
-        <small>EMPTY</small>
-      </div>
+.equipment-left {
+  align-items: flex-end;
+}
 
-      <div class="equipment-slot" data-slot="head">
-        <span>🪖</span>
-        <strong>HEAD</strong>
-        <small>EMPTY</small>
-      </div>
+.equipment-right {
+  align-items: flex-start;
+}
 
-      <div class="equipment-slot" data-slot="chest">
-        <span>🛡️</span>
-        <strong>CHEST</strong>
-        <small>EMPTY</small>
-      </div>
+.equipment-layout .equipment-slot {
+  width: 100%;
+  max-width: 210px;
+  min-height: 82px;
+  box-sizing: border-box;
+  padding: 12px 15px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  background: linear-gradient(145deg, #112b40, #091725);
+  border: 1px solid #29445d;
+  border-radius: 8px;
+  transition: 0.25s ease;
+}
 
-      <div class="equipment-slot" data-slot="hands">
-        <span>🧤</span>
-        <strong>HANDS</strong>
-        <small>EMPTY</small>
-      </div>
+.equipment-layout .equipment-slot:hover {
+  border-color: #39baff;
+  box-shadow: 0 0 15px rgba(57, 186, 255, 0.2);
+  transform: translateY(-2px);
+}
 
-    </div>
+.equipment-layout .equipment-slot > span {
+  font-size: 19px;
+}
 
-    <!-- CENTER PORTRAIT -->
-    <div class="hunter-portrait-container">
+.equipment-layout .equipment-slot strong {
+  color: #65caff;
+  font-size: 11px;
+  letter-spacing: 1.5px;
+}
 
-      <div class="hunter-portrait-frame">
+.equipment-layout .equipment-slot small {
+  color: #8297ad;
+  font-size: 10px;
+}
 
-        <img
-          src="images/hunter-portrait.png"
-          alt="Hunter Portrait"
-          class="hunter-portrait"
-        />
+.equipment-layout .hunter-portrait-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 15px 0;
+  margin: 0;
+}
 
-        <div class="hunter-aura"></div>
+.equipment-layout .hunter-portrait-frame {
+  position: relative;
+  isolation: isolate;
+  width: 230px;
+  height: 290px;
+  overflow: visible;
+  border: 1px solid #39baff;
+  border-radius: 9px;
+  box-shadow: 0 0 20px rgba(57, 186, 255, 0.25);
+}
 
-      </div>
+.equipment-layout .hunter-portrait {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+  border-radius: 8px;
+  position: relative;
+  z-index: 1;
+}
 
-      <div class="hunter-portrait-info">
-        <span>AWAKENED HUNTER</span>
-        <h2 id="equipmentHunterName">HUNTER</h2>
+.equipment-layout .hunter-aura {
+  position: absolute;
+  z-index: 0;
+  inset: -20px;
+  border-radius: 50%;
+  background: radial-gradient(
+    ellipse,
+    rgba(0, 174, 255, 0.5),
+    rgba(0, 100, 255, 0.2) 45%,
+    transparent 72%
+  );
+  filter: blur(22px);
+  animation: hunterEnergy 3s ease-in-out infinite alternate;
+  pointer-events: none;
+}
 
-        <p>
-          <span id="equipmentHunterRank">RANK E</span>
-          ·
-          <span id="equipmentHunterLevel">LV. 1</span>
-        </p>
-      </div>
+@keyframes hunterEnergy {
+  from {
+    opacity: 0.4;
+    transform: scale(0.92);
+  }
+  to {
+    opacity: 0.9;
+    transform: scale(1.1);
+  }
+}
 
-    </div>
+.equipment-layout .hunter-portrait-info {
+  margin-top: 20px;
+}
 
-    <!-- RIGHT SLOTS -->
-    <div class="equipment-column equipment-right">
+.equipment-layout .hunter-portrait-info > span {
+  color: #65caff;
+  font-size: 10px;
+  letter-spacing: 3px;
+}
 
-      <div class="equipment-slot" data-slot="legs">
-        <span>👖</span>
-        <strong>LEGS</strong>
-        <small>EMPTY</small>
-      </div>
+.equipment-layout .hunter-portrait-info h2 {
+  color: #fff;
+  font-size: 22px;
+  letter-spacing: 3px;
+  margin: 8px 0;
+}
 
-      <div class="equipment-slot" data-slot="feet">
-        <span>🥾</span>
-        <strong>FEET</strong>
-        <small>EMPTY</small>
-      </div>
+.equipment-layout .hunter-portrait-info p {
+  color: #65caff;
+  font-size: 11px;
+  letter-spacing: 2px;
+}
 
-      <div class="equipment-slot" data-slot="ring">
-        <span>💍</span>
-        <strong>RING</strong>
-        <small>EMPTY</small>
-      </div>
+@media (max-width: 750px) {
+  .equipment-layout {
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
 
-      <div class="equipment-slot" data-slot="neck">
-        <span>📿</span>
-        <strong>NECK</strong>
-        <small>EMPTY</small>
-      </div>
+  .equipment-layout .hunter-portrait-container {
+    grid-column: 1 / -1;
+    grid-row: 1;
+  }
 
-      <div class="equipment-slot" data-slot="charm">
-        <span>🔮</span>
-        <strong>CHARM</strong>
-        <small>EMPTY</small>
-      </div>
+  .equipment-left,
+  .equipment-right {
+    align-items: stretch;
+  }
 
-    </div>
+  .equipment-layout .equipment-slot {
+    max-width: none;
+  }
+}
 
-  </div>
+@media (max-width: 480px) {
+  .equipment-layout .hunter-portrait-frame {
+    width: 190px;
+    height: 245px;
+  }
 
-</section>
+  .equipment-layout .equipment-slot {
+    min-height: 75px;
+    padding: 9px;
+  }
+}
+
