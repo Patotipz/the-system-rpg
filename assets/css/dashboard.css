@@ -779,3 +779,67 @@ button:disabled {
     padding: 15px;
   }
 }
+/* =========================================
+   ACTIVITY LOG
+========================================= */
+
+.activity-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  padding: 18px 20px;
+  background: var(--surface-2);
+  border-left: 3px solid var(--blue);
+  border-bottom: 1px solid var(--border);
+  transition: background 0.2s ease;
+}
+
+.activity-card:hover {
+  background: var(--surface);
+}
+
+.activity-info {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.activity-title {
+  color: var(--blue-light);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 2px;
+}
+
+.activity-description {
+  color: #ffffff;
+  font-size: 13px;
+  margin: 0;
+}
+
+.activity-date {
+  color: var(--muted);
+  font-size: 10px;
+  letter-spacing: 1px;
+}
+
+.activity-xp {
+  color: #8bffb0;
+  font-size: 16px;
+  font-weight: 900;
+  white-space: nowrap;
+  text-shadow: 0 0 10px #8bffb044;
+}
+
+@media (max-width: 600px) {
+  .activity-card {
+    padding: 15px;
+    gap: 10px;
+  }
+
+  .activity-xp {
+    font-size: 14px;
+  }
+}
