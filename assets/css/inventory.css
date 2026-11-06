@@ -608,4 +608,14 @@
     padding: 9px;
   }
 }
+.inventory-filter-container {
+  display: flex;
+  justify-content: flex-start;
+  width: 100%;
+  margin: 20px 0;
+}
 
+.inventory-filter-container select {
+  width: 220px;
+  max-width: 100%;
+}
