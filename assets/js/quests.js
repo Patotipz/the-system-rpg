@@ -170,7 +170,8 @@ async function initialize() {
   }
 
   await loadProfile();
-  await loadQuests();
+await loadQuestEnergy();
+await loadQuests();
   startDailyRefresh();
 }
 
@@ -185,6 +186,31 @@ async function loadProfile() {
 
   rankElement.textContent = `RANK ${data.rank}`;
   levelElement.textContent = `LV. ${data.level}`;
+}
+
+async function loadQuestEnergy() {
+  const { data, error } = await supabase
+    .from("player_stats")
+    .select("energy, max_energy")
+    .eq("user_id", currentUser.id)
+    .single();
+
+  if (error) throw error;
+
+  const energy = Number(data.energy || 0);
+  const maxEnergy = Number(data.max_energy || 0);
+
+  const percentage = maxEnergy > 0
+    ? Math.min(100, (energy / maxEnergy) * 100)
+    : 0;
+
+  document.getElementById("questEnergyValue").textContent = energy;
+  document.getElementById("questEnergyMax").textContent = maxEnergy;
+  document.getElementById("questEnergyBar").style.width =
+    `${percentage}%`;
+
+  document.getElementById("questEnergyPercentage").textContent =
+    `${Math.round(percentage)}% AVAILABLE`;
 }
 
 async function loadQuests() {
@@ -713,8 +739,8 @@ message.textContent =
     }
 
     await loadQuests();
-    await loadProfile();
-
+await loadProfile();
+await loadQuestEnergy();
   } catch (error) {
   console.error(error);
 
