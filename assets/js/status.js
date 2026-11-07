@@ -52,17 +52,16 @@ function setBar(id, percentage) {
 // ATTRIBUTES
 // =========================================
 
+
 function renderAttributes(hunterStats) {
   const container = document.getElementById("statusStatsList");
-
-  if (!container) return;
-
   container.replaceChildren();
 
   attributes.forEach(({ key, label }) => {
-    const base = hunterStats.base_stats[key] ?? 0;
-    const bonus = hunterStats.equipment_bonus[key] ?? 0;
-    const total = hunterStats.total_stats[key] ?? 0;
+    const base = Number(hunterStats.base_stats?.[key] ?? 0);
+    const equipment = Number(hunterStats.equipment_bonus?.[key] ?? 0);
+    const effects = Number(hunterStats.active_effects?.[key] ?? 0);
+    const total = Number(hunterStats.total_stats?.[key] ?? 0);
 
     const card = document.createElement("div");
     card.className = "status-stat-card";
@@ -81,14 +80,23 @@ function renderAttributes(hunterStats) {
     const baseValue = document.createElement("span");
     baseValue.textContent = `BASE ${base}`;
 
-    const bonusValue = document.createElement("span");
-    bonusValue.textContent = `EQUIPMENT +${bonus}`;
+    const equipmentValue = document.createElement("span");
+    equipmentValue.textContent = `EQUIPMENT +${equipment}`;
 
-    breakdown.append(baseValue, bonusValue);
+    const effectsValue = document.createElement("span");
+    effectsValue.textContent = `ACTIVE EFFECTS +${effects}`;
+
+    breakdown.append(
+      baseValue,
+      equipmentValue,
+      effectsValue
+    );
+
     card.append(name, totalValue, breakdown);
     container.appendChild(card);
   });
 }
+
 
 // =========================================
 // EQUIPMENT
