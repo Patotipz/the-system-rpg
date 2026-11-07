@@ -55,25 +55,44 @@
       </p>
     </section>
 
-    <section class="quest-summary">
-      <article class="resource-card">
-        <span>⚔</span>
-        <p>ACTIVE QUESTS</p>
-        <h2 id="activeQuestCount">0</h2>
-      </article>
+    
+<section class="quest-summary">
 
-      <article class="resource-card">
-        <span>✦</span>
-        <p>AVAILABLE QUESTS</p>
-        <h2 id="availableQuestCount">0</h2>
-      </article>
+  <article class="resource-card">
+    <span>⚔</span>
+    <p>ACTIVE QUESTS</p>
+    <h2 id="activeQuestCount">0</h2>
+  </article>
 
-      <article class="resource-card">
-        <span>🏆</span>
-        <p>COMPLETED QUESTS</p>
-        <h2 id="completedQuestCount">0</h2>
-      </article>
-    </section>
+  <article class="resource-card">
+    <span>✦</span>
+    <p>AVAILABLE QUESTS</p>
+    <h2 id="availableQuestCount">0</h2>
+  </article>
+
+  <article class="resource-card">
+    <span>🏆</span>
+    <p>COMPLETED QUESTS</p>
+    <h2 id="completedQuestCount">0</h2>
+  </article>
+
+  <article class="resource-card quest-energy-card">
+    <span>⚡</span>
+    <p>HUNTER ENERGY</p>
+    <h2>
+      <span id="questEnergyValue">--</span>
+      <small>/ <span id="questEnergyMax">--</span></small>
+    </h2>
+
+    <div class="quest-energy-track">
+      <div id="questEnergyBar" class="quest-energy-fill"></div>
+    </div>
+
+    <small id="questEnergyPercentage">LOADING...</small>
+  </article>
+
+</section>
+
 <!-- FEATURED QUESTS -->
 <section class="quest-section featured-section">
 
