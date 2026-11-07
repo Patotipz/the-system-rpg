@@ -12,29 +12,27 @@
 
 <body>
 
- 
-<aside class="sidebar">
-  <div class="logo">THE <span>SYSTEM</span></div>
+  <aside class="sidebar">
+    <div class="logo">THE <span>SYSTEM</span></div>
 
-  <div class="menu-label">MAIN MENU</div>
+    <div class="menu-label">MAIN MENU</div>
 
-  <nav>
-    <a href="dashboard.html" class="nav-link">◈ DASHBOARD</a>
-    <a href="status.html" class="nav-link active">▣ STATUS</a>
-    <a href="quests.html" class="nav-link">⚔ QUESTS</a>
-    <a href="shop.html" class="nav-link">🛒 SHOP</a>
-    <a href="inventory.html" class="nav-link">▤ INVENTORY</a>
-    <a href="achievements.html" class="nav-link">♛ ACHIEVEMENTS</a>
-    <a href="guild.html" class="nav-link">♜ GUILD</a>
-    <a href="dashboard.html#activity" class="nav-link">◷ ACTIVITY</a>
-  </nav>
+    <nav>
+      <a href="dashboard.html" class="nav-link">◈ DASHBOARD</a>
+      <a href="status.html" class="nav-link active">▣ STATUS</a>
+      <a href="quests.html" class="nav-link">⚔ QUESTS</a>
+      <a href="shop.html" class="nav-link">🛒 SHOP</a>
+      <a href="inventory.html" class="nav-link">▤ INVENTORY</a>
+      <a href="achievements.html" class="nav-link">♛ ACHIEVEMENTS</a>
+      <a href="guild.html" class="nav-link">♜ GUILD</a>
+      <a href="dashboard.html#activity" class="nav-link">◷ ACTIVITY</a>
+    </nav>
 
-  <div class="sidebar-bottom">
-    <button id="logoutButton">↪ LOG OUT</button>
-    <p>SYSTEM VERSION 1.0</p>
-  </div>
-</aside>
-
+    <div class="sidebar-bottom">
+      <button id="logoutButton">↪ LOG OUT</button>
+      <p>SYSTEM VERSION 1.0</p>
+    </div>
+  </aside>
 
   <main class="main-content status-page">
 
@@ -43,6 +41,7 @@
         <span class="system-label">HUNTER DATABASE</span>
         <h1>STATUS WINDOW</h1>
       </div>
+
       <div id="statusMessage" class="muted">
         LOADING HUNTER DATA...
       </div>
@@ -55,6 +54,7 @@
       <div class="hunter-profile-info">
         <span class="system-label">HUNTER PROFILE</span>
         <h2 id="statusName">---</h2>
+
         <div class="hunter-profile-meta">
           <span id="statusRank">RANK --</span>
           <span id="statusLevel">LV. --</span>
@@ -66,9 +66,11 @@
             <span>EXPERIENCE</span>
             <strong id="statusXP">0 XP</strong>
           </div>
+
           <div class="progress-track">
             <div id="statusXPBar" class="progress-fill"></div>
           </div>
+
           <span id="statusXPNext" class="muted"></span>
         </div>
       </div>
@@ -79,9 +81,11 @@
       <h2 class="panel-heading">HUNTER RESOURCES</h2>
 
       <div class="status-resource-grid">
+
         <div class="panel status-resource-card">
           <span class="system-label">HEALTH POINTS</span>
           <strong id="statusHP">0</strong>
+
           <div class="resource-track hp-track">
             <div id="statusHPBar" class="resource-fill"></div>
           </div>
@@ -90,9 +94,22 @@
         <div class="panel status-resource-card">
           <span class="system-label">ENERGY</span>
           <strong id="statusEnergy">0</strong>
+
           <div class="resource-track energy-track">
             <div id="statusEnergyBar" class="resource-fill"></div>
           </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ACTIVE EFFECTS -->
+    <section class="status-section active-effects-section">
+      <h2 class="panel-heading">ACTIVE EFFECTS</h2>
+
+      <div id="statusActiveEffects" class="active-effects-grid">
+        <div class="status-empty">
+          LOADING ACTIVE EFFECTS...
         </div>
       </div>
     </section>
@@ -100,12 +117,14 @@
     <!-- ATTRIBUTES -->
     <section class="status-section">
       <h2 class="panel-heading">HUNTER ATTRIBUTES</h2>
+
       <div id="statusStatsList" class="status-stats-grid"></div>
     </section>
 
     <!-- EQUIPMENT -->
     <section class="status-section">
       <h2 class="panel-heading">EQUIPMENT STATUS</h2>
+
       <div id="statusEquipmentList" class="status-equipment-grid"></div>
     </section>
 
@@ -114,6 +133,7 @@
       <h2 class="panel-heading">HUNTER PROGRESSION</h2>
 
       <div class="status-progression-grid">
+
         <div class="panel progression-card">
           <span class="system-label">CURRENT STREAK</span>
           <strong id="statusCurrentStreak">0</strong>
@@ -131,6 +151,7 @@
           <strong id="statusAchievements">0</strong>
           <span class="muted">UNLOCKED</span>
         </div>
+
       </div>
     </section>
 
@@ -140,7 +161,9 @@
 
       <div class="panel training-placeholder">
         <span class="system-label">TRAINING DATABASE</span>
+
         <h3>TRAINING RECORDS NOT CONNECTED</h3>
+
         <p class="muted">
           Running distance, workouts, personal records and physical
           performance will appear here once the training module is created.
@@ -151,5 +174,6 @@
   </main>
 
   <script type="module" src="assets/js/status.js"></script>
+
 </body>
 </html>
