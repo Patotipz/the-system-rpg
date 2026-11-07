@@ -188,9 +188,24 @@ async function loadProfile() {
 }
 
 async function loadQuests() {
-  const { data: questData, error: questError } = await supabase
-    .from("quests")
-    .select("id, title, description, quest_type, difficulty, xp_reward, coin_reward");
+  const { data: assignedData, error: assignedError } = await supabase
+  .from("user_quests")
+  .select(`
+    id,
+    quest_id,
+    status,
+    assigned_at,
+    quests(
+      title,
+      description,
+      quest_type,
+      difficulty,
+      xp_reward,
+      coin_reward,
+      energy_cost
+    )
+  `)
+  .eq("user_id", currentUser.id);
 
   if (questError) throw questError;
 
@@ -369,9 +384,10 @@ function renderAvailable(quests) {
         <p>${q.description || "No description available."}</p>
 
         <div class="quest-rewards">
-          <span>✦ +${q.xp_reward} XP</span>
-          <span>◈ +${q.coin_reward} COINS</span>
-        </div>
+  <span>✦ +${q.xp_reward} XP</span>
+  <span>◈ +${q.coin_reward} COINS</span>
+  <span>⚡ ${Number(q.energy_cost || 0)} ENERGY</span>
+</div>
 
         <button class="quest-action" data-quest-id="${q.id}">
           ACCEPT QUEST
@@ -429,9 +445,10 @@ function renderFeatured(quests) {
         <p>${q.description || "No description available."}</p>
 
         <div class="quest-rewards">
-          <span>✦ +${q.xp_reward} XP</span>
-          <span>◈ +${q.coin_reward} COINS</span>
-        </div>
+  <span>✦ +${q.xp_reward} XP</span>
+  <span>◈ +${q.coin_reward} COINS</span>
+  <span>⚡ ${Number(q.energy_cost || 0)} ENERGY</span>
+</div>
 
         <button class="quest-action" data-featured-quest-id="${q.id}">
           ACCEPT QUEST
@@ -516,9 +533,10 @@ function renderMyQuests(quests) {
         <p>${quest.description || ""}</p>
 
         <div class="quest-rewards">
-          <span>✦ +${quest.xp_reward} XP</span>
-          <span>◈ +${quest.coin_reward} COINS</span>
-        </div>
+  <span>✦ +${quest.xp_reward} XP</span>
+  <span>◈ +${quest.coin_reward} COINS</span>
+  <span>⚡ ${Number(quest.energy_cost || 0)} ENERGY</span>
+</div>
 
         <div class="quest-progress">
   <div class="quest-progress-info">
@@ -635,7 +653,12 @@ myQuestsContainer.addEventListener("click", async event => {
 
       if (error) throw error;
 
-      message.textContent = "QUEST COMPLETED. CLAIM YOUR REWARDS.";
+      const energySpent = Number(data?.energy_spent ?? 0);
+const energyRemaining = Number(data?.energy_remaining ?? 0);
+
+message.textContent =
+  `QUEST COMPLETED. -${energySpent} ENERGY. ` +
+  `${energyRemaining} ENERGY REMAINING.`;
 
       showAchievementNotifications(data?.achievements || []);
     }
@@ -693,9 +716,19 @@ myQuestsContainer.addEventListener("click", async event => {
     await loadProfile();
 
   } catch (error) {
-    console.error(error);
-    message.textContent = error.message;
+  console.error(error);
+
+  const errorMessage = error.message || "";
+
+  if (errorMessage.includes("Not enough energy")) {
+    message.textContent =
+      "INSUFFICIENT ENERGY. RESTORE YOUR ENERGY BEFORE COMPLETING THIS QUEST.";
+  } else {
+    message.textContent = errorMessage;
   }
+
+  await loadQuests();
+}
 });
 
 
