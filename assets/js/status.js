@@ -180,27 +180,31 @@ function renderEquipment(items) {
 // HP AND ENERGY
 // =========================================
 
+
 function renderResources(resources) {
   const hp = Number(resources.hp ?? 0);
   const maxHP = Number(resources.max_hp ?? 100);
-
   const energy = Number(resources.energy ?? 0);
   const maxEnergy = Number(resources.max_energy ?? 100);
 
-  const hpPercentage = maxHP > 0
-    ? (hp / maxHP) * 100
-    : 0;
+  const exhausted = Boolean(resources.exhausted);
 
-  const energyPercentage = maxEnergy > 0
-    ? (energy / maxEnergy) * 100
-    : 0;
+  const hpPercentage = maxHP > 0 ? (hp / maxHP) * 100 : 0;
+  const energyPercentage = maxEnergy > 0 ? (energy / maxEnergy) * 100 : 0;
 
   setText("statusHP", `${hp} / ${maxHP}`);
   setText("statusEnergy", `${energy} / ${maxEnergy}`);
 
   setBar("statusHPBar", hpPercentage);
   setBar("statusEnergyBar", energyPercentage);
+
+  const conditionBadge = document.getElementById("statusCondition");
+
+  if (conditionBadge) {
+    conditionBadge.hidden = !exhausted;
+  }
 }
+
 
 async function loadPlayerResources(userId) {
 
@@ -214,7 +218,7 @@ async function loadPlayerResources(userId) {
   // Retrieve updated resources
   const { data, error } = await supabase
     .from("player_stats")
-    .select("hp, max_hp, energy, max_energy")
+    .select("hp, max_hp, energy, max_energy, exhausted")
     .eq("user_id", userId)
     .single();
 
