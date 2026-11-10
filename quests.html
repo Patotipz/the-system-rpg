@@ -10,29 +10,27 @@
 </head>
 <body>
 
-  
-<aside class="sidebar">
-  <div class="logo">THE <span>SYSTEM</span></div>
+  <aside class="sidebar">
+    <div class="logo">THE <span>SYSTEM</span></div>
 
-  <div class="menu-label">MAIN MENU</div>
+    <div class="menu-label">MAIN MENU</div>
 
-<nav>
-  <a href="dashboard.html" class="nav-link">◈ DASHBOARD</a>
-  <a href="status.html" class="nav-link">▣ STATUS</a>
-  <a href="quests.html" class="nav-link active">⚔ QUESTS</a>
-  <a href="shop.html" class="nav-link">🛒 SHOP</a>
-  <a href="inventory.html" class="nav-link">▤ INVENTORY</a>
-  <a href="achievements.html" class="nav-link">♛ ACHIEVEMENTS</a>
-  <a href="guild.html" class="nav-link">♜ GUILD</a>
-  <a href="#activity" class="nav-link">◷ ACTIVITY</a>
-</nav>
+    <nav>
+      <a href="dashboard.html" class="nav-link">◈ DASHBOARD</a>
+      <a href="status.html" class="nav-link">▣ STATUS</a>
+      <a href="quests.html" class="nav-link active">⚔ QUESTS</a>
+      <a href="shop.html" class="nav-link">🛒 SHOP</a>
+      <a href="inventory.html" class="nav-link">▤ INVENTORY</a>
+      <a href="achievements.html" class="nav-link">♛ ACHIEVEMENTS</a>
+      <a href="guild.html" class="nav-link">♜ GUILD</a>
+      <a href="#activity" class="nav-link">◷ ACTIVITY</a>
+    </nav>
 
-  <div class="sidebar-bottom">
-    <button id="logoutButton">↪ LOG OUT</button>
-    <p>SYSTEM VERSION 1.0</p>
-  </div>
-</aside>
-
+    <div class="sidebar-bottom">
+      <button id="logoutButton">↪ LOG OUT</button>
+      <p>SYSTEM VERSION 1.0</p>
+    </div>
+  </aside>
 
   <main class="main-content">
 
@@ -55,78 +53,106 @@
       </p>
     </section>
 
-    
-<section class="quest-summary">
+    <section class="quest-summary">
 
-  <article class="resource-card">
-    <span>⚔</span>
-    <p>ACTIVE QUESTS</p>
-    <h2 id="activeQuestCount">0</h2>
-  </article>
+      <article class="resource-card">
+        <span>⚔</span>
+        <p>ACTIVE QUESTS</p>
+        <h2 id="activeQuestCount">0</h2>
+      </article>
 
-  <article class="resource-card">
-    <span>✦</span>
-    <p>AVAILABLE QUESTS</p>
-    <h2 id="availableQuestCount">0</h2>
-  </article>
+      <article class="resource-card">
+        <span>✦</span>
+        <p>AVAILABLE QUESTS</p>
+        <h2 id="availableQuestCount">0</h2>
+      </article>
 
-  <article class="resource-card">
-    <span>🏆</span>
-    <p>COMPLETED QUESTS</p>
-    <h2 id="completedQuestCount">0</h2>
-  </article>
+      <article class="resource-card">
+        <span>🏆</span>
+        <p>COMPLETED QUESTS</p>
+        <h2 id="completedQuestCount">0</h2>
+      </article>
 
-  <article class="resource-card quest-energy-card">
-    <span>⚡</span>
-    <p>HUNTER ENERGY</p>
-    <h2>
-      <span id="questEnergyValue">--</span>
-      <small>/ <span id="questEnergyMax">--</span></small>
-    </h2>
+      <!-- HUNTER HP -->
+      <article class="resource-card quest-hp-card">
+        <span>❤</span>
+        <p>HUNTER HP</p>
 
-    <div class="quest-energy-track">
-      <div id="questEnergyBar" class="quest-energy-fill"></div>
-    </div>
+        <h2>
+          <span id="questHPValue">--</span>
+          <small>/ <span id="questHPMax">--</span></small>
+        </h2>
 
-    <small id="questEnergyPercentage">LOADING...</small>
-  </article>
+        <div class="quest-hp-track">
+          <div id="questHPBar" class="quest-hp-fill"></div>
+        </div>
 
-</section>
+        <small id="questHPPercentage">LOADING...</small>
 
-<!-- FEATURED QUESTS -->
-<section class="quest-section featured-section">
+        <div id="questExhaustedWarning" class="quest-exhausted-warning" hidden>
+          ⚠ EXHAUSTED — RECOVER TO 50% HP
+        </div>
+      </article>
 
-  <div class="quest-section-heading">
-    <h2>FEATURED QUESTS</h2>
-    <span>[ HIGH PRIORITY MISSIONS ]</span>
-  </div>
+      <!-- HUNTER ENERGY -->
+      <article class="resource-card quest-energy-card">
+        <span>⚡</span>
+        <p>HUNTER ENERGY</p>
 
-  <div id="featuredQuests" class="quest-grid">
-    <p class="muted">Loading featured missions...</p>
-  </div>
+        <h2>
+          <span id="questEnergyValue">--</span>
+          <small>/ <span id="questEnergyMax">--</span></small>
+        </h2>
 
-</section>
+        <div class="quest-energy-track">
+          <div id="questEnergyBar" class="quest-energy-fill"></div>
+        </div>
+
+        <small id="questEnergyPercentage">LOADING...</small>
+      </article>
+
+    </section>
+
+    <!-- FEATURED QUESTS -->
+    <section class="quest-section featured-section">
+
+      <div class="quest-section-heading">
+        <h2>FEATURED QUESTS</h2>
+        <span>[ HIGH PRIORITY MISSIONS ]</span>
+      </div>
+
+      <div id="featuredQuests" class="quest-grid">
+        <p class="muted">Loading featured missions...</p>
+      </div>
+
+    </section>
+
+    <!-- AVAILABLE QUESTS -->
     <section class="quest-section">
+
       <div class="quest-section-heading">
         <h2>AVAILABLE MISSIONS</h2>
         <span>QUEST CATALOG</span>
       </div>
 
-    <div class="quest-filters">
-  <button class="filter-button active" data-filter="all">ALL</button>
-  <button class="filter-button" data-filter="daily">DAILY</button>
-  <button class="filter-button" data-filter="weekly">WEEKLY</button>
-  <button class="filter-button" data-filter="special">SPECIAL</button>
-  <button class="filter-button" data-filter="main">MAIN</button>
-  <button class="filter-button" data-filter="dungeon">DUNGEON</button>
-</div>
+      <div class="quest-filters">
+        <button class="filter-button active" data-filter="all">ALL</button>
+        <button class="filter-button" data-filter="daily">DAILY</button>
+        <button class="filter-button" data-filter="weekly">WEEKLY</button>
+        <button class="filter-button" data-filter="special">SPECIAL</button>
+        <button class="filter-button" data-filter="main">MAIN</button>
+        <button class="filter-button" data-filter="dungeon">DUNGEON</button>
+      </div>
 
       <div id="availableQuests" class="quest-grid">
         <p class="muted">Loading available missions...</p>
       </div>
+
     </section>
 
+    <!-- MY QUESTS -->
     <section class="quest-section">
+
       <div class="quest-section-heading">
         <h2>MY ACTIVE QUESTS</h2>
         <span>YOUR MISSIONS</span>
@@ -135,46 +161,49 @@
       <div id="myQuests" class="quest-grid">
         <p class="muted">Loading your missions...</p>
       </div>
+
     </section>
 
     <p id="questMessage" class="system-label"></p>
 
   </main>
-<!-- ACHIEVEMENT UNLOCKED MODAL -->
-<div id="achievementModal" class="achievement-modal hidden">
 
-  <div class="achievement-modal-content">
+  <!-- ACHIEVEMENT UNLOCKED MODAL -->
+  <div id="achievementModal" class="achievement-modal hidden">
 
-    <p class="system-label">[ SYSTEM NOTIFICATION ]</p>
+    <div class="achievement-modal-content">
 
-    <div class="achievement-modal-icon" id="modalAchievementIcon">
-      🏆
+      <p class="system-label">[ SYSTEM NOTIFICATION ]</p>
+
+      <div class="achievement-modal-icon" id="modalAchievementIcon">
+        🏆
+      </div>
+
+      <p class="achievement-modal-label">
+        ACHIEVEMENT UNLOCKED
+      </p>
+
+      <h2 id="modalAchievementTitle">
+        AWAKENING
+      </h2>
+
+      <p id="modalAchievementDescription">
+        A new achievement has been unlocked.
+      </p>
+
+      <div class="achievement-modal-rewards">
+        <span id="modalAchievementXP">+50 XP</span>
+        <span id="modalAchievementCoins">+25 COINS</span>
+      </div>
+
+      <button id="closeAchievementModal" class="quest-action">
+        CONFIRM
+      </button>
+
     </div>
-
-    <p class="achievement-modal-label">
-      ACHIEVEMENT UNLOCKED
-    </p>
-
-    <h2 id="modalAchievementTitle">
-      AWAKENING
-    </h2>
-
-    <p id="modalAchievementDescription">
-      A new achievement has been unlocked.
-    </p>
-
-    <div class="achievement-modal-rewards">
-      <span id="modalAchievementXP">+50 XP</span>
-      <span id="modalAchievementCoins">+25 COINS</span>
-    </div>
-
-    <button id="closeAchievementModal" class="quest-action">
-      CONFIRM
-    </button>
 
   </div>
 
-</div>
   <script type="module" src="assets/js/quests.js"></script>
 
 </body>
