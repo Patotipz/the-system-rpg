@@ -1,0 +1,174 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>THE SYSTEM | Activity</title>
+
+  <link rel="stylesheet" href="assets/css/guild.css">
+  <link rel="stylesheet" href="assets/css/activity.css">
+</head>
+
+<body>
+
+  <aside class="sidebar">
+
+    <div class="logo">THE <span>SYSTEM</span></div>
+
+    <div class="menu-label">MAIN MENU</div>
+
+    <nav>
+      <a href="dashboard.html" class="nav-link">◈ DASHBOARD</a>
+      <a href="status.html" class="nav-link">▣ STATUS</a>
+      <a href="quests.html" class="nav-link">⚔ QUESTS</a>
+      <a href="shop.html" class="nav-link">🛒 SHOP</a>
+      <a href="inventory.html" class="nav-link">▤ INVENTORY</a>
+      <a href="achievements.html" class="nav-link">♛ ACHIEVEMENTS</a>
+      <a href="guild.html" class="nav-link">♜ GUILD</a>
+      <a href="activity.html" class="nav-link active">◷ ACTIVITY</a>
+    </nav>
+
+    <div class="sidebar-bottom">
+      <button id="logoutButton">↪ LOG OUT</button>
+      <p>SYSTEM VERSION 1.0</p>
+    </div>
+
+  </aside>
+
+  <main class="main-content">
+
+    <!-- HEADER -->
+
+    <header class="topbar">
+
+      <div>
+        <p class="system-label">[ HUNTER RECORDS ONLINE ]</p>
+        <h1>ACTIVITY LOG</h1>
+      </div>
+
+      <div class="activity-status">
+        <span>◉ PERSONAL HISTORY</span>
+      </div>
+
+    </header>
+
+    <!-- INTRO -->
+
+    <section class="activity-intro">
+
+      <p class="system-label">[ SYSTEM ARCHIVE ]</p>
+
+      <h2>YOUR JOURNEY</h2>
+
+      <p class="muted">
+        Every mission completed. Every achievement unlocked.
+        Every step towards becoming stronger.
+      </p>
+
+    </section>
+
+    <!-- STATISTICS -->
+
+    <section class="activity-stats">
+
+      <article class="activity-stat-card">
+        <span>◷</span>
+        <p>TOTAL ACTIVITIES</p>
+        <h2 id="totalActivities">--</h2>
+      </article>
+
+      <article class="activity-stat-card">
+        <span>✦</span>
+        <p>XP EARNED</p>
+        <h2 id="totalXP">--</h2>
+      </article>
+
+      <article class="activity-stat-card">
+        <span>⚔</span>
+        <p>QUEST COMPLETIONS</p>
+        <h2 id="questActivities">--</h2>
+      </article>
+
+      <article class="activity-stat-card">
+        <span>🏆</span>
+        <p>ACHIEVEMENTS</p>
+        <h2 id="achievementActivities">--</h2>
+      </article>
+
+    </section>
+
+    <!-- ACTIVITY HISTORY -->
+
+    <section class="panel activity-history-panel">
+
+      <div class="panel-heading">
+
+        <h2>ACTIVITY HISTORY</h2>
+
+        <span>PERSONAL EVENT RECORDS</span>
+
+      </div>
+
+      <!-- FILTERS -->
+
+      <div class="activity-filters">
+
+        <button
+          class="activity-filter active"
+          data-filter="all"
+        >
+          ALL EVENTS
+        </button>
+
+        <button
+          class="activity-filter"
+          data-filter="quest_completed"
+        >
+          QUESTS
+        </button>
+
+        <button
+          class="activity-filter"
+          data-filter="achievement_unlocked"
+        >
+          ACHIEVEMENTS
+        </button>
+
+      </div>
+
+      <!-- MESSAGE -->
+
+      <p id="activityMessage" class="system-label">
+        [ SYNCHRONIZING ACTIVITY RECORDS... ]
+      </p>
+
+      <!-- FEED -->
+
+      <div id="activityFeed">
+
+        <p class="muted">
+          Loading activity records...
+        </p>
+
+      </div>
+
+      <!-- LOAD MORE -->
+
+      <div class="activity-pagination">
+
+        <button id="loadMoreButton" hidden>
+          LOAD MORE RECORDS
+        </button>
+
+      </div>
+
+    </section>
+
+  </main>
+
+  <script type="module" src="assets/js/activity.js"></script>
+
+</body>
+</html>
