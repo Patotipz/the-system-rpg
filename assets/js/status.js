@@ -202,6 +202,29 @@ function renderResources(resources) {
   setBar("statusEnergyBar", energyPercentage);
 }
 
+async function loadPlayerResources(userId) {
+
+  // Apply passive HP and Energy regeneration
+  const { error: regenError } = await supabase.rpc(
+    "regenerate_player_resources"
+  );
+
+  if (regenError) throw regenError;
+
+  // Retrieve updated resources
+  const { data, error } = await supabase
+    .from("player_stats")
+    .select("hp, max_hp, energy, max_energy")
+    .eq("user_id", userId)
+    .single();
+
+  if (error) throw error;
+
+  renderResources(data);
+
+  return data;
+}
+
 // =========================================
 // ACTIVE EFFECTS
 // =========================================
@@ -438,16 +461,17 @@ async function initializeStatus() {
 
     // 4. LOAD HP AND ENERGY
 
-    const { data: resources, error: resourcesError } =
-      await supabase
-        .from("player_stats")
-        .select("hp, max_hp, energy, max_energy")
-        .eq("user_id", user.id)
-        .single();
+await loadPlayerResources(user.id);
 
-    if (resourcesError) throw resourcesError;
+// Refresh resources every 60 seconds
 
-    renderResources(resources);
+setInterval(async () => {
+  try {
+    await loadPlayerResources(user.id);
+  } catch (error) {
+    console.error("Resource refresh error:", error);
+  }
+}, 60000);
 
     // 5. LOAD ACTIVE EFFECTS
 
