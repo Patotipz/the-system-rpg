@@ -25,6 +25,14 @@ const energyMax = document.getElementById("questEnergyMax");
 const energyBar = document.getElementById("questEnergyBar");
 const energyPercentage = document.getElementById("questEnergyPercentage");
 
+// HP ELEMENTS
+
+const hpValue = document.getElementById("questHPValue");
+const hpMax = document.getElementById("questHPMax");
+const hpBar = document.getElementById("questHPBar");
+const hpPercentage = document.getElementById("questHPPercentage");
+const exhaustedWarning = document.getElementById("questExhaustedWarning");
+
 // ACHIEVEMENT MODAL
 
 const achievementModal = document.getElementById("achievementModal");
@@ -303,27 +311,27 @@ async function loadProfile() {
 }
 
 // ==========================================
-// LOAD ENERGY
+// LOAD HP AND ENERGY
 // ==========================================
 
 async function loadQuestEnergy() {
 
   const { data, error } = await supabase
     .from("player_stats")
-    .select("energy, max_energy")
+    .select("hp, max_hp, energy, max_energy, exhausted")
     .eq("user_id", currentUser.id)
     .single();
 
   if (error) throw error;
 
+  // ENERGY
+
   const energy = Number(data.energy ?? 0);
   const maxEnergy = Number(data.max_energy ?? 0);
 
-  const percentage = maxEnergy > 0
+  const energyPercent = maxEnergy > 0
     ? Math.min(100, (energy / maxEnergy) * 100)
     : 0;
-
-  // Update only if the HTML elements exist.
 
   if (energyValue) {
     energyValue.textContent = energy;
@@ -334,12 +342,43 @@ async function loadQuestEnergy() {
   }
 
   if (energyBar) {
-    energyBar.style.width = `${percentage}%`;
+    energyBar.style.width = `${energyPercent}%`;
   }
 
   if (energyPercentage) {
     energyPercentage.textContent =
-      `${Math.round(percentage)}% AVAILABLE`;
+      `${Math.round(energyPercent)}% AVAILABLE`;
+  }
+
+  // HP
+
+  const hp = Number(data.hp ?? 0);
+  const maxHP = Number(data.max_hp ?? 0);
+  const exhausted = Boolean(data.exhausted);
+
+  const hpPercent = maxHP > 0
+    ? Math.min(100, (hp / maxHP) * 100)
+    : 0;
+
+  if (hpValue) {
+    hpValue.textContent = hp;
+  }
+
+  if (hpMax) {
+    hpMax.textContent = maxHP;
+  }
+
+  if (hpBar) {
+    hpBar.style.width = `${hpPercent}%`;
+  }
+
+  if (hpPercentage) {
+    hpPercentage.textContent =
+      `${Math.round(hpPercent)}% HP`;
+  }
+
+  if (exhaustedWarning) {
+    exhaustedWarning.hidden = !exhausted;
   }
 }
 
