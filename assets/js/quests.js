@@ -383,35 +383,85 @@ async function loadQuestEnergy() {
     exhaustedWarning.hidden = !exhausted;
   }
 }
+
 // ==========================================
 // AUTOMATIC RESOURCE REGENERATION
 // ==========================================
 
+function showResourceGain(element, amount, label) {
+
+  if (!element) return;
+
+  if (amount <= 0) {
+    element.hidden = true;
+    return;
+  }
+
+  element.textContent = `+${amount} ${label}`;
+  element.hidden = false;
+
+  // Reiniciar la animación
+  element.style.animation = "none";
+  void element.offsetWidth;
+  element.style.animation = "";
+
+  setTimeout(() => {
+    element.hidden = true;
+  }, 2500);
+}
+
 function startResourceRefresh() {
 
   async function refreshResources() {
+
     try {
-      const { error } = await supabase.rpc(
+
+      const { data, error } = await supabase.rpc(
         "regenerate_player_resources"
       );
 
       if (error) throw error;
 
+      const hpRegenerated = Number(
+        data?.hp_regenerated ?? 0
+      );
+
+      const energyRegenerated = Number(
+        data?.energy_regenerated ?? 0
+      );
+
       await loadQuestEnergy();
 
+      showResourceGain(
+        hpRegenIndicator,
+        hpRegenerated,
+        "HP"
+      );
+
+      showResourceGain(
+        energyRegenIndicator,
+        energyRegenerated,
+        "ENERGY"
+      );
+
     } catch (error) {
+
       console.error("RESOURCE REFRESH ERROR:", error);
+
     }
   }
 
   setInterval(refreshResources, 30000);
 
   document.addEventListener("visibilitychange", () => {
+
     if (document.visibilityState === "visible") {
       refreshResources();
     }
+
   });
 }
+
 // ==========================================
 // LOAD QUESTS
 // ==========================================
