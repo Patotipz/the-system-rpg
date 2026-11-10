@@ -899,7 +899,7 @@ async function acceptQuest(questId, button) {
 
     await loadQuestEnergy();
 
-  }   } catch (error) {
+  }   catch (error) {
 
     console.error(error);
 
