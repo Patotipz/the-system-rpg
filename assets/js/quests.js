@@ -32,6 +32,8 @@ const hpMax = document.getElementById("questHPMax");
 const hpBar = document.getElementById("questHPBar");
 const hpPercentage = document.getElementById("questHPPercentage");
 const exhaustedWarning = document.getElementById("questExhaustedWarning");
+const hpRegenIndicator = document.getElementById("questHPRegen");
+const energyRegenIndicator = document.getElementById("questEnergyRegen");
 
 // ACHIEVEMENT MODAL
 
