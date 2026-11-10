@@ -287,7 +287,7 @@ async function initialize() {
   await loadProfile();
   await loadQuestEnergy();
   await loadQuests();
-
+startResourceRefresh();
   startDailyRefresh();
 }
 
@@ -381,7 +381,35 @@ async function loadQuestEnergy() {
     exhaustedWarning.hidden = !exhausted;
   }
 }
+// ==========================================
+// AUTOMATIC RESOURCE REGENERATION
+// ==========================================
 
+function startResourceRefresh() {
+
+  async function refreshResources() {
+    try {
+      const { error } = await supabase.rpc(
+        "regenerate_player_resources"
+      );
+
+      if (error) throw error;
+
+      await loadQuestEnergy();
+
+    } catch (error) {
+      console.error("RESOURCE REFRESH ERROR:", error);
+    }
+  }
+
+  setInterval(refreshResources, 30000);
+
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "visible") {
+      refreshResources();
+    }
+  });
+}
 // ==========================================
 // LOAD QUESTS
 // ==========================================
