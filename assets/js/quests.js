@@ -123,7 +123,31 @@ function showAchievementNotifications(achievements) {
     showNextAchievement();
   }
 }
+// ==========================================
+// USER-FRIENDLY ERROR MESSAGES
+// ==========================================
 
+function getQuestErrorMessage(error) {
+
+  const errorMessage = [
+    error?.message,
+    error?.details,
+    error?.hint
+  ].filter(Boolean).join(" ");
+
+  if (errorMessage.includes("EXHAUSTED")) {
+    return "⚠ SYSTEM WARNING: YOU ARE EXHAUSTED. RECOVER AT LEAST 50% HP BEFORE ACCEPTING OR COMPLETING QUESTS.";
+  }
+
+  if (
+    errorMessage.includes("Not enough energy") ||
+    errorMessage.includes("Insufficient energy")
+  ) {
+    return "INSUFFICIENT ENERGY. RESTORE YOUR ENERGY BEFORE COMPLETING THIS QUEST.";
+  }
+
+  return "SYSTEM ERROR: " + (error?.message || "UNKNOWN ERROR.");
+}
 closeAchievementModal.addEventListener(
   "click",
   showNextAchievement
@@ -836,11 +860,11 @@ async function acceptQuest(questId, button) {
 
     await loadQuestEnergy();
 
-  } catch (error) {
+  }   } catch (error) {
 
     console.error(error);
 
-    message.textContent = error.message;
+    message.textContent = getQuestErrorMessage(error);
 
     button.disabled = false;
   }
@@ -990,24 +1014,11 @@ myQuestsContainer.addEventListener("click", async event => {
 
     await loadQuestEnergy();
 
-  } catch (error) {
+  }   } catch (error) {
 
     console.error(error);
 
-    const errorMessage = error.message || "";
-
-    if (
-      errorMessage.includes("Not enough energy") ||
-      errorMessage.includes("Insufficient energy")
-    ) {
-
-      message.textContent =
-        "INSUFFICIENT ENERGY. RESTORE YOUR ENERGY BEFORE COMPLETING THIS QUEST.";
-
-    } else {
-
-      message.textContent = errorMessage;
-    }
+    message.textContent = getQuestErrorMessage(error);
 
     // Refresh data even if an operation fails.
 
