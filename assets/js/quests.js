@@ -1043,12 +1043,10 @@ myQuestsContainer.addEventListener("click", async event => {
     // ======================================
 
     await loadQuests();
-
     await loadProfile();
-
     await loadQuestEnergy();
 
-  }   } catch (error) {
+  } catch (error) {
 
     console.error(error);
 
@@ -1067,6 +1065,7 @@ myQuestsContainer.addEventListener("click", async event => {
   }
 
 });
+
 
 // ==========================================
 // LOGOUT
