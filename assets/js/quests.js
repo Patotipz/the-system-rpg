@@ -878,29 +878,23 @@ document.querySelectorAll(".filter-button").forEach(button => {
 // ACCEPT QUEST
 // ==========================================
 
-async function acceptQuest(questId, button) {
 
+async function acceptQuest(questId, button) {
   button.disabled = true;
 
   try {
-
-    const { error } = await supabase.rpc(
-      "assign_quest",
-      {
-        p_quest_id: Number(questId)
-      }
-    );
+    const { error } = await supabase.rpc("assign_quest", {
+      p_quest_id: Number(questId)
+    });
 
     if (error) throw error;
 
     message.textContent = "QUEST ACCEPTED.";
 
     await loadQuests();
-
     await loadQuestEnergy();
 
-  }   catch (error) {
-
+  } catch (error) {
     console.error(error);
 
     message.textContent = getQuestErrorMessage(error);
@@ -908,6 +902,7 @@ async function acceptQuest(questId, button) {
     button.disabled = false;
   }
 }
+
 
 availableContainer.addEventListener("click", async event => {
 
