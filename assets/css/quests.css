@@ -850,3 +850,43 @@
     box-shadow: 0 0 12px rgba(255, 45, 45, 0.2);
   }
 }
+
+/* ==========================================
+   RESOURCE REGEN INDICATORS
+========================================== */
+
+.resource-regen-indicator {
+  display: inline-block;
+  margin-top: 8px;
+  color: #65e6a3;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 1.5px;
+  animation: resourceRegenPulse 1.5s ease-in-out infinite;
+}
+
+.resource-regen-indicator[hidden] {
+  display: none;
+}
+
+@keyframes resourceRegenPulse {
+  0% {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+
+  30% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  70% {
+    opacity: 1;
+    transform: translateY(-2px);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+}
