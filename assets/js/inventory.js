@@ -379,8 +379,9 @@ const skillButton = item.item_type === "skill_item"
         }
 
         ${equipButton}
-        ${enhanceButton}
-        ${useButton}
+${enhanceButton}
+${useButton}
+${skillButton}
 
       </article>
     `;
