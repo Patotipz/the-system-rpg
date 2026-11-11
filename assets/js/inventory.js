@@ -195,7 +195,7 @@ allItems = (data || []).map(item => ({
   is_skill_unlocked:
     item.item_type === "skill_item" &&
     unlockedSkillCodes.has(item.shop_items?.item_code)
-  is_cosmetic_equipped:
+  ,is_cosmetic_equipped:
   item.item_type === "cosmetic" &&
   equippedCosmeticIds.has(item.shop_item_id)
 }));
