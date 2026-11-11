@@ -1025,3 +1025,21 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
+/* UNLOCKED SKILL */
+#inventoryItems .skill-button.skill-unlocked {
+  background: linear-gradient(
+    135deg,
+    rgba(35, 160, 110, 0.16),
+    rgba(25, 110, 85, 0.08)
+  );
+  border: 1px solid rgba(65, 200, 145, 0.45);
+  color: #65dba8;
+  cursor: default;
+  opacity: 1;
+  box-shadow: inset 0 0 12px rgba(65, 200, 145, 0.06);
+}
+
+#inventoryItems .skill-button.skill-unlocked:hover {
+  transform: none;
+  box-shadow: inset 0 0 12px rgba(65, 200, 145, 0.06);
+}
