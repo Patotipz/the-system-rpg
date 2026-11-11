@@ -150,25 +150,42 @@ async function loadInventory() {
       enhancement_level,
       shop_item_id,
       shop_items (
-        equipment_slot,
-        bonus_str,
-        bonus_agi,
-        bonus_vit,
-        bonus_int,
-        bonus_per,
-        bonus_sen,
-        hp_restore,
-        energy_restore,
-        effect_type,
-        effect_value,
-        duration_seconds
-      )
+  item_code,
+  equipment_slot,
+  bonus_str,
+  bonus_agi,
+  bonus_vit,
+  bonus_int,
+  bonus_per,
+  bonus_sen,
+  hp_restore,
+  energy_restore,
+  effect_type,
+  effect_value,
+  duration_seconds
+)
     `)
     .order("obtained_at", { ascending: false });
 
   if (error) throw error;
 
-  allItems = data || [];
+ const { data: unlockedSkills, error: skillsError } = await supabase
+  .from("user_skills")
+  .select("skill_code")
+  .eq("user_id", authData.user.id);
+
+if (skillsError) throw skillsError;
+
+const unlockedSkillCodes = new Set(
+  (unlockedSkills || []).map(skill => skill.skill_code)
+);
+
+allItems = (data || []).map(item => ({
+  ...item,
+  is_skill_unlocked:
+    item.item_type === "skill_item" &&
+    unlockedSkillCodes.has(item.shop_items?.item_code)
+}));
 
   updateSummary();
   renderEquipment();
@@ -331,10 +348,15 @@ function renderInventory() {
        </button>`
   : "";
 const skillButton = item.item_type === "skill_item"
-  ? `<button class="inventory-action skill-button"
-       data-skill-id="${item.id}">
-       UNLOCK SKILL
-     </button>`
+  ? item.is_skill_unlocked
+    ? `<button class="inventory-action skill-button skill-unlocked"
+         disabled>
+         ✓ UNLOCKED
+       </button>`
+    : `<button class="inventory-action skill-button"
+         data-skill-id="${item.id}">
+         UNLOCK SKILL
+       </button>`
   : "";
     return `
       <article class="inventory-item rarity-${escapeHTML(item.rarity)}">
