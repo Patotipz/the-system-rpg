@@ -179,12 +179,25 @@ if (skillsError) throw skillsError;
 const unlockedSkillCodes = new Set(
   (unlockedSkills || []).map(skill => skill.skill_code)
 );
+const { data: equippedCosmetics, error: cosmeticsError } =
+  await supabase
+    .from("user_equipped_cosmetics")
+    .select("shop_item_id, equipment_slot")
+    .eq("user_id", authData.user.id);
 
+if (cosmeticsError) throw cosmeticsError;
+
+const equippedCosmeticIds = new Set(
+  (equippedCosmetics || []).map(item => item.shop_item_id)
+);
 allItems = (data || []).map(item => ({
   ...item,
   is_skill_unlocked:
     item.item_type === "skill_item" &&
     unlockedSkillCodes.has(item.shop_items?.item_code)
+  is_cosmetic_equipped:
+  item.item_type === "cosmetic" &&
+  equippedCosmeticIds.has(item.shop_item_id)
 }));
 
   updateSummary();
@@ -358,6 +371,21 @@ const skillButton = item.item_type === "skill_item"
          UNLOCK SKILL
        </button>`
   : "";
+    const cosmeticSlot = (
+  item.shop_items?.equipment_slot || "cosmetic"
+).toUpperCase();
+
+const cosmeticButton = item.item_type === "cosmetic"
+  ? item.is_cosmetic_equipped
+    ? `<button class="inventory-action cosmetic-button cosmetic-equipped"
+         data-unequip-cosmetic="${item.shop_items?.equipment_slot}">
+         UNEQUIP ${cosmeticSlot}
+       </button>`
+    : `<button class="inventory-action cosmetic-button"
+         data-equip-cosmetic="${item.id}">
+         EQUIP ${cosmeticSlot}
+       </button>`
+  : "";
     return `
       <article class="inventory-item rarity-${escapeHTML(item.rarity)}">
 
@@ -404,6 +432,7 @@ const skillButton = item.item_type === "skill_item"
 ${enhanceButton}
 ${useButton}
 ${skillButton}
+${cosmeticButton}
 
       </article>
     `;
@@ -477,13 +506,16 @@ inventoryContainer.addEventListener("click", async event => {
   const enhanceButton = event.target.closest("[data-enhance-id]");
   const useButton = event.target.closest("[data-use-id]");
   const skillButton = event.target.closest("[data-skill-id]");
-
+const equipCosmeticButton = event.target.closest("[data-equip-cosmetic]");
+const unequipCosmeticButton = event.target.closest("[data-unequip-cosmetic]");
   if (
   !equipButton &&
   !unequipButton &&
   !enhanceButton &&
   !useButton &&
-  !skillButton
+  !skillButton &&
+  !equipCosmeticButton &&
+  !unequipCosmeticButton
 ) {
   return;
 }
@@ -531,6 +563,63 @@ if (skillButton) {
 
     inventoryMessage.textContent =
       error.message || "SKILL UNLOCK FAILED.";
+
+    await loadInventory();
+  }
+
+  return;
+}
+  if (equipCosmeticButton || unequipCosmeticButton) {
+  const button = equipCosmeticButton || unequipCosmeticButton;
+
+  button.disabled = true;
+  button.textContent = "PROCESSING...";
+
+  try {
+    let rpcName;
+    let rpcParams;
+
+    if (equipCosmeticButton) {
+      rpcName = "equip_cosmetic_item";
+      rpcParams = {
+        p_inventory_id: Number(
+          equipCosmeticButton.dataset.equipCosmetic
+        )
+      };
+    } else {
+      rpcName = "unequip_cosmetic_item";
+      rpcParams = {
+        p_equipment_slot:
+          unequipCosmeticButton.dataset.unequipCosmetic
+      };
+    }
+
+    const { data, error } = await supabase.rpc(
+      rpcName,
+      rpcParams
+    );
+
+    if (error) throw error;
+
+    if (!data.success) {
+      inventoryMessage.textContent =
+        data.message || "COSMETIC ACTION FAILED.";
+
+      await loadInventory();
+      return;
+    }
+
+    inventoryMessage.textContent = equipCosmeticButton
+      ? `${data.item_name.toUpperCase()} EQUIPPED SUCCESSFULLY!`
+      : `${data.equipment_slot.toUpperCase()} COSMETIC UNEQUIPPED!`;
+
+    await loadInventory();
+
+  } catch (error) {
+    console.error("Cosmetic error:", error);
+
+    inventoryMessage.textContent =
+      error.message || "COSMETIC ACTION FAILED.";
 
     await loadInventory();
   }
