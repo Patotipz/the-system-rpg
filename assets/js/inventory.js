@@ -330,7 +330,12 @@ function renderInventory() {
          NOT AVAILABLE
        </button>`
   : "";
-
+const skillButton = item.item_type === "skill_item"
+  ? `<button class="inventory-action skill-button"
+       data-skill-id="${item.id}">
+       UNLOCK SKILL
+     </button>`
+  : "";
     return `
       <article class="inventory-item rarity-${escapeHTML(item.rarity)}">
 
