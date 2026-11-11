@@ -318,11 +318,11 @@ function renderInventory() {
          </button>`
       : "";
 
-    const useButton = ["consumable", "boost"].includes(item.item_type)
+   const useButton = ["consumable", "boost"].includes(item.item_type)
   ? canConsume(item)
     ? `<button class="inventory-action use-button"
          data-use-id="${item.id}">
-         USE
+         ${item.item_type === "boost" ? "ACTIVATE BOOST" : "USE"}
        </button>`
     : `<button class="inventory-action use-button"
          disabled
