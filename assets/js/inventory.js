@@ -66,6 +66,17 @@ function getEnhancedBonus(item, column) {
 function canConsume(item) {
   const shopItem = item.shop_items || {};
 
+  // BOOST validation
+  if (item.item_type === "boost") {
+    return (
+      ["xp_multiplier", "coin_multiplier", "reward_multiplier"]
+        .includes(shopItem.effect_type) &&
+      Number(shopItem.effect_value || 0) > 0 &&
+      Number(shopItem.duration_seconds || 0) > 0
+    );
+  }
+
+  // CONSUMABLE validation
   return (
     item.item_type === "consumable" &&
     (
@@ -307,18 +318,18 @@ function renderInventory() {
          </button>`
       : "";
 
-    const useButton = item.item_type === "consumable"
-      ? canConsume(item)
-        ? `<button class="inventory-action use-button"
-             data-use-id="${item.id}">
-             USE
-           </button>`
-        : `<button class="inventory-action use-button"
-             disabled
-             title="This item has no configured effect">
-             NOT AVAILABLE
-           </button>`
-      : "";
+    const useButton = ["consumable", "boost"].includes(item.item_type)
+  ? canConsume(item)
+    ? `<button class="inventory-action use-button"
+         data-use-id="${item.id}">
+         USE
+       </button>`
+    : `<button class="inventory-action use-button"
+         disabled
+         title="This item has no configured effect">
+         NOT AVAILABLE
+       </button>`
+  : "";
 
     return `
       <article class="inventory-item rarity-${escapeHTML(item.rarity)}">
@@ -399,12 +410,15 @@ async function useConsumable(button, itemId) {
 
     if (data.effect_type) {
       const effectNames = {
-        bonus_str: "STRENGTH",
-        bonus_vit: "VITALITY",
-        bonus_int: "INTELLIGENCE",
-        focus: "FOCUS",
-        stamina: "STAMINA"
-      };
+  bonus_str: "STRENGTH",
+  bonus_vit: "VITALITY",
+  bonus_int: "INTELLIGENCE",
+  focus: "FOCUS",
+  stamina: "STAMINA",
+  xp_multiplier: "XP BOOST",
+  coin_multiplier: "COIN BOOST",
+  reward_multiplier: "DOUBLE REWARD"
+};
 
       const effectName =
         effectNames[data.effect_type] || data.effect_type.toUpperCase();
