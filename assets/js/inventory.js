@@ -454,17 +454,67 @@ inventoryContainer.addEventListener("click", async event => {
   const unequipButton = event.target.closest("[data-unequip-id]");
   const enhanceButton = event.target.closest("[data-enhance-id]");
   const useButton = event.target.closest("[data-use-id]");
+  const skillButton = event.target.closest("[data-skill-id]");
 
-  if (!equipButton && !unequipButton && !enhanceButton && !useButton) {
-    return;
-  }
+  if (
+  !equipButton &&
+  !unequipButton &&
+  !enhanceButton &&
+  !useButton &&
+  !skillButton
+) {
+  return;
+}
 
   if (useButton) {
     const itemId = Number(useButton.dataset.useId);
     await useConsumable(useButton, itemId);
     return;
   }
+if (skillButton) {
+  const itemId = Number(skillButton.dataset.skillId);
 
+  skillButton.disabled = true;
+  skillButton.textContent = "UNLOCKING...";
+
+  try {
+    const { data, error } = await supabase.rpc(
+      "use_skill_item",
+      { p_inventory_id: itemId }
+    );
+
+    if (error) throw error;
+
+    if (!data.success) {
+      inventoryMessage.textContent =
+        data.message || "SKILL UNLOCK FAILED.";
+
+      await loadInventory();
+      return;
+    }
+
+    inventoryMessage.textContent =
+      `${data.skill_name.toUpperCase()} UNLOCKED! ` +
+      `BONUSES: STR +${data.bonuses.str}, ` +
+      `AGI +${data.bonuses.agi}, ` +
+      `VIT +${data.bonuses.vit}, ` +
+      `INT +${data.bonuses.int}, ` +
+      `PER +${data.bonuses.per}, ` +
+      `SEN +${data.bonuses.sen}.`;
+
+    await loadInventory();
+
+  } catch (error) {
+    console.error("Skill unlock error:", error);
+
+    inventoryMessage.textContent =
+      error.message || "SKILL UNLOCK FAILED.";
+
+    await loadInventory();
+  }
+
+  return;
+}
   const button = equipButton || unequipButton || enhanceButton;
 
   const isEnhancing = Boolean(enhanceButton);
