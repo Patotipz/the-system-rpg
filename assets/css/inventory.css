@@ -544,7 +544,69 @@
   box-shadow: 0 0 15px rgba(255, 196, 92, 0.25);
   transform: translateY(-2px);
 }
+/* ================================
+   BOOST / CONSUMABLE ACTIVATE
+================================ */
 
+#inventoryItems .inventory-action.use-button {
+  position: relative;
+  overflow: hidden;
+
+  background: linear-gradient(
+    135deg,
+    #123d68,
+    #087fc4,
+    #123d68
+  );
+
+  border: 1px solid #55caff;
+  border-radius: 6px;
+
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 2px;
+
+  text-shadow: 0 0 8px rgba(255, 255, 255, 0.45);
+
+  box-shadow:
+    0 0 10px rgba(35, 165, 255, 0.18),
+    inset 0 0 12px rgba(85, 202, 255, 0.12);
+
+  transition: all 0.25s ease;
+}
+
+#inventoryItems .inventory-action.use-button:hover:not(:disabled) {
+  background: linear-gradient(
+    135deg,
+    #087fc4,
+    #20baff,
+    #087fc4
+  );
+
+  border-color: #a3e7ff;
+
+  box-shadow:
+    0 0 10px rgba(35, 165, 255, 0.45),
+    0 0 22px rgba(35, 165, 255, 0.25),
+    inset 0 0 15px rgba(255, 255, 255, 0.12);
+
+  transform: translateY(-2px);
+}
+
+#inventoryItems .inventory-action.use-button:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: 0 0 8px rgba(35, 165, 255, 0.3);
+}
+
+#inventoryItems .inventory-action.use-button:disabled {
+  background: #172536;
+  border-color: #34485d;
+  color: #71869b;
+  opacity: 0.55;
+  cursor: not-allowed;
+  box-shadow: none;
+}
 /* ENHANCE */
 
 #inventoryItems .inventory-action.enhance-button {
