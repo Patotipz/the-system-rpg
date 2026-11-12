@@ -958,14 +958,21 @@ button:disabled {
   filter: drop-shadow(0 0 8px rgba(85, 170, 255, 0.8));
 }
 
-/* Monarch Wings */
+
+/* MONARCH WINGS */
 .hunter-item-back {
-  top: 5%;
+  top: 15%;
   left: 50%;
   transform: translateX(-50%);
-  font-size: 48px;
+  font-size: 76px;
   z-index: 1;
+  width: 150px;
+  text-align: center;
+  filter:
+    drop-shadow(0 0 8px #55aaff)
+    drop-shadow(0 0 15px #8b5cf6);
 }
+
 
 /* Head equipment */
 .hunter-item-head {
