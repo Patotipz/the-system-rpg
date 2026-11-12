@@ -175,7 +175,61 @@ function renderEquipment(items) {
     container.appendChild(card);
   });
 }
+// =========================================
+// HUNTER COSMETICS
+// =========================================
 
+function renderCosmetics(cosmetics) {
+  const visual = document.getElementById("hunterVisual");
+  const back = document.getElementById("statusBack");
+  const title = document.getElementById("statusTitle");
+
+  if (!visual || !back || !title) return;
+
+  // Reset previous cosmetics
+  visual.className = "hunter-visual-container";
+  visual.style.removeProperty("--aura-color");
+
+  back.textContent = "";
+  back.hidden = true;
+
+  title.textContent = "";
+  title.hidden = true;
+
+  const auraColors = {
+    hunter_aura: "#55aaff",
+    shadow_aura: "#8b5cf6",
+    monarch_aura: "#f5c542",
+    green_hunter_aura: "#35d69a",
+    crimson_hunter_aura: "#ef4444",
+    violet_hunter_aura: "#a855f7",
+    golden_hunter_aura: "#fbbf24",
+    abyssal_hunter_aura: "#2563eb"
+  };
+
+  cosmetics.forEach(item => {
+    const code = item.shop_items?.item_code;
+    const slot = item.equipment_slot;
+
+    if (slot === "aura") {
+      visual.classList.add("has-aura");
+      visual.style.setProperty(
+        "--aura-color",
+        auraColors[code] || "#55aaff"
+      );
+    }
+
+    if (slot === "back") {
+      back.textContent = code === "monarch_wings" ? "🪽" : "✦";
+      back.hidden = false;
+    }
+
+    if (slot === "title") {
+      title.textContent = item.shop_items?.item_name || "HUNTER";
+      title.hidden = false;
+    }
+  });
+}
 // =========================================
 // HP AND ENERGY
 // =========================================
