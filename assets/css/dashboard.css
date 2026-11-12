@@ -902,3 +902,49 @@ button:disabled {
     transform: scale(1.04);
   }
 }
+
+/* HUNTER EQUIPMENT LAYERS */
+
+.hunter-avatar-container {
+  position: relative;
+  isolation: isolate;
+  overflow: visible;
+}
+
+/* Base de las capas */
+.hunter-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+/* Accesorios detrás del personaje */
+.hunter-back-layer {
+  z-index: 1;
+}
+
+/* Retrato */
+.hunter-avatar {
+  position: relative;
+  z-index: 2;
+}
+
+/* Armaduras, armas y accesorios delanteros */
+.hunter-equipment-layer {
+  z-index: 3;
+}
+
+/* Título */
+.hunter-title-layer {
+  position: absolute;
+  z-index: 4;
+  bottom: -25px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: #55aaff;
+  font-size: 11px;
+  font-weight: bold;
+  letter-spacing: 2px;
+  white-space: nowrap;
+  text-shadow: 0 0 10px #55aaff;
+}
