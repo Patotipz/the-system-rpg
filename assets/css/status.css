@@ -550,3 +550,104 @@
     box-shadow: 0 0 12px rgba(255, 45, 45, 0.25);
   }
 }
+/* =========================================
+   HUNTER COSMETICS VISUALS
+========================================= */
+
+.hunter-visual-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 110px;
+    height: 110px;
+    flex-shrink: 0;
+}
+
+/* Hunter Avatar */
+
+.hunter-visual-container .hunter-profile-avatar {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Aura Effect */
+
+.hunter-visual-container.has-aura::before {
+    content: "";
+    position: absolute;
+    inset: 5px;
+    border-radius: 50%;
+    border: 2px solid var(--aura-color, #55aaff);
+    box-shadow:
+        0 0 10px var(--aura-color, #55aaff),
+        0 0 25px var(--aura-color, #55aaff),
+        inset 0 0 15px var(--aura-color, #55aaff);
+    animation: hunterAuraPulse 2.5s ease-in-out infinite;
+    z-index: 1;
+}
+
+.hunter-visual-container.has-aura::after {
+    content: "";
+    position: absolute;
+    inset: -3px;
+    border-radius: 50%;
+    background: var(--aura-color, #55aaff);
+    opacity: 0.12;
+    filter: blur(18px);
+    animation: hunterAuraGlow 3s ease-in-out infinite;
+    z-index: 0;
+}
+
+@keyframes hunterAuraPulse {
+    0%, 100% {
+        transform: scale(0.96);
+        opacity: 0.65;
+    }
+    50% {
+        transform: scale(1.06);
+        opacity: 1;
+    }
+}
+
+@keyframes hunterAuraGlow {
+    0%, 100% {
+        opacity: 0.08;
+    }
+    50% {
+        opacity: 0.22;
+    }
+}
+
+/* Back Accessory */
+
+.hunter-back-accessory {
+    position: absolute;
+    z-index: 1;
+    top: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 58px;
+    filter: drop-shadow(0 0 10px rgba(85, 170, 255, 0.7));
+    pointer-events: none;
+}
+
+/* Hunter Title */
+
+.hunter-cosmetic-title {
+    width: fit-content;
+    margin-top: 6px;
+    padding: 4px 12px;
+    border: 1px solid rgba(85, 170, 255, 0.45);
+    border-radius: 4px;
+    background: rgba(40, 120, 208, 0.12);
+    color: #8fc8ff;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    text-shadow: 0 0 8px rgba(85, 170, 255, 0.4);
+}
