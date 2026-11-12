@@ -486,7 +486,6 @@ async function initializeStatus() {
     if (profileError) throw profileError;
 
     setText("statusName", profile.display_name || "UNKNOWN HUNTER");
-    setText("statusAvatar", avatarMap[profile.avatar_id] || "⚔️");
     setText("statusRank", `RANK ${profile.rank}`);
     setText("statusLevel", `LV. ${profile.level}`);
     setText("statusCoins", `${profile.coins ?? 0} COINS`);
