@@ -29,7 +29,40 @@ function getMexicoDateKey(date) {
 
   return `${values.year}-${values.month}-${values.day}`;
 }
+// DASHBOARD HUNTER AURA
+function renderDashboardAura(cosmetics) {
+  const avatar = document.querySelector(".hunter-avatar-container");
 
+  if (!avatar) return;
+
+  avatar.classList.remove("has-aura");
+  avatar.style.removeProperty("--aura-color");
+
+  const auraColors = {
+    hunter_aura: "#55aaff",
+    shadow_aura: "#8b5cf6",
+    monarch_aura: "#f5c542",
+    green_hunter_aura: "#35d69a",
+    crimson_hunter_aura: "#ef4444",
+    violet_hunter_aura: "#a855f7",
+    golden_hunter_aura: "#fbbf24",
+    abyssal_hunter_aura: "#2563eb"
+  };
+
+  const equippedAura = cosmetics.find(
+    item => item.equipment_slot === "aura"
+  );
+
+  if (!equippedAura) return;
+
+  const code = equippedAura.shop_items?.item_code;
+
+  avatar.classList.add("has-aura");
+  avatar.style.setProperty(
+    "--aura-color",
+    auraColors[code] || "#55aaff"
+  );
+}
 async function initializeDashboard() {
   try {
     // 1. VERIFY USER SESSION
