@@ -72,9 +72,6 @@ async function initializeDashboard() {
     document.getElementById("hunterName").textContent =
       profile.display_name;
 
-    document.getElementById("hunterAvatar").textContent =
-      avatarMap[profile.avatar_id] || "⚔️";
-
     document.getElementById("hunterRank").textContent =
       `RANK ${profile.rank}`;
 
