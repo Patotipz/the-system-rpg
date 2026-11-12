@@ -948,3 +948,52 @@ button:disabled {
   white-space: nowrap;
   text-shadow: 0 0 10px #55aaff;
 }
+
+/* HUNTER EQUIPMENT VISUALS */
+
+.hunter-item {
+  position: absolute;
+  display: block;
+  pointer-events: none;
+  filter: drop-shadow(0 0 8px rgba(85, 170, 255, 0.8));
+}
+
+/* Monarch Wings */
+.hunter-item-back {
+  top: 5%;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 48px;
+  z-index: 1;
+}
+
+/* Head equipment */
+.hunter-item-head {
+  top: 5%;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 32px;
+}
+
+/* Weapons */
+.hunter-item-weapon {
+  right: -5%;
+  bottom: 20%;
+  font-size: 35px;
+  transform: rotate(-25deg);
+}
+
+/* Equipped item animation */
+.hunter-item {
+  animation: hunterEquipmentGlow 3s ease-in-out infinite;
+}
+
+@keyframes hunterEquipmentGlow {
+  0%, 100% {
+    filter: drop-shadow(0 0 5px rgba(85, 170, 255, 0.5));
+  }
+
+  50% {
+    filter: drop-shadow(0 0 12px rgba(85, 170, 255, 1));
+  }
+}
