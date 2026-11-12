@@ -581,9 +581,27 @@ setInterval(async () => {
       bonus_sen: item.shop_items?.bonus_sen ?? 0
     }));
 
-    renderEquipment(formattedEquipment);
+   renderEquipment(formattedEquipment);
 
-    // 8. LOAD STREAKS
+// 8. LOAD EQUIPPED COSMETICS
+
+const { data: equippedCosmetics, error: cosmeticsError } =
+  await supabase
+    .from("user_equipped_cosmetics")
+    .select(`
+      equipment_slot,
+      shop_items (
+        item_code,
+        item_name
+      )
+    `)
+    .eq("user_id", user.id);
+
+if (cosmeticsError) throw cosmeticsError;
+
+renderCosmetics(equippedCosmetics || []);
+
+// 9. LOAD STREAKS
 
     setText("statusCurrentStreak", profile.current_streak ?? 0);
     setText("statusLongestStreak", profile.longest_streak ?? 0);
