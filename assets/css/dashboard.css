@@ -871,3 +871,34 @@ button:disabled {
     font-size: 14px;
   }
 }
+/* DASHBOARD HUNTER AURA */
+.hunter-avatar-container {
+  position: relative;
+  isolation: isolate;
+  overflow: visible;
+}
+
+.hunter-avatar-container.has-aura::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: -20px;
+  border-radius: 50%;
+  background: var(--aura-color, #55aaff);
+  opacity: 0.35;
+  filter: blur(25px);
+  animation: dashboardAuraGlow 3s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes dashboardAuraGlow {
+  0%, 100% {
+    opacity: 0.25;
+    transform: scale(0.96);
+  }
+
+  50% {
+    opacity: 0.55;
+    transform: scale(1.04);
+  }
+}
