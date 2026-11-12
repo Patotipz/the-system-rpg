@@ -101,7 +101,22 @@ async function initializeDashboard() {
         .single();
 
     if (profileError) throw profileError;
+// LOAD EQUIPPED COSMETICS
+const { data: equippedCosmetics, error: cosmeticsError } =
+  await supabase
+    .from("user_equipped_cosmetics")
+    .select(`
+      equipment_slot,
+      shop_items (
+        item_code,
+        item_name
+      )
+    `)
+    .eq("user_id", user.id);
 
+if (cosmeticsError) throw cosmeticsError;
+
+renderDashboardAura(equippedCosmetics || []);
     document.getElementById("hunterName").textContent =
       profile.display_name;
 
