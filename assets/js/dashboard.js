@@ -30,13 +30,22 @@ function getMexicoDateKey(date) {
   return `${values.year}-${values.month}-${values.day}`;
 }
 // DASHBOARD HUNTER AURA
-function renderDashboardAura(cosmetics) {
-  const avatar = document.querySelector(".hunter-avatar-container");
 
-  if (!avatar) return;
+function renderDashboardCosmetics(cosmetics) {
+  const avatar = document.getElementById("hunterVisual");
+  const back = document.getElementById("dashboardBack");
+  const equipment = document.getElementById("dashboardEquipment");
+  const title = document.getElementById("dashboardTitle");
 
+  if (!avatar || !back || !equipment || !title) return;
+
+  // Reset visual
   avatar.classList.remove("has-aura");
   avatar.style.removeProperty("--aura-color");
+
+  back.innerHTML = "";
+  equipment.innerHTML = "";
+  title.textContent = "";
 
   const auraColors = {
     hunter_aura: "#55aaff",
@@ -49,20 +58,68 @@ function renderDashboardAura(cosmetics) {
     abyssal_hunter_aura: "#2563eb"
   };
 
-  const equippedAura = cosmetics.find(
-    item => item.equipment_slot === "aura"
-  );
+  const visualMap = {
+    back: {
+      monarch_wings: "🪽"
+    },
+    head: {
+      hunter_helmet: "⛑️",
+      knight_helmet: "🪖",
+      shadow_hood: "🌑"
+    },
+    weapon: {
+      assassin_blade: "🗡️",
+      battle_axe: "🪓",
+      dragon_slayer: "⚔️",
+      flame_sword: "🔥",
+      frost_blade: "❄️",
+      hunter_dagger: "🔪",
+      longbow: "🏹",
+      iron_sword: "⚔️",
+      knight_greatsword: "🗡️",
+      monarch_blade: "⚔️",
+      rusty_sword: "🗡️",
+      shadow_edge: "🌑",
+      silver_spear: "🔱",
+      steel_sword: "⚔️",
+      twin_daggers: "⚔️"
+    }
+  };
 
-  if (!equippedAura) return;
+  cosmetics.forEach(item => {
+    const code = item.shop_items?.item_code;
+    const slot = item.equipment_slot;
 
-  const code = equippedAura.shop_items?.item_code;
+    if (!code) return;
 
-  avatar.classList.add("has-aura");
-  avatar.style.setProperty(
-    "--aura-color",
-    auraColors[code] || "#55aaff"
-  );
+    if (slot === "aura") {
+      avatar.classList.add("has-aura");
+      avatar.style.setProperty(
+        "--aura-color",
+        auraColors[code] || "#55aaff"
+      );
+      return;
+    }
+
+    if (slot === "title") {
+      title.textContent = item.shop_items?.item_name || "";
+      return;
+    }
+
+    const symbol = visualMap[slot]?.[code];
+
+    if (!symbol) return;
+
+    const layer = slot === "back" ? back : equipment;
+
+    const accessory = document.createElement("span");
+    accessory.className = `hunter-item hunter-item-${slot}`;
+    accessory.textContent = symbol;
+
+    layer.appendChild(accessory);
+  });
 }
+
 async function initializeDashboard() {
   try {
     // 1. VERIFY USER SESSION
@@ -116,7 +173,7 @@ const { data: equippedCosmetics, error: cosmeticsError } =
 
 if (cosmeticsError) throw cosmeticsError;
 
-renderDashboardAura(equippedCosmetics || []);
+renderDashboardCosmetics(equippedCosmetics || []);
     document.getElementById("hunterName").textContent =
       profile.display_name;
 
