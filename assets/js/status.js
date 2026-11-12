@@ -210,6 +210,7 @@ function renderCosmetics(cosmetics) {
   cosmetics.forEach(item => {
     const code = item.shop_items?.item_code;
     const slot = item.equipment_slot;
+    console.log("COSMETIC DETECTED:", code, slot);
 
     if (slot === "aura") {
       visual.classList.add("has-aura");
@@ -598,6 +599,8 @@ const { data: equippedCosmetics, error: cosmeticsError } =
     .eq("user_id", user.id);
 
 if (cosmeticsError) throw cosmeticsError;
+
+console.log("EQUIPPED COSMETICS:", equippedCosmetics);
 
 renderCosmetics(equippedCosmetics || []);
 
