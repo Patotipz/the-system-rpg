@@ -913,35 +913,36 @@
    RESPONSIVE
 ================================ */
 
-@media (max-width: 1000px) {
-  .inventory-section #inventoryItems,
-  .inventory-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .inventory-page > .inventory-summary {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
 
 @media (max-width: 750px) {
   .equipment-layout {
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     gap: 12px;
+    max-width: 100%;
   }
 
   .equipment-layout .hunter-portrait-container {
     grid-column: 1 / -1;
     grid-row: 1;
+    justify-self: center;
+    width: 100%;
   }
 
   .equipment-left,
   .equipment-right {
     align-items: stretch;
+    justify-items: stretch;
+  }
+
+  .equipment-column {
+    grid-template-rows: repeat(6, minmax(75px, auto));
+    gap: 10px;
   }
 
   .equipment-layout .equipment-slot {
     max-width: none;
+    min-height: 75px;
+    padding: 10px 8px;
   }
 
   .equipment-bonus-grid {
@@ -949,72 +950,30 @@
   }
 }
 
-@media (max-width: 600px) {
-  .inventory-header {
-    align-items: flex-start;
-    flex-direction: column;
+@media (max-width: 420px) {
+  .equipment-layout {
+    gap: 8px;
   }
 
-  .inventory-header h1 {
-    font-size: 27px;
-  }
-
-  .inventory-toolbar {
-    align-items: flex-start;
-    flex-direction: column;
-  }
-
-  #inventoryFilter {
-    width: 100%;
-  }
-
-  .inventory-section #inventoryItems,
-  .inventory-grid {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  .inventory-page > .inventory-summary {
-    gap: 10px;
-  }
-
-  .inventory-stat {
-    padding: 14px;
-  }
-
-  .inventory-stat span {
-    font-size: 9px;
-  }
-
-  .inventory-section {
-    padding: 16px;
-  }
-
-  #inventoryItems .inventory-action {
-    min-height: 44px;
-  }
-
-  #inventoryItems .inventory-item-footer {
-    font-size: 11px;
-  }
-}
-
-@media (max-width: 480px) {
-  .equipment-layout .hunter-portrait-frame {
-    width: 190px;
-    height: 245px;
+  .equipment-column {
+    gap: 8px;
+    grid-template-rows: repeat(6, minmax(68px, auto));
   }
 
   .equipment-layout .equipment-slot {
-    min-height: 75px;
-    padding: 9px;
+    min-height: 68px;
+    padding: 8px 5px;
+  }
+
+  .equipment-layout .equipment-slot strong {
+    font-size: 11px;
+  }
+
+  .equipment-layout .equipment-slot small {
+    font-size: 9px;
   }
 }
 
-@media (max-width: 400px) {
-  .equipment-bonus-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
 /* UNLOCKED SKILL */
 #inventoryItems .skill-button.skill-unlocked {
   background: linear-gradient(
