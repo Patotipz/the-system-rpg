@@ -630,14 +630,16 @@ function renderInventory() {
       : "";
 
     // COMPARISON BUTTON
-    const compareButton = canEquip(item) && !item.is_equipped
-      ? `<button
-           type="button"
-           class="inventory-action compare-button"
-           data-compare-id="${escapeHTML(item.id)}">
-           ⇄ COMPARE
-         </button>`
-      : "";
+    const compareButton =
+  ["weapon", "armor", "accessory"].includes(item.item_type) &&
+  !item.is_equipped
+    ? `<button
+         type="button"
+         class="inventory-action compare-button"
+         data-compare-id="${escapeHTML(item.id)}">
+         ⇄ COMPARE
+       </button>`
+    : "";
 
     const enhancementCosts = [
       100, 200, 350, 500, 700,
