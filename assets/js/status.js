@@ -713,6 +713,7 @@ const { data: equippedCosmetics, error: cosmeticsError } =
   await supabase
     .from("user_equipped_cosmetics")
     .select(`
+      shop_item_id,
       equipment_slot,
       shop_items (
         item_code,
@@ -723,10 +724,27 @@ const { data: equippedCosmetics, error: cosmeticsError } =
 
 if (cosmeticsError) throw cosmeticsError;
 
-console.log("EQUIPPED COSMETICS:", equippedCosmetics);
+// Verify that each equipped cosmetic is actually owned
+const { data: ownedCosmetics, error: ownedCosmeticsError } =
+  await supabase
+    .from("inventory")
+    .select("shop_item_id")
+    .eq("user_id", user.id)
+    .eq("item_type", "cosmetic");
 
-renderCosmetics(equippedCosmetics || []);
+if (ownedCosmeticsError) throw ownedCosmeticsError;
 
+const ownedCosmeticIds = new Set(
+  (ownedCosmetics || []).map(item => item.shop_item_id)
+);
+
+const validEquippedCosmetics = (equippedCosmetics || []).filter(
+  item => ownedCosmeticIds.has(item.shop_item_id)
+);
+
+console.log("VALID EQUIPPED COSMETICS:", validEquippedCosmetics);
+
+renderCosmetics(validEquippedCosmetics);
 // 9. LOAD STREAKS
 
     setText("statusCurrentStreak", profile.current_streak ?? 0);
