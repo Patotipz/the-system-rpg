@@ -249,6 +249,80 @@
     </main>
   </div>
 
+    <!-- ITEM INSPECTION MODAL -->
+  <div
+    id="itemDetailsModal"
+    class="item-modal"
+    aria-hidden="true"
+  >
+    <div
+      class="item-modal-backdrop"
+      data-close-modal
+    ></div>
+
+    <section
+      class="item-modal-content"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="itemModalName"
+    >
+
+      <button
+        type="button"
+        class="item-modal-close"
+        data-close-modal
+        aria-label="Close item details"
+      >
+        ✕
+      </button>
+
+      <span id="itemModalCategory" class="item-modal-category">
+        ITEM CATEGORY
+      </span>
+
+      <div id="itemModalIcon" class="item-modal-icon">
+        📦
+      </div>
+
+      <h2 id="itemModalName">ITEM NAME</h2>
+
+      <span id="itemModalRarity" class="item-modal-rarity">
+        COMMON
+      </span>
+
+      <p id="itemModalDescription" class="item-modal-description">
+        Item description.
+      </p>
+
+      <div class="item-modal-divider"></div>
+
+      <div class="item-modal-info-grid">
+
+        <div>
+          <span>QUANTITY</span>
+          <strong id="itemModalQuantity">0</strong>
+        </div>
+
+        <div>
+          <span>ENHANCEMENT</span>
+          <strong id="itemModalEnhancement">+0</strong>
+        </div>
+
+        <div>
+          <span>STATUS</span>
+          <strong id="itemModalStatus">AVAILABLE</strong>
+        </div>
+
+      </div>
+
+      <div id="itemModalStatsSection" class="item-modal-stats-section">
+        <h3>ATTRIBUTE BONUSES</h3>
+        <div id="itemModalStats" class="item-modal-stats-grid"></div>
+      </div>
+
+    </section>
+  </div>
+
   <script type="module" src="assets/js/inventory.js"></script>
 
 </body>
