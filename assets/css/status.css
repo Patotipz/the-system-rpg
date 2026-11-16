@@ -800,22 +800,3 @@
     right: -12px;
   }
 }
-.hunter-back-accessory {
-  position: absolute;
-  top: -35px;
-  left: -35px;
-  right: auto;
-  width: 145px;
-  height: 145px;
-  display: grid;
-  place-items: center;
-  z-index: 1;
-  pointer-events: none;
-}
-
-.hunter-back-accessory img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  filter: drop-shadow(0 0 12px rgba(85, 170, 255, 0.7));
-}
