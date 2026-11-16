@@ -828,12 +828,14 @@
   z-index: 0;
   inset: -20px;
   border-radius: 50%;
+
   background: radial-gradient(
     ellipse,
-    rgba(0, 174, 255, 0.5),
-    rgba(0, 100, 255, 0.2) 45%,
+    color-mix(in srgb, var(--aura-color, #00aeff) 50%, transparent),
+    color-mix(in srgb, var(--aura-color, #00aeff) 20%, transparent) 45%,
     transparent 72%
   );
+
   filter: blur(22px);
   animation: hunterEnergy 3s ease-in-out infinite alternate;
   pointer-events: none;
