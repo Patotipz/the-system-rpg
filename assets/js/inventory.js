@@ -231,8 +231,10 @@ function formatDifference(value) {
   return "0";
 }
 
-function renderComparison(currentItem, newItem) {
+function renderComparison(currentItem, newItem) {function renderComparison(currentItem, newItem) {
   if (!compareModal || !newItem) return;
+
+  const isCosmetic = newItem.item_type === "cosmetic";
 
   // CURRENT ITEM
   compareCurrentIcon.textContent = currentItem
@@ -246,8 +248,9 @@ function renderComparison(currentItem, newItem) {
     ? String(currentItem.rarity || "common").toUpperCase()
     : "EMPTY";
 
-  compareCurrentEnhancement.textContent =
-    `+${Number(currentItem?.enhancement_level || 0)} ENHANCEMENT`;
+  compareCurrentEnhancement.textContent = isCosmetic
+    ? currentItem?.item_description || "NO AURA EQUIPPED"
+    : `+${Number(currentItem?.enhancement_level || 0)} ENHANCEMENT`;
 
   // NEW ITEM
   compareNewIcon.textContent =
@@ -259,8 +262,30 @@ function renderComparison(currentItem, newItem) {
   compareNewRarity.textContent =
     String(newItem.rarity || "common").toUpperCase();
 
-  compareNewEnhancement.textContent =
-    `+${Number(newItem.enhancement_level || 0)} ENHANCEMENT`;
+  compareNewEnhancement.textContent = isCosmetic
+    ? newItem.item_description || "NO DESCRIPTION"
+    : `+${Number(newItem.enhancement_level || 0)} ENHANCEMENT`;
+
+  if (isCosmetic) {
+    compareStatsList.innerHTML = `
+      <div class="compare-stat-row">
+        <span>STATUS</span>
+        <span>${currentItem ? "EQUIPPED" : "EMPTY"}</span>
+        <span>AVAILABLE</span>
+        <span class="compare-stat-difference neutral">—</span>
+      </div>
+    `;
+
+    compareTotalDifference.textContent = "COSMETIC COMPARISON";
+    compareTotalDifference.classList.remove(
+      "positive",
+      "negative",
+      "neutral"
+    );
+    compareTotalDifference.classList.add("neutral");
+
+    return;
+  }
 
   // ATTRIBUTE COMPARISON
   let totalDifference = 0;
@@ -269,7 +294,6 @@ function renderComparison(currentItem, newItem) {
     .map(([attribute, column]) => {
       const currentValue = getEnhancedBonus(currentItem, column);
       const newValue = getEnhancedBonus(newItem, column);
-
       const difference = newValue - currentValue;
 
       totalDifference += difference;
@@ -284,15 +308,8 @@ function renderComparison(currentItem, newItem) {
       return `
         <div class="compare-stat-row">
           <span>${escapeHTML(attribute)}</span>
-
-          <span class="compare-stat-current">
-            ${currentValue}
-          </span>
-
-          <span class="compare-stat-new">
-            ${newValue}
-          </span>
-
+          <span class="compare-stat-current">${currentValue}</span>
+          <span class="compare-stat-new">${newValue}</span>
           <span class="compare-stat-difference ${differenceClass}">
             ${formatDifference(difference)}
           </span>
@@ -301,7 +318,6 @@ function renderComparison(currentItem, newItem) {
     })
     .join("");
 
-  // TOTAL DIFFERENCE
   compareTotalDifference.textContent =
     formatDifference(totalDifference);
 
