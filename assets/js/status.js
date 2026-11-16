@@ -229,6 +229,42 @@ name.textContent = item.item_name;
     container.appendChild(card);
   });
 }
+
+function renderWeaponVisual(items) {
+  const weaponContainer = document.getElementById("statusWeapon");
+  const weaponImage = document.getElementById("statusWeaponImage");
+
+  if (!weaponContainer || !weaponImage) return;
+
+  const weapon = items.find(item =>
+    item.item_type === "weapon"
+  );
+
+  if (!weapon) {
+    weaponContainer.hidden = true;
+    weaponImage.removeAttribute("src");
+    return;
+  }
+
+  const imagePath = getStatusImagePath(
+    weapon.shop_items?.item_code
+  );
+
+  if (!imagePath) {
+    weaponContainer.hidden = true;
+    return;
+  }
+
+  weaponImage.src = imagePath;
+  weaponImage.alt = weapon.item_name || "Equipped weapon";
+
+  weaponImage.onerror = () => {
+    weaponContainer.hidden = true;
+  };
+
+  weaponContainer.hidden = false;
+}
+
 // =========================================
 // HUNTER COSMETICS
 // =========================================
@@ -660,6 +696,7 @@ setInterval(async () => {
     }));
 
    renderEquipment(formattedEquipment);
+renderWeaponVisual(formattedEquipment);
 console.log("HUNTER EQUIPMENT DATA:", formattedEquipment);
     console.table(
   formattedEquipment.map(item => ({
