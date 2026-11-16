@@ -586,20 +586,26 @@
     border-radius: 8px;
 }
 
-/* Aura dinámica */
-.hunter-visual-container.has-aura .hunter-portrait-frame::before {
-    content: "";
-    position: absolute;
-    z-index: -1;
-    inset: -20px;
-    border-radius: 50%;
-    background: var(--aura-color, #55aaff);
-    opacity: 0.45;
-    filter: blur(25px);
-    animation: hunterAuraGlow 3s ease-in-out infinite;
-    pointer-events: none;
+/* Dynamic Hunter Aura */
+.hunter-visual-container.has-aura .hunter-portrait-frame {
+  border-color: var(--aura-color, #55aaff);
+  box-shadow:
+    0 0 12px color-mix(in srgb, var(--aura-color, #55aaff) 45%, transparent),
+    0 0 25px color-mix(in srgb, var(--aura-color, #55aaff) 25%, transparent);
 }
 
+.hunter-visual-container.has-aura .hunter-portrait-frame::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: -20px;
+  border-radius: 50%;
+  background: var(--aura-color, #55aaff);
+  opacity: 0.45;
+  filter: blur(25px);
+  animation: hunterAuraGlow 3s ease-in-out infinite;
+  pointer-events: none;
+}
 
 /* =========================================
    MONARCH WINGS - SHADOW ENERGY EFFECT
