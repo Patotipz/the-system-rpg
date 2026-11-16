@@ -327,12 +327,29 @@ function openCompareModal(itemId) {
     item => String(item.id) === String(itemId)
   );
 
-  if (!newItem || !canEquip(newItem) || newItem.is_equipped) {
-    return;
-  }
+  if (!newItem) return;
+
+  const isEquipment =
+    ["weapon", "armor", "accessory"].includes(newItem.item_type) &&
+    !newItem.is_equipped &&
+    Boolean(newItem.shop_items?.equipment_slot);
+
+  const isCosmetic =
+    newItem.item_type === "cosmetic" &&
+    !newItem.is_cosmetic_equipped &&
+    Boolean(newItem.shop_items?.equipment_slot);
+
+  if (!isEquipment && !isCosmetic) return;
 
   const slot = newItem.shop_items.equipment_slot;
-  const currentItem = getEquippedItemForSlot(slot);
+
+  const currentItem = isCosmetic
+    ? allItems.find(item =>
+        item.item_type === "cosmetic" &&
+        item.is_cosmetic_equipped &&
+        item.shop_items?.equipment_slot === slot
+      ) || null
+    : getEquippedItemForSlot(slot);
 
   renderComparison(currentItem, newItem);
 
