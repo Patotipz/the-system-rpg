@@ -31,20 +31,17 @@ function getMexicoDateKey(date) {
 }
 // DASHBOARD HUNTER AURA
 
+// DASHBOARD HUNTER AURA AND TITLE
+
 function renderDashboardCosmetics(cosmetics) {
   const avatar = document.getElementById("hunterVisual");
-  const back = document.getElementById("dashboardBack");
-  const equipment = document.getElementById("dashboardEquipment");
   const title = document.getElementById("dashboardTitle");
 
-  if (!avatar || !back || !equipment || !title) return;
+  if (!avatar || !title) return;
 
   // Reset visual
   avatar.classList.remove("has-aura");
   avatar.style.removeProperty("--aura-color");
-
-  back.innerHTML = "";
-  equipment.innerHTML = "";
   title.textContent = "";
 
   const auraColors = {
@@ -58,40 +55,13 @@ function renderDashboardCosmetics(cosmetics) {
     abyssal_hunter_aura: "#2563eb"
   };
 
-  const visualMap = {
-    back: {
-      monarch_wings: "🪽"
-    },
-    head: {
-      hunter_helmet: "⛑️",
-      knight_helmet: "🪖",
-      shadow_hood: "🌑"
-    },
-    weapon: {
-      assassin_blade: "🗡️",
-      battle_axe: "🪓",
-      dragon_slayer: "⚔️",
-      flame_sword: "🔥",
-      frost_blade: "❄️",
-      hunter_dagger: "🔪",
-      longbow: "🏹",
-      iron_sword: "⚔️",
-      knight_greatsword: "🗡️",
-      monarch_blade: "⚔️",
-      rusty_sword: "🗡️",
-      shadow_edge: "🌑",
-      silver_spear: "🔱",
-      steel_sword: "⚔️",
-      twin_daggers: "⚔️"
-    }
-  };
-
   cosmetics.forEach(item => {
     const code = item.shop_items?.item_code;
     const slot = item.equipment_slot;
 
     if (!code) return;
 
+    // AURA
     if (slot === "aura") {
       avatar.classList.add("has-aura");
       avatar.style.setProperty(
@@ -101,22 +71,10 @@ function renderDashboardCosmetics(cosmetics) {
       return;
     }
 
+    // TITLE
     if (slot === "title") {
       title.textContent = item.shop_items?.item_name || "";
-      return;
     }
-
-    const symbol = visualMap[slot]?.[code];
-
-    if (!symbol) return;
-
-    const layer = slot === "back" ? back : equipment;
-
-    const accessory = document.createElement("span");
-    accessory.className = `hunter-item hunter-item-${slot}`;
-    accessory.textContent = symbol;
-
-    layer.appendChild(accessory);
   });
 }
 
