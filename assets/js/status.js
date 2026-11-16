@@ -48,6 +48,59 @@ function setBar(id, percentage) {
   }
 }
 
+function getStatusImagePath(itemCode) {
+  if (!itemCode) return null;
+
+  const filename = String(itemCode)
+    .trim()
+    .toLowerCase()
+    .replace(/[_\s]+/g, "-")
+    .replace(/[^a-z0-9-]/g, "");
+
+  return filename
+    ? `images/equipment/${filename}.png`
+    : null;
+}
+
+function createStatusItemVisual(item) {
+  const wrapper = document.createElement("div");
+  wrapper.className = "status-equipment-image";
+
+  const imagePath = getStatusImagePath(
+    item.shop_items?.item_code
+  );
+
+  const fallback = document.createElement("span");
+  fallback.className = "status-equipment-image-fallback";
+
+  const icons = {
+    weapon: "⚔️",
+    armor: "🛡️",
+    accessory: "💍",
+    cosmetic: "✨"
+  };
+
+  fallback.textContent = icons[item.item_type] || "📦";
+
+  if (imagePath) {
+    const image = document.createElement("img");
+    image.src = imagePath;
+    image.alt = item.item_name || "Equipped item";
+
+    image.addEventListener("error", () => {
+      image.remove();
+      fallback.style.display = "grid";
+    });
+
+    wrapper.append(image);
+    fallback.style.display = "none";
+  }
+
+  wrapper.append(fallback);
+
+  return wrapper;
+}
+
 // =========================================
 // ATTRIBUTES
 // =========================================
@@ -134,9 +187,10 @@ function renderEquipment(items) {
 
     top.append(slot, rarity);
 
-    const name = document.createElement("h3");
-    name.textContent = item.item_name;
+    const visual = createStatusItemVisual(item);
 
+const name = document.createElement("h3");
+name.textContent = item.item_name;
     const enhancement = document.createElement("span");
     enhancement.className = "status-equipment-enhancement";
     enhancement.textContent = `ENHANCEMENT +${item.enhancement_level ?? 0}`;
@@ -171,7 +225,7 @@ function renderEquipment(items) {
       bonuses.appendChild(noBonus);
     }
 
-    card.append(top, name, enhancement, bonuses);
+    card.append(top, visual, name, enhancement, bonuses);
     container.appendChild(card);
   });
 }
@@ -225,12 +279,26 @@ function renderCosmetics(cosmetics) {
       visual.classList.add("has-aura");
     }
 
-    if (slot === "back") {
-      back.textContent =
-        code === "monarch_wings" ? "🪽" : "✦";
+   if (slot === "back") {
+  const imagePath = getStatusImagePath(code);
 
-      back.hidden = false;
-    }
+  if (imagePath) {
+    const image = document.createElement("img");
+    image.src = imagePath;
+    image.alt = item.shop_items?.item_name || "Back accessory";
+
+    image.addEventListener("error", () => {
+      image.remove();
+      back.textContent = "🪽";
+    });
+
+    back.replaceChildren(image);
+  } else {
+    back.textContent = "🪽";
+  }
+
+  back.hidden = false;
+}
 
     if (slot === "title") {
       title.textContent =
