@@ -322,7 +322,109 @@
 
     </section>
   </div>
+  <!-- EQUIPMENT COMPARISON MODAL -->
+  <div
+    id="itemCompareModal"
+    class="item-modal compare-modal"
+    aria-hidden="true"
+  >
+    <div
+      class="item-modal-backdrop"
+      data-close-compare
+    ></div>
 
+    <section
+      class="item-modal-content compare-modal-content"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="compareModalTitle"
+    >
+
+      <button
+        type="button"
+        class="item-modal-close"
+        data-close-compare
+        aria-label="Close comparison"
+      >
+        ✕
+      </button>
+
+      <span class="item-modal-category">
+        EQUIPMENT ANALYSIS
+      </span>
+
+      <h2 id="compareModalTitle">ITEM COMPARISON</h2>
+
+      <p class="compare-modal-subtitle">
+        ANALYZE YOUR CURRENT EQUIPMENT AGAINST THIS ITEM
+      </p>
+
+      <div class="compare-items-grid">
+
+        <!-- CURRENT EQUIPMENT -->
+        <div class="compare-item-card current-item-card">
+
+          <span class="compare-item-label">CURRENT EQUIPMENT</span>
+
+          <div id="compareCurrentIcon" class="compare-item-icon">
+            ⚔️
+          </div>
+
+          <h3 id="compareCurrentName">NO EQUIPMENT</h3>
+
+          <span id="compareCurrentRarity" class="item-modal-rarity">
+            EMPTY
+          </span>
+
+          <p id="compareCurrentEnhancement">+0 ENHANCEMENT</p>
+
+        </div>
+
+        <!-- NEW EQUIPMENT -->
+        <div class="compare-item-card new-item-card">
+
+          <span class="compare-item-label">NEW ITEM</span>
+
+          <div id="compareNewIcon" class="compare-item-icon">
+            ⚔️
+          </div>
+
+          <h3 id="compareNewName">ITEM NAME</h3>
+
+          <span id="compareNewRarity" class="item-modal-rarity">
+            COMMON
+          </span>
+
+          <p id="compareNewEnhancement">+0 ENHANCEMENT</p>
+
+        </div>
+
+      </div>
+
+      <div class="item-modal-divider"></div>
+
+      <div class="compare-stats-section">
+
+        <h3>ATTRIBUTE COMPARISON</h3>
+
+        <div class="compare-stats-header">
+          <span>ATTRIBUTE</span>
+          <span>CURRENT</span>
+          <span>NEW ITEM</span>
+          <span>DIFFERENCE</span>
+        </div>
+
+        <div id="compareStatsList"></div>
+
+      </div>
+
+      <div class="compare-summary">
+        <span>OVERALL ATTRIBUTE CHANGE</span>
+        <strong id="compareTotalDifference">+0</strong>
+      </div>
+
+    </section>
+  </div>
   <script type="module" src="assets/js/inventory.js"></script>
 
 </body>
