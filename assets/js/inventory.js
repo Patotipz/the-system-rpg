@@ -227,44 +227,57 @@ function updateSummary() {
     .filter(item => item.item_type === "material").length;
 }
 
-// HUNTER EQUIPMENT DISPLAY
+
 function renderEquipment() {
   const slots = document.querySelectorAll(".equipment-slot");
 
   slots.forEach(slot => {
     const slotName = slot.dataset.slot;
 
+    // Regular equipment: weapons, armor and accessories
     const equippedItem = allItems.find(item =>
       item.is_equipped &&
       item.shop_items?.equipment_slot === slotName
     );
 
+    // Cosmetic equipment: aura, back and title
+    const equippedCosmetic = allItems.find(item =>
+      item.is_cosmetic_equipped &&
+      item.shop_items?.equipment_slot === slotName
+    );
+
+    const equipped = equippedItem || equippedCosmetic;
     const small = slot.querySelector("small");
 
     if (!small) return;
 
-    slot.classList.toggle("slot-equipped", Boolean(equippedItem));
+    slot.classList.toggle("slot-equipped", Boolean(equipped));
+    slot.classList.toggle(
+      "cosmetic-slot-equipped",
+      Boolean(equippedCosmetic)
+    );
 
-    if (equippedItem) {
+    if (equipped) {
       small.textContent = "";
 
       const itemName = document.createElement("span");
       itemName.className = "equipped-item-name";
-      itemName.textContent = equippedItem.item_name;
+      itemName.textContent = equipped.item_name;
 
       const rarity = document.createElement("span");
       rarity.className = "equipped-item-rarity";
-      rarity.textContent = equippedItem.rarity.toUpperCase();
+      rarity.textContent = (equipped.rarity || "common").toUpperCase();
 
       small.append(itemName, rarity);
 
-      slot.title = equippedItem.item_name;
+      slot.title = equipped.item_name;
     } else {
       small.textContent = "EMPTY";
       slot.title = "Empty equipment slot";
     }
   });
 
+  // Attribute bonuses
   const bonusAttributes = {
     STR: "bonus_str",
     AGI: "bonus_agi",
@@ -274,7 +287,11 @@ function renderEquipment() {
     SEN: "bonus_sen"
   };
 
-  const equippedItems = allItems.filter(item => item.is_equipped);
+  // Include regular equipment and equipped cosmetics.
+  // Set prevents counting an item twice.
+  const equippedItems = allItems.filter(item =>
+    item.is_equipped || item.is_cosmetic_equipped
+  );
 
   Object.entries(bonusAttributes).forEach(([attribute, column]) => {
     const totalBonus = equippedItems.reduce((total, item) => {
@@ -288,6 +305,7 @@ function renderEquipment() {
     }
   });
 }
+
 
 // INVENTORY CARDS
 function renderInventory() {
