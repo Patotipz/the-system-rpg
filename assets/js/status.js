@@ -565,14 +565,15 @@ setInterval(async () => {
           rarity,
           enhancement_level,
           shop_items (
-            equipment_slot,
-            bonus_str,
-            bonus_vit,
-            bonus_agi,
-            bonus_int,
-            bonus_per,
-            bonus_sen
-          )
+  item_code,
+  equipment_slot,
+  bonus_str,
+  bonus_vit,
+  bonus_agi,
+  bonus_int,
+  bonus_per,
+  bonus_sen
+)
         `)
         .eq("user_id", user.id)
         .eq("is_equipped", true);
@@ -592,6 +593,15 @@ setInterval(async () => {
 
    renderEquipment(formattedEquipment);
 console.log("HUNTER EQUIPMENT DATA:", formattedEquipment);
+    console.table(
+  formattedEquipment.map(item => ({
+    name: item.item_name,
+    type: item.item_type,
+    slot: item.equipment_slot,
+    code: item.shop_items?.item_code,
+    enhancement: item.enhancement_level
+  }))
+);
 // 8. LOAD EQUIPPED COSMETICS
 
 const { data: equippedCosmetics, error: cosmeticsError } =
