@@ -24,6 +24,21 @@ const modalStatus = document.getElementById("itemModalStatus");
 const modalStatsSection = document.getElementById("itemModalStatsSection");
 const modalStats = document.getElementById("itemModalStats");
 
+// EQUIPMENT COMPARISON MODAL
+const compareModal = document.getElementById("itemCompareModal");
+const compareCurrentIcon = document.getElementById("compareCurrentIcon");
+const compareCurrentName = document.getElementById("compareCurrentName");
+const compareCurrentRarity = document.getElementById("compareCurrentRarity");
+const compareCurrentEnhancement = document.getElementById("compareCurrentEnhancement");
+
+const compareNewIcon = document.getElementById("compareNewIcon");
+const compareNewName = document.getElementById("compareNewName");
+const compareNewRarity = document.getElementById("compareNewRarity");
+const compareNewEnhancement = document.getElementById("compareNewEnhancement");
+
+const compareStatsList = document.getElementById("compareStatsList");
+const compareTotalDifference = document.getElementById("compareTotalDifference");
+
 let allItems = [];
 
 const itemIcons = {
@@ -79,8 +94,8 @@ function canEquip(item) {
 }
 
 function getEnhancedBonus(item, column) {
-  const baseBonus = Number(item.shop_items?.[column] || 0);
-  const enhancementLevel = Number(item.enhancement_level || 0);
+  const baseBonus = Number(item?.shop_items?.[column] || 0);
+  const enhancementLevel = Number(item?.enhancement_level || 0);
 
   return Math.round(baseBonus * (1 + 0.10 * enhancementLevel));
 }
@@ -109,6 +124,18 @@ function canConsume(item) {
       )
     )
   );
+}
+
+// =========================================
+// MODAL SCROLL MANAGEMENT
+// =========================================
+
+function updateModalScroll() {
+  const inspectionOpen = itemModal?.classList.contains("active");
+  const comparisonOpen = compareModal?.classList.contains("active");
+
+  document.body.style.overflow =
+    inspectionOpen || comparisonOpen ? "hidden" : "";
 }
 
 // =========================================
@@ -145,7 +172,6 @@ function openItemDetails(itemId) {
     `+${Number(item.enhancement_level || 0)}`;
   modalStatus.textContent = status;
 
-  // ATTRIBUTE BONUSES
   const stats = Object.entries(attributeColumns)
     .map(([attribute, column]) => ({
       attribute,
@@ -170,7 +196,7 @@ function openItemDetails(itemId) {
   itemModal.classList.add("active");
   itemModal.setAttribute("aria-hidden", "false");
 
-  document.body.style.overflow = "hidden";
+  updateModalScroll();
 }
 
 function closeItemDetails() {
@@ -179,7 +205,7 @@ function closeItemDetails() {
   itemModal.classList.remove("active");
   itemModal.setAttribute("aria-hidden", "true");
 
-  document.body.style.overflow = "";
+  updateModalScroll();
 }
 
 if (itemModal) {
@@ -188,8 +214,159 @@ if (itemModal) {
   });
 }
 
+// =========================================
+// EQUIPMENT COMPARISON
+// =========================================
+
+function getEquippedItemForSlot(slot) {
+  return allItems.find(item =>
+    item.is_equipped &&
+    item.shop_items?.equipment_slot === slot
+  ) || null;
+}
+
+function formatDifference(value) {
+  if (value > 0) return `+${value}`;
+  if (value < 0) return String(value);
+  return "0";
+}
+
+function renderComparison(currentItem, newItem) {
+  if (!compareModal || !newItem) return;
+
+  // CURRENT ITEM
+  compareCurrentIcon.textContent = currentItem
+    ? itemIcons[currentItem.item_type] || "📦"
+    : "—";
+
+  compareCurrentName.textContent =
+    currentItem?.item_name || "NO EQUIPMENT";
+
+  compareCurrentRarity.textContent = currentItem
+    ? String(currentItem.rarity || "common").toUpperCase()
+    : "EMPTY";
+
+  compareCurrentEnhancement.textContent =
+    `+${Number(currentItem?.enhancement_level || 0)} ENHANCEMENT`;
+
+  // NEW ITEM
+  compareNewIcon.textContent =
+    itemIcons[newItem.item_type] || "📦";
+
+  compareNewName.textContent =
+    newItem.item_name || "UNKNOWN ITEM";
+
+  compareNewRarity.textContent =
+    String(newItem.rarity || "common").toUpperCase();
+
+  compareNewEnhancement.textContent =
+    `+${Number(newItem.enhancement_level || 0)} ENHANCEMENT`;
+
+  // ATTRIBUTE COMPARISON
+  let totalDifference = 0;
+
+  compareStatsList.innerHTML = Object.entries(attributeColumns)
+    .map(([attribute, column]) => {
+      const currentValue = getEnhancedBonus(currentItem, column);
+      const newValue = getEnhancedBonus(newItem, column);
+
+      const difference = newValue - currentValue;
+
+      totalDifference += difference;
+
+      const differenceClass =
+        difference > 0
+          ? "positive"
+          : difference < 0
+            ? "negative"
+            : "neutral";
+
+      return `
+        <div class="compare-stat-row">
+          <span>${escapeHTML(attribute)}</span>
+
+          <span class="compare-stat-current">
+            ${currentValue}
+          </span>
+
+          <span class="compare-stat-new">
+            ${newValue}
+          </span>
+
+          <span class="compare-stat-difference ${differenceClass}">
+            ${formatDifference(difference)}
+          </span>
+        </div>
+      `;
+    })
+    .join("");
+
+  // TOTAL DIFFERENCE
+  compareTotalDifference.textContent =
+    formatDifference(totalDifference);
+
+  compareTotalDifference.classList.remove(
+    "positive",
+    "negative",
+    "neutral"
+  );
+
+  compareTotalDifference.classList.add(
+    totalDifference > 0
+      ? "positive"
+      : totalDifference < 0
+        ? "negative"
+        : "neutral"
+  );
+}
+
+function openCompareModal(itemId) {
+  if (!compareModal) return;
+
+  const newItem = allItems.find(
+    item => String(item.id) === String(itemId)
+  );
+
+  if (!newItem || !canEquip(newItem) || newItem.is_equipped) {
+    return;
+  }
+
+  const slot = newItem.shop_items.equipment_slot;
+  const currentItem = getEquippedItemForSlot(slot);
+
+  renderComparison(currentItem, newItem);
+
+  compareModal.classList.add("active");
+  compareModal.setAttribute("aria-hidden", "false");
+
+  updateModalScroll();
+}
+
+function closeCompareModal() {
+  if (!compareModal) return;
+
+  compareModal.classList.remove("active");
+  compareModal.setAttribute("aria-hidden", "true");
+
+  updateModalScroll();
+}
+
+if (compareModal) {
+  compareModal.querySelectorAll("[data-close-compare]").forEach(element => {
+    element.addEventListener("click", closeCompareModal);
+  });
+}
+
+// CLOSE MODALS WITH ESCAPE
 document.addEventListener("keydown", event => {
-  if (event.key === "Escape" && itemModal?.classList.contains("active")) {
+  if (event.key !== "Escape") return;
+
+  if (compareModal?.classList.contains("active")) {
+    closeCompareModal();
+    return;
+  }
+
+  if (itemModal?.classList.contains("active")) {
     closeItemDetails();
   }
 });
@@ -452,6 +629,16 @@ function renderInventory() {
            </button>`
       : "";
 
+    // COMPARISON BUTTON
+    const compareButton = canEquip(item) && !item.is_equipped
+      ? `<button
+           type="button"
+           class="inventory-action compare-button"
+           data-compare-id="${escapeHTML(item.id)}">
+           ⇄ COMPARE
+         </button>`
+      : "";
+
     const enhancementCosts = [
       100, 200, 350, 500, 700,
       900, 1200, 1500, 1900, 2500
@@ -560,6 +747,7 @@ function renderInventory() {
           ⌕ INSPECT
         </button>
 
+        ${compareButton}
         ${equipButton}
         ${enhanceButton}
         ${useButton}
@@ -644,6 +832,14 @@ inventoryContainer.addEventListener("click", async event => {
 
   if (inspectButton) {
     openItemDetails(inspectButton.dataset.inspectId);
+    return;
+  }
+
+  // COMPARE
+  const compareButton = event.target.closest("[data-compare-id]");
+
+  if (compareButton) {
+    openCompareModal(compareButton.dataset.compareId);
     return;
   }
 
