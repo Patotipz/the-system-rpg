@@ -231,7 +231,7 @@ function formatDifference(value) {
   return "0";
 }
 
-function renderComparison(currentItem, newItem) {function renderComparison(currentItem, newItem) {
+function renderComparison(currentItem, newItem) {
   if (!compareModal || !newItem) return;
 
   const isCosmetic = newItem.item_type === "cosmetic";
@@ -781,7 +781,7 @@ const compareButton =
             ? `<span class="inventory-equipped">EQUIPPED</span>`
             : ""
         }
-<div class="inventory-primary-actions">
+<div class="inventory-primary-actions ${compareButton ? "has-compare" : "inspect-only"}">
   <button
     type="button"
     class="inventory-action inspect-button"
