@@ -632,3 +632,78 @@
     0%, 100% { opacity: 0.25; transform: scale(0.96); }
     50% { opacity: 0.55; transform: scale(1.04); }
 }
+
+/* =========================================
+   STATUS EQUIPMENT IMAGES
+========================================= */
+
+.status-equipment-image {
+  width: 100%;
+  height: 115px;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  background: rgba(40, 113, 190, 0.08);
+  border: 1px solid var(--border);
+}
+
+.status-equipment-image img {
+  width: 100%;
+  height: 100%;
+  padding: 10px;
+  box-sizing: border-box;
+  object-fit: contain;
+  filter: drop-shadow(0 0 8px rgba(76, 165, 255, 0.3));
+}
+
+.status-equipment-image-fallback {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  place-items: center;
+  font-size: 38px;
+}
+
+/* BACK ACCESSORY IMAGE */
+
+.hunter-back-accessory img {
+  width: 125px;
+  height: 125px;
+  object-fit: contain;
+  filter: drop-shadow(0 0 12px rgba(85, 170, 255, 0.7));
+}
+
+/* WEAPON ON HUNTER PORTRAIT */
+
+.hunter-weapon-effect {
+  position: absolute;
+  z-index: 4;
+  right: -25px;
+  bottom: 5px;
+  width: 105px;
+  height: 135px;
+  pointer-events: none;
+}
+
+.hunter-weapon-effect[hidden] {
+  display: none;
+}
+
+.hunter-weapon-effect img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 0 10px rgba(76, 165, 255, 0.65));
+}
+
+@media (max-width: 600px) {
+  .status-equipment-image {
+    height: 100px;
+  }
+
+  .hunter-weapon-effect {
+    width: 75px;
+    height: 105px;
+    right: -12px;
+  }
+}
