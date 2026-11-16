@@ -1572,3 +1572,55 @@
 .inventory-primary-actions .inventory-action:active {
   transform: translateY(0);
 }
+
+/* =========================================
+   ITEM IMAGE SYSTEM
+========================================= */
+
+#inventoryItems .inventory-item-icon,
+.item-modal-icon,
+.compare-item-icon {
+  position: relative;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+}
+
+.item-visual-image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  padding: 5px;
+  box-sizing: border-box;
+}
+
+.item-visual-fallback {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  font-size: inherit;
+}
+
+#inventoryItems .inventory-item-icon .item-visual-image {
+  padding: 4px;
+}
+
+.item-modal-icon .item-visual {
+  width: 100%;
+  height: 100%;
+}
+
+.item-modal-icon .item-visual-image {
+  padding: 8px;
+}
+
+.compare-item-icon .item-visual {
+  width: 100%;
+  height: 100%;
+}
+
+.compare-item-icon .item-visual-image {
+  padding: 6px;
+}
