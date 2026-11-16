@@ -630,9 +630,17 @@ function renderInventory() {
       : "";
 
     // COMPARISON BUTTON
-    const compareButton =
+const isComparableEquipment =
   ["weapon", "armor", "accessory"].includes(item.item_type) &&
-  !item.is_equipped
+  !item.is_equipped;
+
+const isComparableCosmetic =
+  item.item_type === "cosmetic" &&
+  !item.is_cosmetic_equipped &&
+  Boolean(item.shop_items?.equipment_slot);
+
+const compareButton =
+  isComparableEquipment || isComparableCosmetic
     ? `<button
          type="button"
          class="inventory-action compare-button"
