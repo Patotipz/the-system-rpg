@@ -181,14 +181,18 @@ function renderEquipment(items) {
 
 function renderCosmetics(cosmetics) {
   const visual = document.getElementById("hunterVisual");
+  const aura = document.getElementById("statusAura");
   const back = document.getElementById("statusBack");
   const title = document.getElementById("statusTitle");
 
-  if (!visual || !back || !title) return;
+  if (!visual || !aura || !back || !title) return;
 
-  // Reset previous cosmetics
+  // RESET VISUAL EFFECTS
   visual.className = "hunter-visual-container";
-  visual.style.removeProperty("--aura-color");
+
+  aura.hidden = true;
+  aura.className = "hunter-aura-effect";
+  aura.style.removeProperty("--aura-color");
 
   back.textContent = "";
   back.hidden = true;
@@ -210,23 +214,28 @@ function renderCosmetics(cosmetics) {
   cosmetics.forEach(item => {
     const code = item.shop_items?.item_code;
     const slot = item.equipment_slot;
-    console.log("COSMETIC DETECTED:", code, slot);
 
     if (slot === "aura") {
-      visual.classList.add("has-aura");
-      visual.style.setProperty(
+      aura.hidden = false;
+      aura.style.setProperty(
         "--aura-color",
         auraColors[code] || "#55aaff"
       );
+
+      visual.classList.add("has-aura");
     }
 
     if (slot === "back") {
-      back.textContent = code === "monarch_wings" ? "🪽" : "✦";
+      back.textContent =
+        code === "monarch_wings" ? "🪽" : "✦";
+
       back.hidden = false;
     }
 
     if (slot === "title") {
-      title.textContent = item.shop_items?.item_name || "HUNTER";
+      title.textContent =
+        item.shop_items?.item_name || "HUNTER";
+
       title.hidden = false;
     }
   });
@@ -582,7 +591,7 @@ setInterval(async () => {
     }));
 
    renderEquipment(formattedEquipment);
-
+console.log("HUNTER EQUIPMENT DATA:", formattedEquipment);
 // 8. LOAD EQUIPPED COSMETICS
 
 const { data: equippedCosmetics, error: cosmeticsError } =
