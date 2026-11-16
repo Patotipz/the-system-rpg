@@ -47,57 +47,72 @@
       </div>
     </header>
 
-    <!-- HUNTER PROFILE -->
-    <section class="panel hunter-profile-panel">
-     <div class="hunter-visual-container" id="hunterVisual">
+   <!-- HUNTER PROFILE -->
+<section class="panel hunter-profile-panel">
 
-  <div class="hunter-portrait-frame">
+  <div class="hunter-visual-container" id="hunterVisual">
 
-    <div class="hunter-back-accessory" id="statusBack" hidden></div>
+    <div class="hunter-portrait-frame">
 
-    <img
-      src="images/hunter-portrait.png"
-      alt="Hunter Portrait"
-      class="hunter-profile-avatar"
-      id="statusAvatar"
-    />
+      <!-- AURA EFFECT -->
+      <div class="hunter-aura-effect" id="statusAura" hidden></div>
+
+      <!-- BACK ACCESSORY -->
+      <div class="hunter-back-accessory" id="statusBack" hidden></div>
+
+      <!-- HUNTER PORTRAIT -->
+      <img
+        src="images/hunter-portrait.png"
+        alt="Hunter Portrait"
+        class="hunter-profile-avatar"
+        id="statusAvatar"
+      />
+
+      <!-- WEAPON EFFECT -->
+      <div class="hunter-weapon-effect" id="statusWeapon" hidden></div>
+
+    </div>
 
   </div>
 
-</div>
+  <div class="hunter-profile-info">
 
-</div>
+    <span class="system-label">HUNTER PROFILE</span>
 
-      <div class="hunter-profile-info">
-        <span class="system-label">HUNTER PROFILE</span>
-        <h2 id="statusName">---</h2>
-<div id="statusTitle" class="hunter-cosmetic-title" hidden></div>
-        <div class="hunter-profile-meta">
-          <span id="statusRank">RANK --</span>
-          <span id="statusLevel">LV. --</span>
-          <span id="statusCoins">0 COINS</span>
-        </div>
+    <h2 id="statusName">---</h2>
 
-        <!-- HUNTER CONDITION -->
-        <div id="statusCondition" class="status-condition-badge" hidden>
-          <span>⚠</span>
-          <strong>EXHAUSTED</strong>
-        </div>
+    <div id="statusTitle" class="hunter-cosmetic-title" hidden></div>
 
-        <div class="status-xp-section">
-          <div class="status-xp-header">
-            <span>EXPERIENCE</span>
-            <strong id="statusXP">0 XP</strong>
-          </div>
+    <div class="hunter-profile-meta">
+      <span id="statusRank">RANK --</span>
+      <span id="statusLevel">LV. --</span>
+      <span id="statusCoins">0 COINS</span>
+    </div>
 
-          <div class="progress-track">
-            <div id="statusXPBar" class="progress-fill"></div>
-          </div>
+    <!-- HUNTER CONDITION -->
+    <div id="statusCondition" class="status-condition-badge" hidden>
+      <span>⚠</span>
+      <strong>EXHAUSTED</strong>
+    </div>
 
-          <span id="statusXPNext" class="muted"></span>
-        </div>
+    <div class="status-xp-section">
+
+      <div class="status-xp-header">
+        <span>EXPERIENCE</span>
+        <strong id="statusXP">0 XP</strong>
       </div>
-    </section>
+
+      <div class="progress-track">
+        <div id="statusXPBar" class="progress-fill"></div>
+      </div>
+
+      <span id="statusXPNext" class="muted"></span>
+
+    </div>
+
+  </div>
+
+</section>
 
     <!-- RESOURCES -->
     <section class="status-section">
