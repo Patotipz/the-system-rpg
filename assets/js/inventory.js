@@ -607,7 +607,39 @@ function updateSummary() {
   materialCount.textContent = allItems
     .filter(item => item.item_type === "material").length;
 }
+// =========================================
+// HUNTER AURA VISUAL
+// =========================================
 
+function renderHunterAura() {
+  const auraElement = document.querySelector(".hunter-aura");
+
+  if (!auraElement) return;
+
+  const equippedAura = allItems.find(item =>
+    item.is_cosmetic_equipped &&
+    item.shop_items?.equipment_slot === "aura"
+  );
+
+  const auraCode = equippedAura?.shop_items?.item_code;
+
+  const auraColors = {
+    hunter_aura: "#55aaff",
+    shadow_aura: "#8b5cf6",
+    monarch_aura: "#f5c542",
+    green_hunter_aura: "#35d69a",
+    crimson_hunter_aura: "#ef4444",
+    violet_hunter_aura: "#a855f7",
+    golden_hunter_aura: "#fbbf24",
+    abyssal_hunter_aura: "#2563eb"
+  };
+
+  const color = auraCode
+    ? auraColors[auraCode] || "#55aaff"
+    : "#00aeff";
+
+  auraElement.style.setProperty("--aura-color", color);
+}
 // =========================================
 // EQUIPMENT DISPLAY
 // =========================================
@@ -712,6 +744,7 @@ function renderEquipment() {
       element.textContent = `+${totalBonus}`;
     }
   });
+  renderHunterAura();
 }
 
 // =========================================
