@@ -781,17 +781,19 @@ const compareButton =
             ? `<span class="inventory-equipped">EQUIPPED</span>`
             : ""
         }
+<div class="inventory-primary-actions">
+  <button
+    type="button"
+    class="inventory-action inspect-button"
+    data-inspect-id="${escapeHTML(item.id)}"
+  >
+    ⌕ INSPECT
+  </button>
 
-        <button
-          type="button"
-          class="inventory-action inspect-button"
-          data-inspect-id="${escapeHTML(item.id)}"
-        >
-          ⌕ INSPECT
-        </button>
+  ${compareButton}
+</div>
 
-        ${compareButton}
-        ${equipButton}
+${equipButton}
         ${enhanceButton}
         ${useButton}
         ${skillButton}
