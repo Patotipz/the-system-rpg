@@ -612,6 +612,7 @@ function updateSummary() {
 // EQUIPMENT DISPLAY
 // =========================================
 
+
 function renderEquipment() {
   const slots = document.querySelectorAll(".equipment-slot");
 
@@ -629,9 +630,10 @@ function renderEquipment() {
     );
 
     const equipped = equippedItem || equippedCosmetic;
+    const icon = slot.querySelector(":scope > span");
     const small = slot.querySelector("small");
 
-    if (!small) return;
+    if (!small || !icon) return;
 
     slot.classList.toggle("slot-equipped", Boolean(equipped));
     slot.classList.toggle(
@@ -639,8 +641,40 @@ function renderEquipment() {
       Boolean(equippedCosmetic)
     );
 
+    // Remove previous visual
+    slot.querySelector(".equipment-item-visual")?.remove();
+
     if (equipped) {
-      small.textContent = "";
+      const imagePath = getItemImagePath(equipped);
+
+      const visual = document.createElement("div");
+      visual.className = "equipment-item-visual";
+
+      if (imagePath) {
+        const image = document.createElement("img");
+        image.className = "equipment-item-image";
+        image.src = imagePath;
+        image.alt = equipped.item_name || "Equipped item";
+
+        const fallback = document.createElement("span");
+        fallback.className = "equipment-item-fallback";
+        fallback.textContent = itemIcons[equipped.item_type] || "📦";
+        fallback.style.display = "none";
+
+        image.addEventListener("error", () => {
+          image.style.display = "none";
+          fallback.style.display = "grid";
+        });
+
+        visual.append(image, fallback);
+      } else {
+        const fallback = document.createElement("span");
+        fallback.className = "equipment-item-fallback";
+        fallback.textContent = itemIcons[equipped.item_type] || "📦";
+        visual.append(fallback);
+      }
+
+      icon.style.display = "none";
 
       const itemName = document.createElement("span");
       itemName.className = "equipped-item-name";
@@ -651,10 +685,13 @@ function renderEquipment() {
       rarity.textContent =
         (equipped.rarity || "common").toUpperCase();
 
-      small.append(itemName, rarity);
+      small.replaceChildren(itemName, rarity);
 
+      slot.insertBefore(visual, small);
       slot.title = equipped.item_name;
+
     } else {
+      icon.style.display = "";
       small.textContent = "EMPTY";
       slot.title = "Empty equipment slot";
     }
