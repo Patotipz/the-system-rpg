@@ -1518,3 +1518,29 @@
   text-align: center;
   box-sizing: border-box;
 }
+/* =================================
+   INVENTORY PRIMARY ACTIONS
+================================= */
+
+.inventory-primary-actions {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+  width: 100%;
+  margin-top: 12px;
+}
+
+.inventory-primary-actions.has-compare {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.inventory-primary-actions .inventory-action {
+  width: 100%;
+  min-width: 0;
+  margin: 0;
+  padding: 10px 5px;
+  font-size: 0.75rem;
+  white-space: nowrap;
+  text-align: center;
+  box-sizing: border-box;
+}
