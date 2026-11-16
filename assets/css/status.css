@@ -757,15 +757,6 @@
   font-size: 38px;
 }
 
-/* BACK ACCESSORY IMAGE */
-
-.hunter-back-accessory img {
-  width: 125px;
-  height: 125px;
-  object-fit: contain;
-  filter: drop-shadow(0 0 12px rgba(85, 170, 255, 0.7));
-}
-
 /* WEAPON ON HUNTER PORTRAIT */
 
 .hunter-weapon-effect {
