@@ -282,7 +282,7 @@ function renderCosmetics(cosmetics) {
 
   aura.hidden = true;
   aura.className = "hunter-aura-effect";
-  aura.style.removeProperty("--aura-color");
+  visual.style.removeProperty("--aura-color");
 
   back.textContent = "";
   back.hidden = true;
@@ -307,7 +307,7 @@ function renderCosmetics(cosmetics) {
 
     if (slot === "aura") {
       aura.hidden = false;
-      aura.style.setProperty(
+      visual.style.setProperty(
         "--aura-color",
         auraColors[code] || "#55aaff"
       );
