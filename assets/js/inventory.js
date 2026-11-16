@@ -71,6 +71,71 @@ function escapeHTML(value) {
   })[char]);
 }
 
+function getItemImagePath(item) {
+  const itemCode = item?.shop_items?.item_code;
+
+  if (!itemCode) return null;
+
+  const filename = String(itemCode)
+    .trim()
+    .toLowerCase()
+    .replace(/[_\s]+/g, "-")
+    .replace(/[^a-z0-9-]/g, "");
+
+  return filename
+    ? `images/equipment/${filename}.png`
+    : null;
+}
+
+function createItemVisualMarkup(item, className = "") {
+  const imagePath = getItemImagePath(item);
+  const fallbackIcon = itemIcons[item?.item_type] || "📦";
+
+  return `
+    <div class="${escapeHTML(className)} item-visual">
+      ${
+        imagePath
+          ? `<img
+               class="item-visual-image"
+               src="${escapeHTML(imagePath)}"
+               alt="${escapeHTML(item?.item_name || "Item")}"
+             >`
+          : ""
+      }
+      <span class="item-visual-fallback"
+        ${imagePath ? 'style="display:none"' : ""}>
+        ${fallbackIcon}
+      </span>
+    </div>
+  `;
+}
+
+function applyImageFallbacks(container) {
+  if (!container) return;
+
+  container.querySelectorAll(".item-visual-image").forEach(image => {
+    if (image.dataset.fallbackBound) return;
+
+    image.dataset.fallbackBound = "true";
+
+    const showFallback = () => {
+      image.style.display = "none";
+
+      const fallback = image.parentElement?.querySelector(
+        ".item-visual-fallback"
+      );
+
+      if (fallback) fallback.style.display = "grid";
+    };
+
+    image.addEventListener("error", showFallback);
+
+    if (image.complete && image.naturalWidth === 0) {
+      showFallback();
+    }
+  });
+}
+
 function formatCategory(type) {
   const categories = {
     consumable: "CONSUMABLE",
@@ -161,7 +226,12 @@ function openItemDetails(itemId) {
   }
 
   modalCategory.textContent = formatCategory(item.item_type);
-  modalIcon.textContent = icon;
+  modalIcon.innerHTML = createItemVisualMarkup(
+  item,
+  "item-modal-image"
+);
+
+applyImageFallbacks(modalIcon);
   modalName.textContent = item.item_name || "UNKNOWN ITEM";
   modalRarity.textContent = rarity;
   modalDescription.textContent =
@@ -236,10 +306,17 @@ function renderComparison(currentItem, newItem) {
 
   const isCosmetic = newItem.item_type === "cosmetic";
 
-  // CURRENT ITEM
-  compareCurrentIcon.textContent = currentItem
-    ? itemIcons[currentItem.item_type] || "📦"
-    : "—";
+    // CURRENT ITEM
+  if (currentItem) {
+    compareCurrentIcon.innerHTML = createItemVisualMarkup(
+      currentItem,
+      "compare-item-image"
+    );
+
+    applyImageFallbacks(compareCurrentIcon);
+  } else {
+    compareCurrentIcon.textContent = "—";
+  }
 
   compareCurrentName.textContent =
     currentItem?.item_name || "NO EQUIPMENT";
@@ -251,10 +328,13 @@ function renderComparison(currentItem, newItem) {
   compareCurrentEnhancement.textContent = isCosmetic
     ? currentItem?.item_description || "NO AURA EQUIPPED"
     : `+${Number(currentItem?.enhancement_level || 0)} ENHANCEMENT`;
+    // NEW ITEM
+  compareNewIcon.innerHTML = createItemVisualMarkup(
+    newItem,
+    "compare-item-image"
+  );
 
-  // NEW ITEM
-  compareNewIcon.textContent =
-    itemIcons[newItem.item_type] || "📦";
+  applyImageFallbacks(compareNewIcon);
 
   compareNewName.textContent =
     newItem.item_name || "UNKNOWN ITEM";
@@ -265,28 +345,6 @@ function renderComparison(currentItem, newItem) {
   compareNewEnhancement.textContent = isCosmetic
     ? newItem.item_description || "NO DESCRIPTION"
     : `+${Number(newItem.enhancement_level || 0)} ENHANCEMENT`;
-
-  if (isCosmetic) {
-    compareStatsList.innerHTML = `
-      <div class="compare-stat-row">
-        <span>STATUS</span>
-        <span>${currentItem ? "EQUIPPED" : "EMPTY"}</span>
-        <span>AVAILABLE</span>
-        <span class="compare-stat-difference neutral">—</span>
-      </div>
-    `;
-
-    compareTotalDifference.textContent = "COSMETIC COMPARISON";
-    compareTotalDifference.classList.remove(
-      "positive",
-      "negative",
-      "neutral"
-    );
-    compareTotalDifference.classList.add("neutral");
-
-    return;
-  }
-
   // ATTRIBUTE COMPARISON
   let totalDifference = 0;
 
@@ -743,7 +801,7 @@ const compareButton =
     return `
       <article class="inventory-item rarity-${escapeHTML(item.rarity || "common")}">
 
-        <div class="inventory-item-icon">${icon}</div>
+       ${createItemVisualMarkup(item, "inventory-item-icon")}
 
         <span class="inventory-item-category">
           ${escapeHTML(formatCategory(item.item_type))}
@@ -802,6 +860,7 @@ ${equipButton}
       </article>
     `;
   }).join("");
+    applyImageFallbacks(inventoryContainer);
 }
 
 // =========================================
