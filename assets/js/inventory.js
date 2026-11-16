@@ -11,6 +11,19 @@ const armorCount = document.getElementById("armorCount");
 const consumableCount = document.getElementById("consumableCount");
 const materialCount = document.getElementById("materialCount");
 
+// ITEM INSPECTION MODAL
+const itemModal = document.getElementById("itemDetailsModal");
+const modalCategory = document.getElementById("itemModalCategory");
+const modalIcon = document.getElementById("itemModalIcon");
+const modalName = document.getElementById("itemModalName");
+const modalRarity = document.getElementById("itemModalRarity");
+const modalDescription = document.getElementById("itemModalDescription");
+const modalQuantity = document.getElementById("itemModalQuantity");
+const modalEnhancement = document.getElementById("itemModalEnhancement");
+const modalStatus = document.getElementById("itemModalStatus");
+const modalStatsSection = document.getElementById("itemModalStatsSection");
+const modalStats = document.getElementById("itemModalStats");
+
 let allItems = [];
 
 const itemIcons = {
@@ -22,6 +35,15 @@ const itemIcons = {
   skill_item: "📜",
   cosmetic: "✨",
   boost: "⚡"
+};
+
+const attributeColumns = {
+  STR: "bonus_str",
+  AGI: "bonus_agi",
+  VIT: "bonus_vit",
+  INT: "bonus_int",
+  PER: "bonus_per",
+  SEN: "bonus_sen"
 };
 
 function escapeHTML(value) {
@@ -46,7 +68,7 @@ function formatCategory(type) {
     boost: "BOOST"
   };
 
-  return categories[type] || type.toUpperCase();
+  return categories[type] || String(type || "ITEM").toUpperCase();
 }
 
 function canEquip(item) {
@@ -66,7 +88,6 @@ function getEnhancedBonus(item, column) {
 function canConsume(item) {
   const shopItem = item.shop_items || {};
 
-  // BOOST validation
   if (item.item_type === "boost") {
     return (
       ["xp_multiplier", "coin_multiplier", "reward_multiplier"]
@@ -76,7 +97,6 @@ function canConsume(item) {
     );
   }
 
-  // CONSUMABLE validation
   return (
     item.item_type === "consumable" &&
     (
@@ -91,7 +111,93 @@ function canConsume(item) {
   );
 }
 
+// =========================================
+// ITEM INSPECTION
+// =========================================
+
+function openItemDetails(itemId) {
+  const item = allItems.find(
+    currentItem => String(currentItem.id) === String(itemId)
+  );
+
+  if (!item || !itemModal) return;
+
+  const icon = itemIcons[item.item_type] || "📦";
+  const rarity = String(item.rarity || "common").toUpperCase();
+
+  let status = "AVAILABLE";
+
+  if (item.is_equipped || item.is_cosmetic_equipped) {
+    status = "EQUIPPED";
+  } else if (item.is_skill_unlocked) {
+    status = "UNLOCKED";
+  }
+
+  modalCategory.textContent = formatCategory(item.item_type);
+  modalIcon.textContent = icon;
+  modalName.textContent = item.item_name || "UNKNOWN ITEM";
+  modalRarity.textContent = rarity;
+  modalDescription.textContent =
+    item.item_description || "No description available.";
+
+  modalQuantity.textContent = Number(item.quantity || 0);
+  modalEnhancement.textContent =
+    `+${Number(item.enhancement_level || 0)}`;
+  modalStatus.textContent = status;
+
+  // ATTRIBUTE BONUSES
+  const stats = Object.entries(attributeColumns)
+    .map(([attribute, column]) => ({
+      attribute,
+      value: getEnhancedBonus(item, column)
+    }))
+    .filter(stat => stat.value > 0);
+
+  if (stats.length) {
+    modalStats.innerHTML = stats.map(stat => `
+      <div class="item-modal-stat">
+        <span>${escapeHTML(stat.attribute)}</span>
+        <strong>+${stat.value}</strong>
+      </div>
+    `).join("");
+
+    modalStatsSection.style.display = "block";
+  } else {
+    modalStats.innerHTML = "";
+    modalStatsSection.style.display = "none";
+  }
+
+  itemModal.classList.add("active");
+  itemModal.setAttribute("aria-hidden", "false");
+
+  document.body.style.overflow = "hidden";
+}
+
+function closeItemDetails() {
+  if (!itemModal) return;
+
+  itemModal.classList.remove("active");
+  itemModal.setAttribute("aria-hidden", "true");
+
+  document.body.style.overflow = "";
+}
+
+if (itemModal) {
+  itemModal.querySelectorAll("[data-close-modal]").forEach(element => {
+    element.addEventListener("click", closeItemDetails);
+  });
+}
+
+document.addEventListener("keydown", event => {
+  if (event.key === "Escape" && itemModal?.classList.contains("active")) {
+    closeItemDetails();
+  }
+});
+
+// =========================================
 // LOAD INVENTORY AND EQUIPMENT
+// =========================================
+
 async function loadInventory() {
   const { data: authData, error: authError } =
     await supabase.auth.getUser();
@@ -150,55 +256,59 @@ async function loadInventory() {
       enhancement_level,
       shop_item_id,
       shop_items (
-  item_code,
-  equipment_slot,
-  bonus_str,
-  bonus_agi,
-  bonus_vit,
-  bonus_int,
-  bonus_per,
-  bonus_sen,
-  hp_restore,
-  energy_restore,
-  effect_type,
-  effect_value,
-  duration_seconds
-)
+        item_code,
+        equipment_slot,
+        bonus_str,
+        bonus_agi,
+        bonus_vit,
+        bonus_int,
+        bonus_per,
+        bonus_sen,
+        hp_restore,
+        energy_restore,
+        effect_type,
+        effect_value,
+        duration_seconds
+      )
     `)
     .order("obtained_at", { ascending: false });
 
   if (error) throw error;
 
- const { data: unlockedSkills, error: skillsError } = await supabase
-  .from("user_skills")
-  .select("skill_code")
-  .eq("user_id", authData.user.id);
-
-if (skillsError) throw skillsError;
-
-const unlockedSkillCodes = new Set(
-  (unlockedSkills || []).map(skill => skill.skill_code)
-);
-const { data: equippedCosmetics, error: cosmeticsError } =
-  await supabase
-    .from("user_equipped_cosmetics")
-    .select("shop_item_id, equipment_slot")
+  const { data: unlockedSkills, error: skillsError } = await supabase
+    .from("user_skills")
+    .select("skill_code")
     .eq("user_id", authData.user.id);
 
-if (cosmeticsError) throw cosmeticsError;
+  if (skillsError) throw skillsError;
 
-const equippedCosmeticIds = new Set(
-  (equippedCosmetics || []).map(item => item.shop_item_id)
-);
-allItems = (data || []).map(item => ({
-  ...item,
-  is_skill_unlocked:
-    item.item_type === "skill_item" &&
-    unlockedSkillCodes.has(item.shop_items?.item_code)
-  ,is_cosmetic_equipped:
-  item.item_type === "cosmetic" &&
-  equippedCosmeticIds.has(item.shop_item_id)
-}));
+  const unlockedSkillCodes = new Set(
+    (unlockedSkills || []).map(skill => skill.skill_code)
+  );
+
+  const { data: equippedCosmetics, error: cosmeticsError } =
+    await supabase
+      .from("user_equipped_cosmetics")
+      .select("shop_item_id, equipment_slot")
+      .eq("user_id", authData.user.id);
+
+  if (cosmeticsError) throw cosmeticsError;
+
+  const equippedCosmeticIds = new Set(
+    (equippedCosmetics || []).map(item => item.shop_item_id)
+  );
+
+  allItems = (data || []).map(item => ({
+    ...item,
+
+    is_skill_unlocked:
+      item.item_type === "skill_item" &&
+      unlockedSkillCodes.has(item.shop_items?.item_code),
+
+    is_cosmetic_equipped:
+      item.item_type === "cosmetic" &&
+      equippedCosmeticIds.has(item.shop_item_id)
+  }));
 
   updateSummary();
   renderEquipment();
@@ -207,7 +317,10 @@ allItems = (data || []).map(item => ({
   return true;
 }
 
+// =========================================
 // SUMMARY COUNTERS
+// =========================================
+
 function updateSummary() {
   inventoryTotal.textContent = allItems.reduce(
     (total, item) => total + Number(item.quantity || 0),
@@ -227,6 +340,9 @@ function updateSummary() {
     .filter(item => item.item_type === "material").length;
 }
 
+// =========================================
+// EQUIPMENT DISPLAY
+// =========================================
 
 function renderEquipment() {
   const slots = document.querySelectorAll(".equipment-slot");
@@ -234,13 +350,11 @@ function renderEquipment() {
   slots.forEach(slot => {
     const slotName = slot.dataset.slot;
 
-    // Regular equipment: weapons, armor and accessories
     const equippedItem = allItems.find(item =>
       item.is_equipped &&
       item.shop_items?.equipment_slot === slotName
     );
 
-    // Cosmetic equipment: aura, back and title
     const equippedCosmetic = allItems.find(item =>
       item.is_cosmetic_equipped &&
       item.shop_items?.equipment_slot === slotName
@@ -266,7 +380,8 @@ function renderEquipment() {
 
       const rarity = document.createElement("span");
       rarity.className = "equipped-item-rarity";
-      rarity.textContent = (equipped.rarity || "common").toUpperCase();
+      rarity.textContent =
+        (equipped.rarity || "common").toUpperCase();
 
       small.append(itemName, rarity);
 
@@ -277,23 +392,11 @@ function renderEquipment() {
     }
   });
 
-  // Attribute bonuses
-  const bonusAttributes = {
-    STR: "bonus_str",
-    AGI: "bonus_agi",
-    VIT: "bonus_vit",
-    INT: "bonus_int",
-    PER: "bonus_per",
-    SEN: "bonus_sen"
-  };
-
-  // Include regular equipment and equipped cosmetics.
-  // Set prevents counting an item twice.
   const equippedItems = allItems.filter(item =>
     item.is_equipped || item.is_cosmetic_equipped
   );
 
-  Object.entries(bonusAttributes).forEach(([attribute, column]) => {
+  Object.entries(attributeColumns).forEach(([attribute, column]) => {
     const totalBonus = equippedItems.reduce((total, item) => {
       return total + getEnhancedBonus(item, column);
     }, 0);
@@ -306,8 +409,10 @@ function renderEquipment() {
   });
 }
 
-
+// =========================================
 // INVENTORY CARDS
+// =========================================
+
 function renderInventory() {
   const filter = inventoryFilter.value;
 
@@ -328,23 +433,21 @@ function renderInventory() {
   inventoryContainer.innerHTML = filteredItems.map(item => {
     const icon = itemIcons[item.item_type] || "📦";
 
-    const stats = [
-      ["STR", getEnhancedBonus(item, "bonus_str")],
-      ["AGI", getEnhancedBonus(item, "bonus_agi")],
-      ["VIT", getEnhancedBonus(item, "bonus_vit")],
-      ["INT", getEnhancedBonus(item, "bonus_int")],
-      ["PER", getEnhancedBonus(item, "bonus_per")],
-      ["SEN", getEnhancedBonus(item, "bonus_sen")]
-    ].filter(([, value]) => value > 0);
+    const stats = Object.entries(attributeColumns)
+      .map(([attribute, column]) => [
+        attribute,
+        getEnhancedBonus(item, column)
+      ])
+      .filter(([, value]) => value > 0);
 
     const equipButton = canEquip(item)
       ? item.is_equipped
         ? `<button class="inventory-action unequip-button"
-             data-unequip-id="${item.id}">
+             data-unequip-id="${escapeHTML(item.id)}">
              UNEQUIP
            </button>`
         : `<button class="inventory-action equip-button"
-             data-equip-id="${item.id}">
+             data-equip-id="${escapeHTML(item.id)}">
              EQUIP
            </button>`
       : "";
@@ -359,53 +462,56 @@ function renderInventory() {
 
     const enhanceButton = canEquip(item) && currentLevel < 10
       ? `<button class="inventory-action enhance-button"
-           data-enhance-id="${item.id}">
+           data-enhance-id="${escapeHTML(item.id)}">
            <span class="enhance-icon">✦</span>
            ENHANCE
            <span class="enhance-cost">${nextEnhancementCost} COINS</span>
          </button>`
       : "";
 
-   const useButton = ["consumable", "boost"].includes(item.item_type)
-  ? canConsume(item)
-    ? `<button class="inventory-action use-button"
-         data-use-id="${item.id}">
-         ${item.item_type === "boost" ? "ACTIVATE BOOST" : "USE"}
-       </button>`
-    : `<button class="inventory-action use-button"
-         disabled
-         title="This item has no configured effect">
-         NOT AVAILABLE
-       </button>`
-  : "";
-const skillButton = item.item_type === "skill_item"
-  ? item.is_skill_unlocked
-    ? `<button class="inventory-action skill-button skill-unlocked"
-         disabled>
-         ✓ UNLOCKED
-       </button>`
-    : `<button class="inventory-action skill-button"
-         data-skill-id="${item.id}">
-         UNLOCK SKILL
-       </button>`
-  : "";
-    const cosmeticSlot = (
-  item.shop_items?.equipment_slot || "cosmetic"
-).toUpperCase();
+    const useButton = ["consumable", "boost"].includes(item.item_type)
+      ? canConsume(item)
+        ? `<button class="inventory-action use-button"
+             data-use-id="${escapeHTML(item.id)}">
+             ${item.item_type === "boost" ? "ACTIVATE BOOST" : "USE"}
+           </button>`
+        : `<button class="inventory-action use-button"
+             disabled
+             title="This item has no configured effect">
+             NOT AVAILABLE
+           </button>`
+      : "";
 
-const cosmeticButton = item.item_type === "cosmetic"
-  ? item.is_cosmetic_equipped
-    ? `<button class="inventory-action cosmetic-button cosmetic-equipped"
-         data-unequip-cosmetic="${item.shop_items?.equipment_slot}">
-         UNEQUIP ${cosmeticSlot}
-       </button>`
-    : `<button class="inventory-action cosmetic-button"
-         data-equip-cosmetic="${item.id}">
-         EQUIP ${cosmeticSlot}
-       </button>`
-  : "";
+    const skillButton = item.item_type === "skill_item"
+      ? item.is_skill_unlocked
+        ? `<button class="inventory-action skill-button skill-unlocked"
+             disabled>
+             ✓ UNLOCKED
+           </button>`
+        : `<button class="inventory-action skill-button"
+             data-skill-id="${escapeHTML(item.id)}">
+             UNLOCK SKILL
+           </button>`
+      : "";
+
+    const cosmeticSlot = (
+      item.shop_items?.equipment_slot || "cosmetic"
+    ).toUpperCase();
+
+    const cosmeticButton = item.item_type === "cosmetic"
+      ? item.is_cosmetic_equipped
+        ? `<button class="inventory-action cosmetic-button cosmetic-equipped"
+             data-unequip-cosmetic="${escapeHTML(item.shop_items?.equipment_slot)}">
+             UNEQUIP ${escapeHTML(cosmeticSlot)}
+           </button>`
+        : `<button class="inventory-action cosmetic-button"
+             data-equip-cosmetic="${escapeHTML(item.id)}">
+             EQUIP ${escapeHTML(cosmeticSlot)}
+           </button>`
+      : "";
+
     return `
-      <article class="inventory-item rarity-${escapeHTML(item.rarity)}">
+      <article class="inventory-item rarity-${escapeHTML(item.rarity || "common")}">
 
         <div class="inventory-item-icon">${icon}</div>
 
@@ -441,23 +547,34 @@ const cosmeticButton = item.item_type === "cosmetic"
         }
 
         ${
-          item.is_equipped
+          item.is_equipped || item.is_cosmetic_equipped
             ? `<span class="inventory-equipped">EQUIPPED</span>`
             : ""
         }
 
+        <button
+          type="button"
+          class="inventory-action inspect-button"
+          data-inspect-id="${escapeHTML(item.id)}"
+        >
+          ⌕ INSPECT
+        </button>
+
         ${equipButton}
-${enhanceButton}
-${useButton}
-${skillButton}
-${cosmeticButton}
+        ${enhanceButton}
+        ${useButton}
+        ${skillButton}
+        ${cosmeticButton}
 
       </article>
     `;
   }).join("");
 }
 
+// =========================================
 // CONSUMABLE ACTION
+// =========================================
+
 async function useConsumable(button, itemId) {
   button.disabled = true;
   button.textContent = "USING...";
@@ -485,15 +602,15 @@ async function useConsumable(button, itemId) {
 
     if (data.effect_type) {
       const effectNames = {
-  bonus_str: "STRENGTH",
-  bonus_vit: "VITALITY",
-  bonus_int: "INTELLIGENCE",
-  focus: "FOCUS",
-  stamina: "STAMINA",
-  xp_multiplier: "XP BOOST",
-  coin_multiplier: "COIN BOOST",
-  reward_multiplier: "DOUBLE REWARD"
-};
+        bonus_str: "STRENGTH",
+        bonus_vit: "VITALITY",
+        bonus_int: "INTELLIGENCE",
+        focus: "FOCUS",
+        stamina: "STAMINA",
+        xp_multiplier: "XP BOOST",
+        coin_multiplier: "COIN BOOST",
+        reward_multiplier: "DOUBLE REWARD"
+      };
 
       const effectName =
         effectNames[data.effect_type] || data.effect_type.toUpperCase();
@@ -517,145 +634,158 @@ async function useConsumable(button, itemId) {
   }
 }
 
-// EQUIP / UNEQUIP / ENHANCE / USE ACTIONS
+// =========================================
+// INVENTORY ACTIONS
+// =========================================
+
 inventoryContainer.addEventListener("click", async event => {
+  // INSPECT
+  const inspectButton = event.target.closest("[data-inspect-id]");
+
+  if (inspectButton) {
+    openItemDetails(inspectButton.dataset.inspectId);
+    return;
+  }
+
   const equipButton = event.target.closest("[data-equip-id]");
   const unequipButton = event.target.closest("[data-unequip-id]");
   const enhanceButton = event.target.closest("[data-enhance-id]");
   const useButton = event.target.closest("[data-use-id]");
   const skillButton = event.target.closest("[data-skill-id]");
-const equipCosmeticButton = event.target.closest("[data-equip-cosmetic]");
-const unequipCosmeticButton = event.target.closest("[data-unequip-cosmetic]");
+  const equipCosmeticButton = event.target.closest("[data-equip-cosmetic]");
+  const unequipCosmeticButton = event.target.closest("[data-unequip-cosmetic]");
+
   if (
-  !equipButton &&
-  !unequipButton &&
-  !enhanceButton &&
-  !useButton &&
-  !skillButton &&
-  !equipCosmeticButton &&
-  !unequipCosmeticButton
-) {
-  return;
-}
+    !equipButton &&
+    !unequipButton &&
+    !enhanceButton &&
+    !useButton &&
+    !skillButton &&
+    !equipCosmeticButton &&
+    !unequipCosmeticButton
+  ) {
+    return;
+  }
 
   if (useButton) {
-    const itemId = Number(useButton.dataset.useId);
+    const itemId = useButton.dataset.useId;
     await useConsumable(useButton, itemId);
     return;
   }
-if (skillButton) {
-  const itemId = Number(skillButton.dataset.skillId);
 
-  skillButton.disabled = true;
-  skillButton.textContent = "UNLOCKING...";
+  if (skillButton) {
+    const itemId = skillButton.dataset.skillId;
 
-  try {
-    const { data, error } = await supabase.rpc(
-      "use_skill_item",
-      { p_inventory_id: itemId }
-    );
+    skillButton.disabled = true;
+    skillButton.textContent = "UNLOCKING...";
 
-    if (error) throw error;
+    try {
+      const { data, error } = await supabase.rpc(
+        "use_skill_item",
+        { p_inventory_id: itemId }
+      );
 
-    if (!data.success) {
+      if (error) throw error;
+
+      if (!data.success) {
+        inventoryMessage.textContent =
+          data.message || "SKILL UNLOCK FAILED.";
+
+        await loadInventory();
+        return;
+      }
+
       inventoryMessage.textContent =
-        data.message || "SKILL UNLOCK FAILED.";
+        `${data.skill_name.toUpperCase()} UNLOCKED! ` +
+        `BONUSES: STR +${data.bonuses.str}, ` +
+        `AGI +${data.bonuses.agi}, ` +
+        `VIT +${data.bonuses.vit}, ` +
+        `INT +${data.bonuses.int}, ` +
+        `PER +${data.bonuses.per}, ` +
+        `SEN +${data.bonuses.sen}.`;
 
       await loadInventory();
-      return;
+
+    } catch (error) {
+      console.error("Skill unlock error:", error);
+
+      inventoryMessage.textContent =
+        error.message || "SKILL UNLOCK FAILED.";
+
+      await loadInventory();
     }
 
-    inventoryMessage.textContent =
-      `${data.skill_name.toUpperCase()} UNLOCKED! ` +
-      `BONUSES: STR +${data.bonuses.str}, ` +
-      `AGI +${data.bonuses.agi}, ` +
-      `VIT +${data.bonuses.vit}, ` +
-      `INT +${data.bonuses.int}, ` +
-      `PER +${data.bonuses.per}, ` +
-      `SEN +${data.bonuses.sen}.`;
-
-    await loadInventory();
-
-  } catch (error) {
-    console.error("Skill unlock error:", error);
-
-    inventoryMessage.textContent =
-      error.message || "SKILL UNLOCK FAILED.";
-
-    await loadInventory();
+    return;
   }
 
-  return;
-}
+  // COSMETIC ACTIONS
   if (equipCosmeticButton || unequipCosmeticButton) {
-  const button = equipCosmeticButton || unequipCosmeticButton;
+    const button = equipCosmeticButton || unequipCosmeticButton;
 
-  button.disabled = true;
-  button.textContent = "PROCESSING...";
+    button.disabled = true;
+    button.textContent = "PROCESSING...";
 
-  try {
-    let rpcName;
-    let rpcParams;
+    try {
+      let rpcName;
+      let rpcParams;
 
-    if (equipCosmeticButton) {
-      rpcName = "equip_cosmetic_item";
-      rpcParams = {
-        p_inventory_id: Number(
-          equipCosmeticButton.dataset.equipCosmetic
-        )
-      };
-    } else {
-      rpcName = "unequip_cosmetic_item";
-      rpcParams = {
-        p_equipment_slot:
-          unequipCosmeticButton.dataset.unequipCosmetic
-      };
-    }
+      if (equipCosmeticButton) {
+        rpcName = "equip_cosmetic_item";
+        rpcParams = {
+          p_inventory_id: equipCosmeticButton.dataset.equipCosmetic
+        };
+      } else {
+        rpcName = "unequip_cosmetic_item";
+        rpcParams = {
+          p_equipment_slot:
+            unequipCosmeticButton.dataset.unequipCosmetic
+        };
+      }
 
-    const { data, error } = await supabase.rpc(
-      rpcName,
-      rpcParams
-    );
+      const { data, error } = await supabase.rpc(
+        rpcName,
+        rpcParams
+      );
 
-    if (error) throw error;
+      if (error) throw error;
 
-    if (!data.success) {
-      inventoryMessage.textContent =
-        data.message || "COSMETIC ACTION FAILED.";
+      if (!data.success) {
+        inventoryMessage.textContent =
+          data.message || "COSMETIC ACTION FAILED.";
+
+        await loadInventory();
+        return;
+      }
+
+      inventoryMessage.textContent = equipCosmeticButton
+        ? `${data.item_name.toUpperCase()} EQUIPPED SUCCESSFULLY!`
+        : `${data.equipment_slot.toUpperCase()} COSMETIC UNEQUIPPED!`;
 
       await loadInventory();
-      return;
+
+    } catch (error) {
+      console.error("Cosmetic error:", error);
+
+      inventoryMessage.textContent =
+        error.message || "COSMETIC ACTION FAILED.";
+
+      await loadInventory();
     }
 
-    inventoryMessage.textContent = equipCosmeticButton
-      ? `${data.item_name.toUpperCase()} EQUIPPED SUCCESSFULLY!`
-      : `${data.equipment_slot.toUpperCase()} COSMETIC UNEQUIPPED!`;
-
-    await loadInventory();
-
-  } catch (error) {
-    console.error("Cosmetic error:", error);
-
-    inventoryMessage.textContent =
-      error.message || "COSMETIC ACTION FAILED.";
-
-    await loadInventory();
+    return;
   }
 
-  return;
-}
+  // EQUIP / UNEQUIP / ENHANCE
   const button = equipButton || unequipButton || enhanceButton;
 
   const isEnhancing = Boolean(enhanceButton);
   const isEquipping = Boolean(equipButton);
 
-  const itemId = Number(
-    isEnhancing
-      ? enhanceButton.dataset.enhanceId
-      : isEquipping
-        ? equipButton.dataset.equipId
-        : unequipButton.dataset.unequipId
-  );
+  const itemId = isEnhancing
+    ? enhanceButton.dataset.enhanceId
+    : isEquipping
+      ? equipButton.dataset.equipId
+      : unequipButton.dataset.unequipId;
 
   button.disabled = true;
   button.textContent = "PROCESSING...";
@@ -708,10 +838,16 @@ if (skillButton) {
   }
 });
 
+// =========================================
 // FILTER
+// =========================================
+
 inventoryFilter.addEventListener("change", renderInventory);
 
+// =========================================
 // LOGOUT
+// =========================================
+
 document.getElementById("logoutButton")
   .addEventListener("click", async () => {
     const { error } = await supabase.auth.signOut();
@@ -725,7 +861,10 @@ document.getElementById("logoutButton")
     window.location.href = "index.html";
   });
 
+// =========================================
 // INITIALIZE
+// =========================================
+
 async function initializeInventory() {
   try {
     inventoryMessage.textContent = "CONNECTING TO SYSTEM...";
@@ -735,6 +874,7 @@ async function initializeInventory() {
     if (success) {
       inventoryMessage.textContent = "";
     }
+
   } catch (error) {
     console.error(error);
 
