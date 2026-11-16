@@ -669,6 +669,7 @@
   box-shadow: none;
 }
 
+
 /* ================================
    HUNTER EQUIPMENT - RPG DISPLAY
 ================================ */
@@ -683,17 +684,18 @@
   border-radius: 10px;
 }
 
-
 .equipment-layout {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 230px minmax(0, 1fr);
-  align-items: stretch;
+  align-items: center;
   gap: 22px;
   width: 100%;
   max-width: 1100px;
   margin: 30px auto;
   position: relative;
 }
+
+/* EQUIPMENT COLUMNS */
 
 .equipment-column {
   display: grid;
@@ -712,12 +714,28 @@
   justify-items: start;
 }
 
+/* EQUIPMENT SLOTS */
+
 .equipment-layout .equipment-slot {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
   width: 100%;
   max-width: 210px;
   min-width: 0;
   min-height: 82px;
   box-sizing: border-box;
+  padding: 12px 15px;
+  overflow: hidden;
+
+  background: linear-gradient(145deg, #112b40, #091725);
+  border: 1px solid #29445d;
+  border-radius: 8px;
+
+  transform: none !important;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .equipment-layout .equipment-slot:hover {
@@ -772,9 +790,7 @@
   background: linear-gradient(145deg, #163b55, #091725);
 }
 
-/* ================================
-   HUNTER PORTRAIT
-================================ */
+/* HUNTER PORTRAIT */
 
 .equipment-layout .hunter-portrait-container {
   position: relative;
@@ -828,7 +844,6 @@
     opacity: 0.4;
     transform: scale(0.92);
   }
-
   to {
     opacity: 0.9;
     transform: scale(1.1);
@@ -858,9 +873,7 @@
   letter-spacing: 2px;
 }
 
-/* ================================
-   EQUIPMENT BONUS PANEL
-================================ */
+/* EQUIPMENT BONUS PANEL */
 
 .equipment-bonus-panel {
   width: 100%;
@@ -909,10 +922,7 @@
   text-shadow: 0 0 10px rgba(57, 186, 255, 0.25);
 }
 
-/* ================================
-   RESPONSIVE
-================================ */
-
+/* RESPONSIVE */
 
 @media (max-width: 750px) {
   .equipment-layout {
@@ -930,7 +940,6 @@
 
   .equipment-left,
   .equipment-right {
-    align-items: stretch;
     justify-items: stretch;
   }
 
