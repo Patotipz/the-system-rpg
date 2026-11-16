@@ -1273,3 +1273,226 @@
     grid-template-columns: repeat(2, 1fr);
   }
 }
+/* =========================================
+   EQUIPMENT COMPARISON MODAL
+========================================= */
+
+.compare-modal-content {
+  max-width: 760px;
+}
+
+.compare-modal-content > h2 {
+  margin-top: 5px;
+}
+
+.compare-modal-subtitle {
+  margin: 12px 0 25px;
+  color: #8da9ca;
+  font-size: 0.72rem;
+  letter-spacing: 1.5px;
+  line-height: 1.6;
+}
+
+.compare-items-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  margin-top: 25px;
+}
+
+.compare-item-card {
+  min-width: 0;
+  padding: 22px 15px;
+  background: rgba(65, 130, 210, 0.07);
+  border: 1px solid rgba(90, 145, 220, 0.2);
+  border-radius: 8px;
+}
+
+.current-item-card {
+  border-color: rgba(130, 160, 200, 0.25);
+}
+
+.new-item-card {
+  border-color: rgba(65, 170, 255, 0.45);
+  box-shadow: inset 0 0 22px rgba(45, 130, 255, 0.06);
+}
+
+.compare-item-label {
+  display: block;
+  margin-bottom: 17px;
+  color: #8ca9ca;
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+}
+
+.new-item-card .compare-item-label {
+  color: #65bdff;
+}
+
+.compare-item-icon {
+  display: grid;
+  place-items: center;
+  width: 75px;
+  height: 75px;
+  margin: 0 auto 15px;
+  font-size: 2.5rem;
+  background: rgba(70, 135, 220, 0.1);
+  border: 1px solid rgba(90, 165, 255, 0.25);
+  border-radius: 10px;
+}
+
+.compare-item-card h3 {
+  min-height: 38px;
+  margin: 0 0 12px;
+  color: #eaf4ff;
+  font-size: 0.9rem;
+  overflow-wrap: anywhere;
+}
+
+.compare-item-card > p {
+  margin: 14px 0 0;
+  color: #9cb7d6;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.compare-stats-section {
+  margin-top: 25px;
+  text-align: left;
+}
+
+.compare-stats-section h3 {
+  margin: 0 0 17px;
+  color: #75baff;
+  font-size: 0.75rem;
+  letter-spacing: 2px;
+}
+
+.compare-stats-header,
+.compare-stat-row {
+  display: grid;
+  grid-template-columns: 1fr 0.8fr 0.8fr 0.9fr;
+  align-items: center;
+  gap: 8px;
+}
+
+.compare-stats-header {
+  padding: 12px 10px;
+  color: #7896b9;
+  font-size: 0.58rem;
+  font-weight: 800;
+  letter-spacing: 0.7px;
+  text-align: center;
+  border-bottom: 1px solid rgba(90, 145, 220, 0.25);
+}
+
+.compare-stats-header span:first-child {
+  text-align: left;
+}
+
+.compare-stat-row {
+  padding: 13px 10px;
+  color: #b7cce5;
+  font-size: 0.78rem;
+  text-align: center;
+  border-bottom: 1px solid rgba(90, 145, 220, 0.1);
+}
+
+.compare-stat-row > span:first-child {
+  color: #a6bfdc;
+  font-weight: 800;
+  text-align: left;
+}
+
+.compare-stat-current,
+.compare-stat-new {
+  font-weight: 700;
+}
+
+.compare-stat-difference {
+  font-weight: 900;
+}
+
+.compare-stat-difference.positive {
+  color: #55e6a5;
+}
+
+.compare-stat-difference.negative {
+  color: #ff7185;
+}
+
+.compare-stat-difference.neutral {
+  color: #8ca9ca;
+}
+
+.compare-summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+  margin-top: 24px;
+  padding: 17px 18px;
+  background: rgba(55, 125, 220, 0.09);
+  border: 1px solid rgba(80, 150, 255, 0.25);
+  border-radius: 7px;
+}
+
+.compare-summary span {
+  color: #91adce;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 1px;
+}
+
+.compare-summary strong {
+  color: #55e6a5;
+  font-size: 1.15rem;
+}
+
+.compare-summary strong.negative {
+  color: #ff7185;
+}
+
+.compare-summary strong.neutral {
+  color: #8ca9ca;
+}
+
+@media (max-width: 600px) {
+  .compare-modal-content {
+    padding: 30px 15px;
+  }
+
+  .compare-items-grid {
+    gap: 9px;
+  }
+
+  .compare-item-card {
+    padding: 17px 9px;
+  }
+
+  .compare-item-card h3 {
+    font-size: 0.78rem;
+  }
+
+  .compare-stats-header,
+  .compare-stat-row {
+    grid-template-columns: 0.8fr 0.7fr 0.7fr 0.9fr;
+    gap: 4px;
+    padding-left: 5px;
+    padding-right: 5px;
+  }
+
+  .compare-stats-header {
+    font-size: 0.49rem;
+  }
+
+  .compare-stat-row {
+    font-size: 0.7rem;
+  }
+
+  .compare-summary span {
+    font-size: 0.58rem;
+  }
+}
