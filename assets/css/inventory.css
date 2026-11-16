@@ -1624,3 +1624,70 @@
 .compare-item-icon .item-visual-image {
   padding: 6px;
 }
+
+/* =========================================
+   EQUIPMENT SLOT ITEM IMAGES
+========================================= */
+
+.equipment-slot {
+  position: relative;
+}
+
+.equipment-slot .equipment-item-visual {
+  width: 68px;
+  height: 68px;
+  margin: 8px auto;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  position: relative;
+}
+
+.equipment-slot .equipment-item-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  padding: 4px;
+  box-sizing: border-box;
+  display: block;
+  filter: drop-shadow(0 0 8px rgba(75, 160, 255, 0.35));
+}
+
+.equipment-slot .equipment-item-fallback {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  place-items: center;
+  font-size: 34px;
+}
+
+.equipment-slot .equipped-item-name {
+  display: block;
+  font-weight: 700;
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+
+.equipment-slot .equipped-item-rarity {
+  display: block;
+  margin-top: 4px;
+  font-size: 10px;
+  letter-spacing: 1px;
+  opacity: 0.75;
+  text-align: center;
+}
+
+.equipment-slot.slot-equipped {
+  min-height: 150px;
+}
+
+.equipment-slot.cosmetic-slot-equipped .equipment-item-image {
+  filter: drop-shadow(0 0 10px rgba(150, 110, 255, 0.55));
+}
+
+@media (max-width: 600px) {
+  .equipment-slot .equipment-item-visual {
+    width: 54px;
+    height: 54px;
+  }
+}
