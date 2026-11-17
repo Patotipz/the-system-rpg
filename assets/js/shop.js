@@ -14,7 +14,7 @@ let currentUser = null;
 let allItems = [];
 let currentCoins = 0;
 
-// ITEM ICONS
+// ITEM ICONS - FALLBACK
 const itemIcons = {
   consumable: "🧪",
   weapon: "⚔️",
@@ -39,7 +39,7 @@ function formatCategory(type) {
     boost: "BOOST"
   };
 
-  return categories[type] || type.toUpperCase();
+  return categories[type] || String(type || "").toUpperCase();
 }
 
 // ESCAPE HTML
@@ -51,6 +51,53 @@ function escapeHTML(value) {
     '"': "&quot;",
     "'": "&#39;"
   })[char]);
+}
+
+// GET ITEM IMAGE PATH
+function getItemImagePath(item) {
+  if (!item.item_code) return null;
+
+  const filename = String(item.item_code)
+    .trim()
+    .toLowerCase()
+    .replace(/_/g, "-");
+
+  if (!/^[a-z0-9-]+$/.test(filename)) return null;
+
+  return `images/equipment/${filename}.png`;
+}
+
+// RENDER ITEM VISUAL
+function renderItemVisual(item) {
+  const icon = itemIcons[item.item_type] || "📦";
+  const imagePath = getItemImagePath(item);
+
+  if (!imagePath) {
+    return `
+      <div class="shop-item-visual">
+        <span class="shop-item-image-fallback">${icon}</span>
+      </div>
+    `;
+  }
+
+  return `
+    <div class="shop-item-visual">
+      <img
+        class="shop-item-image"
+        src="${escapeHTML(imagePath)}"
+        alt="${escapeHTML(item.item_name)}"
+        loading="lazy"
+        onerror="
+          this.hidden = true;
+          this.nextElementSibling.hidden = false;
+        "
+      >
+
+      <span class="shop-item-image-fallback" hidden>
+        ${icon}
+      </span>
+    </div>
+  `;
 }
 
 // LOAD PLAYER
@@ -116,8 +163,8 @@ function renderShopItems() {
 
   const filteredItems = allItems.filter(item => {
     const matchesSearch =
-      item.item_name.toLowerCase().includes(search) ||
-      (item.item_description || "").toLowerCase().includes(search);
+      String(item.item_name || "").toLowerCase().includes(search) ||
+      String(item.item_description || "").toLowerCase().includes(search);
 
     const matchesCategory =
       category === "all" || item.item_type === category;
@@ -141,15 +188,16 @@ function renderShopItems() {
   }
 
   shopItemsContainer.innerHTML = filteredItems.map(item => {
-    const icon = itemIcons[item.item_type] || "📦";
     const canAfford = currentCoins >= item.price_coins;
 
-    return `
-      <article class="shop-item rarity-${escapeHTML(item.rarity)}">
+    const rarityClass = String(item.rarity || "common")
+      .toLowerCase()
+      .replace(/[^a-z0-9-]/g, "");
 
-        <div class="shop-item-icon">
-          ${icon}
-        </div>
+    return `
+      <article class="shop-item rarity-${rarityClass}">
+
+        ${renderItemVisual(item)}
 
         <span class="shop-item-category">
           ${escapeHTML(formatCategory(item.item_type))}
@@ -162,7 +210,7 @@ function renderShopItems() {
         </p>
 
         <span class="shop-item-rarity">
-          ${escapeHTML(item.rarity.toUpperCase())}
+          ${escapeHTML(String(item.rarity || "COMMON").toUpperCase())}
         </span>
 
         <div class="shop-item-footer">
@@ -270,7 +318,7 @@ async function initializeShop() {
     await loadShopItems();
 
     shopMessage.textContent = "";
-    
+
   } catch (error) {
     console.error(error);
     shopMessage.textContent =
