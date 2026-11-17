@@ -375,3 +375,247 @@
     gap: 10px;
   }
 }
+
+/* =========================================
+   THE SYSTEM - SHOP ITEM CARDS
+========================================= */
+
+.shop-item {
+  --item-color: #a4b2c3;
+  --item-glow: rgba(164, 178, 195, 0.17);
+  --item-bg: rgba(164, 178, 195, 0.07);
+
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+
+  background:
+    radial-gradient(
+      ellipse at 50% 0%,
+      var(--item-glow),
+      transparent 65%
+    ),
+    linear-gradient(
+      145deg,
+      var(--item-bg),
+      rgba(7, 16, 29, 0.98) 75%
+    ) !important;
+
+  border: 1px solid var(--item-color) !important;
+
+  box-shadow:
+    0 0 7px var(--item-glow),
+    inset 0 0 18px var(--item-glow),
+    0 8px 25px rgba(0, 0, 0, 0.3) !important;
+
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* RARITY COLORS */
+
+.shop-item.rarity-common {
+  --item-color: #a4b2c3;
+  --item-glow: rgba(164, 178, 195, 0.17);
+  --item-bg: rgba(164, 178, 195, 0.07);
+}
+
+.shop-item.rarity-uncommon {
+  --item-color: #35d69a;
+  --item-glow: rgba(53, 214, 154, 0.2);
+  --item-bg: rgba(53, 214, 154, 0.085);
+}
+
+.shop-item.rarity-rare {
+  --item-color: #4ca5ff;
+  --item-glow: rgba(76, 165, 255, 0.24);
+  --item-bg: rgba(76, 165, 255, 0.09);
+}
+
+.shop-item.rarity-epic {
+  --item-color: #b477ff;
+  --item-glow: rgba(180, 119, 255, 0.25);
+  --item-bg: rgba(180, 119, 255, 0.09);
+}
+
+.shop-item.rarity-legendary {
+  --item-color: #f5c542;
+  --item-glow: rgba(245, 197, 66, 0.27);
+  --item-bg: rgba(245, 197, 66, 0.10);
+}
+
+/* TOP ACCENT */
+
+.shop-item::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: var(--item-color);
+  box-shadow: 0 0 15px var(--item-color);
+  z-index: 2;
+}
+
+/* HOVER */
+
+.shop-item:hover {
+  transform: translateY(-5px);
+  border-color: var(--item-color) !important;
+
+  box-shadow:
+    0 0 10px var(--item-glow),
+    0 0 25px var(--item-glow),
+    inset 0 0 25px var(--item-glow),
+    0 12px 30px rgba(0, 0, 0, 0.4) !important;
+}
+
+/* ITEM ICON */
+
+.shop-item .shop-item-icon {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 100px;
+  height: 100px;
+  margin: 0 auto 18px;
+
+  font-size: 3.2rem;
+
+  border: 1px solid var(--item-color);
+  border-radius: 16px;
+
+  background:
+    radial-gradient(
+      circle,
+      var(--item-glow),
+      rgba(5, 13, 25, 0.75)
+    );
+
+  box-shadow:
+    inset 0 0 20px var(--item-glow),
+    0 0 12px var(--item-glow);
+
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.shop-item:hover .shop-item-icon {
+  transform: scale(1.06);
+  box-shadow:
+    inset 0 0 25px var(--item-glow),
+    0 0 22px var(--item-glow);
+}
+
+/* CATEGORY */
+
+.shop-item .shop-item-category {
+  color: #83a9d1;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+}
+
+/* ITEM NAME */
+
+.shop-item h3 {
+  color: #e8f2ff;
+  text-shadow: 0 0 10px rgba(76, 165, 255, 0.15);
+}
+
+/* DESCRIPTION */
+
+.shop-item .shop-item-description {
+  color: #a8b9cc;
+  line-height: 1.6;
+}
+
+/* RARITY LABEL */
+
+.shop-item .shop-item-rarity {
+  color: var(--item-color);
+  font-weight: 800;
+  letter-spacing: 2px;
+  text-shadow: 0 0 10px var(--item-glow);
+}
+
+/* PRICE */
+
+.shop-item .shop-item-price {
+  color: #f5c542;
+  font-weight: 800;
+  font-size: 1.05rem;
+  text-shadow: 0 0 10px rgba(245, 197, 66, 0.3);
+}
+
+/* BUY BUTTON */
+
+.shop-item .shop-buy-button {
+  border: 1px solid #4ca5ff;
+  color: #e8f5ff;
+
+  background: linear-gradient(
+    135deg,
+    #123b68,
+    #1766a8
+  );
+
+  box-shadow:
+    0 0 10px rgba(76, 165, 255, 0.2),
+    inset 0 0 10px rgba(76, 165, 255, 0.12);
+
+  font-weight: 800;
+  letter-spacing: 1px;
+
+  transition: all 0.25s ease;
+}
+
+.shop-item .shop-buy-button:not(:disabled):hover {
+  background: linear-gradient(
+    135deg,
+    #1766a8,
+    #238de0
+  );
+
+  box-shadow:
+    0 0 12px rgba(76, 165, 255, 0.5),
+    0 0 25px rgba(76, 165, 255, 0.25);
+
+  transform: translateY(-2px);
+}
+
+.shop-item .shop-buy-button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  filter: grayscale(0.7);
+}
+
+/* LEGENDARY SPECIAL EFFECT */
+
+.shop-item.rarity-legendary:hover {
+  box-shadow:
+    0 0 12px rgba(245, 197, 66, 0.35),
+    0 0 30px rgba(245, 197, 66, 0.2),
+    inset 0 0 30px rgba(245, 197, 66, 0.12),
+    0 12px 30px rgba(0, 0, 0, 0.4) !important;
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 600px) {
+  .shop-item .shop-item-icon {
+    width: 82px;
+    height: 82px;
+    font-size: 2.6rem;
+  }
+
+  .shop-item .shop-item-footer {
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .shop-item .shop-buy-button {
+    width: 100%;
+  }
+}
