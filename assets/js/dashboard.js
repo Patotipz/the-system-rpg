@@ -78,6 +78,99 @@ function renderDashboardCosmetics(cosmetics) {
   });
 }
 
+// HUNTER PORTRAIT SELECTOR
+const avatarIds = Object.keys(avatarMap);
+
+function renderHunterPortrait(avatarId) {
+  const avatar = document.getElementById("hunterAvatar");
+
+  if (!avatar) return;
+
+  const selectedAvatar = avatarIds.includes(avatarId)
+    ? avatarId
+    : "hunter-01";
+
+  avatar.src = `images/${selectedAvatar}.png`;
+  avatar.alt = `${selectedAvatar} Hunter Portrait`;
+}
+
+function renderAvatarSelector(currentAvatarId, userId) {
+  const selector = document.getElementById("avatarSelector");
+
+  if (!selector) return;
+
+  const selectedAvatar = avatarIds.includes(currentAvatarId)
+    ? currentAvatarId
+    : "hunter-01";
+
+  selector.replaceChildren();
+
+  avatarIds.forEach(avatarId => {
+    const button = document.createElement("button");
+
+    button.type = "button";
+    button.className = "avatar-option";
+    button.dataset.avatarId = avatarId;
+    button.setAttribute("aria-label", `Choose ${avatarId}`);
+    button.title = avatarId;
+
+    if (avatarId === selectedAvatar) {
+      button.classList.add("selected");
+      button.setAttribute("aria-pressed", "true");
+    } else {
+      button.setAttribute("aria-pressed", "false");
+    }
+
+    const image = document.createElement("img");
+    image.src = `images/${avatarId}.png`;
+    image.alt = "";
+
+    button.appendChild(image);
+
+    button.addEventListener("click", async () => {
+      if (button.disabled || avatarId === selectedAvatar) return;
+
+      selector.querySelectorAll("button").forEach(option => {
+        option.disabled = true;
+      });
+
+      message.textContent = "UPDATING HUNTER PORTRAIT...";
+
+      const { error } = await supabase
+        .from("profiles")
+        .update({ avatar_id: avatarId })
+        .eq("user_id", userId);
+
+      if (error) {
+        console.error("Avatar update error:", error);
+        message.textContent = "UNABLE TO UPDATE HUNTER PORTRAIT";
+
+        selector.querySelectorAll("button").forEach(option => {
+          option.disabled = false;
+        });
+
+        return;
+      }
+
+      renderHunterPortrait(avatarId);
+
+      selector.querySelectorAll(".avatar-option").forEach(option => {
+        const isSelected = option.dataset.avatarId === avatarId;
+
+        option.classList.toggle("selected", isSelected);
+        option.setAttribute("aria-pressed", String(isSelected));
+        option.disabled = false;
+      });
+
+      message.textContent = "HUNTER PORTRAIT UPDATED";
+    });
+
+    selector.appendChild(button);
+  });
+
+  renderHunterPortrait(selectedAvatar);
+}
+
 async function initializeDashboard() {
   try {
     // 1. VERIFY USER SESSION
@@ -116,6 +209,8 @@ async function initializeDashboard() {
         .single();
 
     if (profileError) throw profileError;
+    // LOAD HUNTER PORTRAIT AND SELECTOR
+renderAvatarSelector(profile.avatar_id, user.id);
 // LOAD EQUIPPED COSMETICS
 const { data: equippedCosmetics, error: cosmeticsError } =
   await supabase
