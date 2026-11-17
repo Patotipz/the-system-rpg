@@ -17,8 +17,6 @@ function setMode(nextMode) {
   loginTab.classList.toggle("active", mode === "login");
   registerTab.classList.toggle("active", mode === "register");
 
-  // El código también se puede introducir al iniciar sesión,
-  // por ejemplo, después de confirmar el correo.
   inviteGroup.hidden = false;
   inviteCode.required = mode === "register";
 
@@ -94,6 +92,8 @@ form.addEventListener("submit", async (event) => {
 
       message.textContent =
         "HUNTER AUTHORIZED. Your character awaits.";
+
+      window.location.href = "character.html";
       return;
     }
 
@@ -118,23 +118,27 @@ form.addEventListener("submit", async (event) => {
       return;
     }
 
-const { data: profile, error: profileError } =
-  await supabase
-    .from("profiles")
-    .select("display_name, avatar_id")
-    .eq("user_id", (await supabase.auth.getUser()).data.user.id)
-    .single();
+    const {
+      data: { user },
+      error: userError
+    } = await supabase.auth.getUser();
 
-if (profileError) throw profileError;
+    if (userError) throw userError;
 
-const hasCharacter =
-  profile.display_name &&
-  profile.display_name.trim().length >= 3;
-console.log("PROFILE:", profile);
-console.log("HAS CHARACTER:", hasCharacter);
-window.location.href = hasCharacter
-  ? "dashboard.html"
-  : "character.html";
+    const { data: profile, error: profileError } =
+      await supabase
+        .from("profiles")
+        .select("character_created")
+        .eq("user_id", user.id)
+        .single();
+
+    if (profileError) throw profileError;
+
+    window.location.href =
+      profile.character_created === false
+        ? "character.html"
+        : "dashboard.html";
+
   } catch (error) {
     console.error(error);
     message.textContent = error.message;
