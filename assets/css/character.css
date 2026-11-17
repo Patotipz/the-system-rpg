@@ -1,3 +1,4 @@
+
 * {
   box-sizing: border-box;
   margin: 0;
@@ -18,9 +19,9 @@ body {
 
 .character-container {
   width: 100%;
-  max-width: 600px;
+  max-width: 850px;
   padding: 45px 35px;
-  background: rgba(9, 19, 38, 0.88);
+  background: rgba(9, 19, 38, 0.94);
   border: 1px solid #244b7b;
   box-shadow: 0 0 45px rgba(25, 105, 220, 0.15);
   text-align: center;
@@ -72,19 +73,44 @@ input:focus {
 
 .avatar-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 15px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
   margin: 20px 0 35px;
 }
 
 .avatar {
-  min-height: 100px;
-  background: #101e34;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  padding: 8px 8px 13px;
+  background: linear-gradient(180deg, #14243c, #091426);
   border: 1px solid #29486e;
-  color: white;
-  font-size: 38px;
+  border-radius: 5px;
+  color: #9bb6d5;
   cursor: pointer;
-  transition: 0.2s;
+  overflow: hidden;
+  transition: 0.25s ease;
+}
+
+.avatar img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  object-fit: cover;
+  object-position: center top;
+  border: 1px solid #29486e;
+  border-radius: 3px;
+  filter: brightness(0.78);
+  transition: 0.25s ease;
+}
+
+.avatar span {
+  font-size: 12px;
+  font-weight: bold;
+  letter-spacing: 2px;
 }
 
 .avatar:hover {
@@ -92,10 +118,31 @@ input:focus {
   transform: translateY(-3px);
 }
 
+.avatar:hover img {
+  filter: brightness(1);
+}
+
 .avatar.selected {
-  border: 2px solid #4da6ff;
-  background: #142e50;
-  box-shadow: 0 0 18px rgba(77, 166, 255, 0.3);
+  border: 1px solid #4da6ff;
+  background: linear-gradient(180deg, #18395f, #0c1d33);
+  box-shadow:
+    0 0 12px rgba(77, 166, 255, 0.35),
+    inset 0 0 15px rgba(77, 166, 255, 0.08);
+}
+
+.avatar.selected img {
+  border-color: #65b4ff;
+  filter: brightness(1);
+  box-shadow: 0 0 12px rgba(77, 166, 255, 0.3);
+}
+
+.avatar.selected span {
+  color: #83c5ff;
+}
+
+.avatar:focus-visible {
+  outline: 2px solid #83c5ff;
+  outline-offset: 3px;
 }
 
 #saveCharacter {
@@ -115,18 +162,33 @@ input:focus {
   box-shadow: 0 0 20px rgba(77, 166, 255, 0.3);
 }
 
+#saveCharacter:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
 #characterMessage {
   margin-top: 20px;
   color: #75bdff;
   font-size: 13px;
 }
 
-@media (max-width: 480px) {
-  .character-container {
-    padding: 35px 20px;
+@media (max-width: 600px) {
+  body {
+    padding: 15px;
+    align-items: flex-start;
   }
 
-  .avatar {
-    min-height: 80px;
+  .character-container {
+    padding: 35px 18px;
+  }
+
+  .avatar-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .avatar span {
+    font-size: 11px;
   }
 }
