@@ -47,7 +47,18 @@ function setBar(id, percentage) {
     element.style.width = `${Math.min(100, Math.max(0, percentage))}%`;
   }
 }
+function renderHunterPortrait(avatarId) {
+  const avatar = document.getElementById("statusAvatar");
 
+  if (!avatar) return;
+
+  const validAvatarId = Object.hasOwn(avatarMap, avatarId)
+    ? avatarId
+    : "hunter-01";
+
+  avatar.src = `images/${validAvatarId}.png`;
+  avatar.alt = `${validAvatarId} Hunter Portrait`;
+}
 function getStatusImagePath(itemCode) {
   if (!itemCode) return null;
 
@@ -597,6 +608,7 @@ async function initializeStatus() {
         .single();
 
     if (profileError) throw profileError;
+    renderHunterPortrait(profile.avatar_id);
 
     setText("statusName", profile.display_name || "UNKNOWN HUNTER");
     setText("statusRank", `RANK ${profile.rank}`);
