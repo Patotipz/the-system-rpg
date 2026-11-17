@@ -419,3 +419,145 @@ body {
     text-align: left;
   }
 }
+/* ======================================
+   THE SYSTEM - SHARED SIDEBAR
+   Match dashboard.css
+====================================== */
+
+.sidebar {
+  position: fixed;
+  inset: 0 auto 0 0;
+  width: 250px;
+  height: 100vh;
+  padding: 35px 22px;
+  background: #081221;
+  border-right: 1px solid #203b5c;
+  display: flex;
+  flex-direction: column;
+  z-index: 100;
+}
+
+.logo {
+  font-size: 22px;
+  font-weight: bold;
+  letter-spacing: 3px;
+  margin-bottom: 65px;
+}
+
+.logo span {
+  color: #4ca5ff;
+}
+
+.menu-label {
+  color: #4ca5ff;
+  font-size: 10px;
+  letter-spacing: 3px;
+  margin-bottom: 20px;
+}
+
+.sidebar nav {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.nav-link {
+  padding: 15px 13px;
+  color: #8295ae;
+  text-decoration: none;
+  font-size: 12px;
+  letter-spacing: 1px;
+  border: 1px solid transparent;
+  border-radius: 0;
+  transition: 0.2s;
+}
+
+.nav-link:hover,
+.nav-link.active {
+  color: #83c5ff;
+  background: #112642;
+  border-color: #234d7b;
+}
+
+.sidebar-bottom {
+  margin-top: auto;
+}
+
+.sidebar-bottom button {
+  width: 100%;
+  padding: 13px;
+  color: #ff8d9b;
+  background: transparent;
+  border: 1px solid #623044;
+  cursor: pointer;
+  letter-spacing: 2px;
+}
+
+.sidebar-bottom p {
+  color: #52647c;
+  font-size: 9px;
+  text-align: center;
+  margin-top: 20px;
+}
+
+.main-content {
+  margin-left: 250px;
+  padding: 35px 45px;
+  max-width: 1600px;
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 900px) {
+  .sidebar {
+    width: 190px;
+  }
+
+  .main-content {
+    margin-left: 190px;
+    padding: 25px;
+  }
+}
+
+@media (max-width: 600px) {
+  .sidebar {
+    position: relative;
+    width: 100%;
+    height: auto;
+    padding: 18px;
+    border-right: none;
+    border-bottom: 1px solid #203b5c;
+  }
+
+  .logo {
+    margin-bottom: 20px;
+  }
+
+  .menu-label {
+    display: none;
+  }
+
+  .sidebar nav {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 5px;
+  }
+
+  .nav-link {
+    padding: 10px;
+    font-size: 10px;
+  }
+
+  .sidebar-bottom {
+    margin-top: 15px;
+  }
+
+  .sidebar-bottom p {
+    margin-top: 10px;
+  }
+
+  .main-content {
+    margin-left: 0;
+    padding: 20px 15px;
+  }
+}
