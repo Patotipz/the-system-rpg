@@ -10,7 +10,6 @@ const message = document.getElementById("characterMessage");
 let selectedAvatar = "hunter-01";
 let currentUser = null;
 
-// Verify session and authorization
 async function initializeCharacter() {
   const {
     data: { user },
@@ -51,7 +50,6 @@ async function initializeCharacter() {
   updateAvatarSelection();
 }
 
-// Select avatar
 avatarGrid.addEventListener("click", (event) => {
   const avatar = event.target.closest("[data-avatar]");
 
@@ -70,7 +68,6 @@ function updateAvatarSelection() {
   });
 }
 
-// Save character
 form.addEventListener("submit", async (event) => {
   event.preventDefault();
 
@@ -92,15 +89,14 @@ form.addEventListener("submit", async (event) => {
       .from("profiles")
       .update({
         display_name: name,
-        avatar_id: selectedAvatar
+        avatar_id: selectedAvatar,
+        character_created: true
       })
       .eq("user_id", currentUser.id);
 
     if (error) throw error;
 
-   setTimeout(() => {
-  window.location.href = "dashboard.html";
-}, 1000);
+    window.location.href = "dashboard.html";
 
   } catch (error) {
     console.error(error);
