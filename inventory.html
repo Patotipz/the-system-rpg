@@ -226,18 +226,49 @@
         </div>
 
         <div class="inventory-filter-container">
-          <select id="inventoryFilter">
-            <option value="all">ALL ITEMS</option>
-            <option value="weapon">WEAPONS</option>
-            <option value="armor">ARMOR</option>
-            <option value="accessory">ACCESSORIES</option>
-            <option value="consumable">CONSUMABLES</option>
-            <option value="material">MATERIALS</option>
-            <option value="boost">BOOSTS</option>
-            <option value="skill_item">SKILL ITEMS</option>
-            <option value="cosmetic">COSMETICS</option>
-          </select>
-        </div>
+
+  <!-- CATEGORY -->
+  <select id="inventoryFilter">
+    <option value="all">ALL ITEMS</option>
+    <option value="weapon">WEAPONS</option>
+    <option value="armor">ARMOR</option>
+    <option value="accessory">ACCESSORIES</option>
+    <option value="consumable">CONSUMABLES</option>
+    <option value="material">MATERIALS</option>
+    <option value="boost">BOOSTS</option>
+    <option value="skill_item">SKILL ITEMS</option>
+    <option value="cosmetic">COSMETICS</option>
+  </select>
+
+  <!-- RARITY -->
+  <select id="rarityFilter">
+    <option value="all">ALL RARITIES</option>
+    <option value="common">COMMON</option>
+    <option value="uncommon">UNCOMMON</option>
+    <option value="rare">RARE</option>
+    <option value="epic">EPIC</option>
+    <option value="legendary">LEGENDARY</option>
+  </select>
+
+  <!-- EQUIPMENT STATUS -->
+  <select id="equipmentStatusFilter">
+    <option value="all">ALL STATUS</option>
+    <option value="equipped">EQUIPPED</option>
+    <option value="unequipped">UNEQUIPPED</option>
+  </select>
+
+  <!-- SORT -->
+  <select id="inventorySort">
+    <option value="default">DEFAULT ORDER</option>
+    <option value="name-asc">NAME: A - Z</option>
+    <option value="name-desc">NAME: Z - A</option>
+    <option value="rarity-desc">RARITY: HIGH - LOW</option>
+    <option value="rarity-asc">RARITY: LOW - HIGH</option>
+    <option value="quantity-desc">QUANTITY: HIGH - LOW</option>
+    <option value="enhancement-desc">ENHANCEMENT: HIGH - LOW</option>
+  </select>
+
+</div>
 
         <p id="inventoryMessage">CONNECTING TO SYSTEM...</p>
 
