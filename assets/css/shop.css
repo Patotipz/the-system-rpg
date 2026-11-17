@@ -619,3 +619,93 @@
     width: 100%;
   }
 }
+
+/* =========================================
+   SHOP ITEM IMAGES
+========================================= */
+
+.shop-item-visual {
+  position: relative;
+  width: 100%;
+  height: 175px;
+  margin: 0 auto 18px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  overflow: hidden;
+  border-radius: 14px;
+
+  background:
+    radial-gradient(
+      circle,
+      var(--item-glow, rgba(76, 165, 255, 0.15)),
+      rgba(5, 13, 25, 0.8) 72%
+    );
+
+  border: 1px solid var(--item-color, #4ca5ff);
+  box-shadow:
+    inset 0 0 20px var(--item-glow, rgba(76, 165, 255, 0.15)),
+    0 0 10px var(--item-glow, rgba(76, 165, 255, 0.15));
+}
+
+.shop-item-image {
+  width: 100%;
+  height: 100%;
+  padding: 10px;
+
+  object-fit: contain;
+
+  filter: drop-shadow(
+    0 0 10px var(--item-glow, rgba(76, 165, 255, 0.2))
+  );
+
+  transition: transform 0.35s ease, filter 0.35s ease;
+}
+
+.shop-item:hover .shop-item-image {
+  transform: scale(1.09);
+
+  filter: drop-shadow(
+    0 0 16px var(--item-glow, rgba(76, 165, 255, 0.3))
+  );
+}
+
+.shop-item-image-fallback {
+  width: 100%;
+  height: 100%;
+
+  align-items: center;
+  justify-content: center;
+
+  font-size: 4rem;
+}
+
+.shop-item-image-fallback:not([hidden]) {
+  display: flex;
+}
+
+/* MYTHIC */
+
+.shop-item.rarity-mythic {
+  --item-color: #ff4b75;
+  --item-glow: rgba(255, 75, 117, 0.28);
+  --item-bg: rgba(255, 75, 117, 0.10);
+}
+
+/* TRANSCENDENT */
+
+.shop-item.rarity-transcendent {
+  --item-color: #e0c8ff;
+  --item-glow: rgba(180, 130, 255, 0.35);
+  --item-bg: rgba(150, 100, 255, 0.13);
+}
+
+/* IMAGE RESPONSIVE */
+
+@media (max-width: 600px) {
+  .shop-item-visual {
+    height: 145px;
+  }
+}
