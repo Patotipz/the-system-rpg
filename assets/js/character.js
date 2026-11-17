@@ -10,64 +10,78 @@ const message = document.getElementById("characterMessage");
 let selectedAvatar = "hunter-01";
 let currentUser = null;
 
+// Initialize character creation
 async function initializeCharacter() {
-  const {
-    data: { user },
-    error
-  } = await supabase.auth.getUser();
+  try {
+    const {
+      data: { user },
+      error
+    } = await supabase.auth.getUser();
 
-  if (error || !user) {
-    window.location.href = "login.html";
-    return;
+    if (error || !user) {
+      window.location.href = "login.html";
+      return;
+    }
+
+    const { data: authorized, error: authError } =
+      await supabase.rpc("is_authorized");
+
+    if (authError || authorized !== true) {
+      await supabase.auth.signOut();
+      window.location.href = "login.html";
+      return;
+    }
+
+    currentUser = user;
+
+    const { data: profile, error: profileError } =
+      await supabase
+        .from("profiles")
+        .select("display_name, avatar_id")
+        .eq("user_id", user.id)
+        .single();
+
+    if (profileError) throw profileError;
+
+    hunterName.value = profile.display_name || "";
+    selectedAvatar = profile.avatar_id || "hunter-01";
+
+    setupAvatarSelection();
+
+  } catch (error) {
+    console.error("CHARACTER INITIALIZATION ERROR:", error);
+    message.textContent = error.message;
   }
+}
 
-  const { data: authorized, error: authError } =
-    await supabase.rpc("is_authorized");
+// Configure individual avatar buttons
+function setupAvatarSelection() {
+  const avatars = document.querySelectorAll(".avatar");
 
-  if (authError || authorized !== true) {
-    await supabase.auth.signOut();
-    window.location.href = "login.html";
-    return;
-  }
+  avatars.forEach((avatar) => {
+    avatar.addEventListener("click", () => {
+      selectedAvatar = avatar.dataset.avatar;
 
-  currentUser = user;
+      updateAvatarSelection();
 
-  const { data: profile, error: profileError } =
-    await supabase
-      .from("profiles")
-      .select("display_name, avatar_id")
-      .eq("user_id", user.id)
-      .single();
-
-  if (profileError) {
-    message.textContent = profileError.message;
-    return;
-  }
-
-  hunterName.value = profile.display_name || "";
-  selectedAvatar = profile.avatar_id || "hunter-01";
+      console.log("SELECTED AVATAR:", selectedAvatar);
+    });
+  });
 
   updateAvatarSelection();
 }
 
-avatarGrid.addEventListener("click", (event) => {
-  const avatar = event.target.closest("[data-avatar]");
-
-  if (!avatar) return;
-
-  selectedAvatar = avatar.dataset.avatar;
-  updateAvatarSelection();
-});
-
+// Update visual selection
 function updateAvatarSelection() {
   document.querySelectorAll(".avatar").forEach((avatar) => {
-    avatar.classList.toggle(
-      "selected",
-      avatar.dataset.avatar === selectedAvatar
-    );
+    const isSelected = avatar.dataset.avatar === selectedAvatar;
+
+    avatar.classList.toggle("selected", isSelected);
+    avatar.setAttribute("aria-pressed", String(isSelected));
   });
 }
 
+// Save character
 form.addEventListener("submit", async (event) => {
   event.preventDefault();
 
@@ -96,12 +110,14 @@ form.addEventListener("submit", async (event) => {
 
     if (error) throw error;
 
+    message.textContent = "HUNTER CONFIRMED.";
+
     window.location.href = "dashboard.html";
 
   } catch (error) {
-    console.error(error);
+    console.error("CHARACTER SAVE ERROR:", error);
     message.textContent = error.message;
-  } finally {
+
     saveButton.disabled = false;
     saveButton.textContent = "CONFIRM HUNTER";
   }
