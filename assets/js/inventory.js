@@ -5,6 +5,9 @@ const inventoryContainer = document.getElementById("inventoryItems");
 const inventoryMessage = document.getElementById("inventoryMessage");
 const inventoryTotal = document.getElementById("inventoryTotal");
 const inventoryFilter = document.getElementById("inventoryFilter");
+const rarityFilter = document.getElementById("rarityFilter");
+const equipmentStatusFilter = document.getElementById("equipmentStatusFilter");
+const inventorySort = document.getElementById("inventorySort");
 
 const weaponCount = document.getElementById("weaponCount");
 const armorCount = document.getElementById("armorCount");
@@ -765,18 +768,106 @@ function renderEquipment() {
   });
   renderHunterAura();
 }
+// =========================================
+// INVENTORY FILTERING AND SORTING
+// =========================================
 
+const rarityOrder = {
+  common: 1,
+  uncommon: 2,
+  rare: 3,
+  epic: 4,
+  legendary: 5
+};
+
+function isItemEquipped(item) {
+  return Boolean(item.is_equipped || item.is_cosmetic_equipped);
+}
+
+function getFilteredAndSortedItems() {
+  const category = inventoryFilter.value;
+  const rarity = rarityFilter.value;
+  const status = equipmentStatusFilter.value;
+  const sort = inventorySort.value;
+
+  let filteredItems = [...allItems];
+
+  // CATEGORY FILTER
+  if (category !== "all") {
+    filteredItems = filteredItems.filter(
+      item => item.item_type === category
+    );
+  }
+
+  // RARITY FILTER
+  if (rarity !== "all") {
+    filteredItems = filteredItems.filter(
+      item => String(item.rarity || "common").toLowerCase() === rarity
+    );
+  }
+
+  // EQUIPMENT STATUS FILTER
+  if (status === "equipped") {
+    filteredItems = filteredItems.filter(isItemEquipped);
+  } else if (status === "unequipped") {
+    filteredItems = filteredItems.filter(item => !isItemEquipped(item));
+  }
+
+  // SORTING
+  switch (sort) {
+    case "name-asc":
+      filteredItems.sort((a, b) =>
+        String(a.item_name || "").localeCompare(
+          String(b.item_name || "")
+        )
+      );
+      break;
+
+    case "name-desc":
+      filteredItems.sort((a, b) =>
+        String(b.item_name || "").localeCompare(
+          String(a.item_name || "")
+        )
+      );
+      break;
+
+    case "rarity-desc":
+      filteredItems.sort((a, b) =>
+        (rarityOrder[String(b.rarity || "common").toLowerCase()] || 0) -
+        (rarityOrder[String(a.rarity || "common").toLowerCase()] || 0)
+      );
+      break;
+
+    case "rarity-asc":
+      filteredItems.sort((a, b) =>
+        (rarityOrder[String(a.rarity || "common").toLowerCase()] || 0) -
+        (rarityOrder[String(b.rarity || "common").toLowerCase()] || 0)
+      );
+      break;
+
+    case "quantity-desc":
+      filteredItems.sort((a, b) =>
+        Number(b.quantity || 0) - Number(a.quantity || 0)
+      );
+      break;
+
+    case "enhancement-desc":
+      filteredItems.sort((a, b) =>
+        Number(b.enhancement_level || 0) -
+        Number(a.enhancement_level || 0)
+      );
+      break;
+  }
+
+  return filteredItems;
+}
 // =========================================
 // INVENTORY CARDS
 // =========================================
 
 function renderInventory() {
-  const filter = inventoryFilter.value;
-
-  const filteredItems = allItems.filter(item =>
-    filter === "all" || item.item_type === filter
-  );
-
+  const filteredItems = getFilteredAndSortedItems();
+  
   if (!filteredItems.length) {
     inventoryContainer.innerHTML = `
       <div class="inventory-empty">
@@ -1228,10 +1319,13 @@ inventoryContainer.addEventListener("click", async event => {
 });
 
 // =========================================
-// FILTER
+// INVENTORY FILTERS
 // =========================================
 
 inventoryFilter.addEventListener("change", renderInventory);
+rarityFilter.addEventListener("change", renderInventory);
+equipmentStatusFilter.addEventListener("change", renderInventory);
+inventorySort.addEventListener("change", renderInventory);
 
 // =========================================
 // LOGOUT
