@@ -1,3 +1,4 @@
+
 import { supabase } from "./config.js";
 
 const message = document.getElementById("dashboardMessage");
@@ -5,14 +6,15 @@ const statsList = document.getElementById("statsList");
 const questsList = document.getElementById("questsList");
 const activityList = document.getElementById("activityList");
 
-const avatarMap = {
-  "hunter-01": "⚔️",
-  "hunter-02": "🛡️",
-  "hunter-03": "🔥",
-  "hunter-04": "🌑",
-  "hunter-05": "⚡",
-  "hunter-06": "🐉"
-};
+// VALID HUNTER PORTRAITS
+const validAvatarIds = [
+  "hunter-01",
+  "hunter-02",
+  "hunter-03",
+  "hunter-04",
+  "hunter-05",
+  "hunter-06"
+];
 
 // MEXICO CITY DATE
 function getMexicoDateKey(date) {
@@ -29,17 +31,29 @@ function getMexicoDateKey(date) {
 
   return `${values.year}-${values.month}-${values.day}`;
 }
-// DASHBOARD HUNTER AURA
+
+// HUNTER PORTRAIT
+function renderHunterPortrait(avatarId) {
+  const avatar = document.getElementById("hunterAvatar");
+
+  if (!avatar) return;
+
+  const selectedAvatar = validAvatarIds.includes(avatarId)
+    ? avatarId
+    : "hunter-01";
+
+  avatar.src = `images/${selectedAvatar}.png`;
+  avatar.alt = `${selectedAvatar} Hunter Portrait`;
+}
 
 // DASHBOARD HUNTER AURA AND TITLE
-
 function renderDashboardCosmetics(cosmetics) {
   const avatar = document.getElementById("hunterVisual");
   const title = document.getElementById("dashboardTitle");
 
   if (!avatar || !title) return;
 
-  // Reset visual
+  // RESET VISUAL
   avatar.classList.remove("has-aura");
   avatar.style.removeProperty("--aura-color");
   title.textContent = "";
@@ -64,10 +78,12 @@ function renderDashboardCosmetics(cosmetics) {
     // AURA
     if (slot === "aura") {
       avatar.classList.add("has-aura");
+
       avatar.style.setProperty(
         "--aura-color",
         auraColors[code] || "#55aaff"
       );
+
       return;
     }
 
@@ -78,99 +94,7 @@ function renderDashboardCosmetics(cosmetics) {
   });
 }
 
-// HUNTER PORTRAIT SELECTOR
-const avatarIds = Object.keys(avatarMap);
-
-function renderHunterPortrait(avatarId) {
-  const avatar = document.getElementById("hunterAvatar");
-
-  if (!avatar) return;
-
-  const selectedAvatar = avatarIds.includes(avatarId)
-    ? avatarId
-    : "hunter-01";
-
-  avatar.src = `images/${selectedAvatar}.png`;
-  avatar.alt = `${selectedAvatar} Hunter Portrait`;
-}
-
-function renderAvatarSelector(currentAvatarId, userId) {
-  const selector = document.getElementById("avatarSelector");
-
-  if (!selector) return;
-
-  const selectedAvatar = avatarIds.includes(currentAvatarId)
-    ? currentAvatarId
-    : "hunter-01";
-
-  selector.replaceChildren();
-
-  avatarIds.forEach(avatarId => {
-    const button = document.createElement("button");
-
-    button.type = "button";
-    button.className = "avatar-option";
-    button.dataset.avatarId = avatarId;
-    button.setAttribute("aria-label", `Choose ${avatarId}`);
-    button.title = avatarId;
-
-    if (avatarId === selectedAvatar) {
-      button.classList.add("selected");
-      button.setAttribute("aria-pressed", "true");
-    } else {
-      button.setAttribute("aria-pressed", "false");
-    }
-
-    const image = document.createElement("img");
-    image.src = `images/${avatarId}.png`;
-    image.alt = "";
-
-    button.appendChild(image);
-
-    button.addEventListener("click", async () => {
-      if (button.disabled || avatarId === selectedAvatar) return;
-
-      selector.querySelectorAll("button").forEach(option => {
-        option.disabled = true;
-      });
-
-      message.textContent = "UPDATING HUNTER PORTRAIT...";
-
-      const { error } = await supabase
-        .from("profiles")
-        .update({ avatar_id: avatarId })
-        .eq("user_id", userId);
-
-      if (error) {
-        console.error("Avatar update error:", error);
-        message.textContent = "UNABLE TO UPDATE HUNTER PORTRAIT";
-
-        selector.querySelectorAll("button").forEach(option => {
-          option.disabled = false;
-        });
-
-        return;
-      }
-
-      renderHunterPortrait(avatarId);
-
-      selector.querySelectorAll(".avatar-option").forEach(option => {
-        const isSelected = option.dataset.avatarId === avatarId;
-
-        option.classList.toggle("selected", isSelected);
-        option.setAttribute("aria-pressed", String(isSelected));
-        option.disabled = false;
-      });
-
-      message.textContent = "HUNTER PORTRAIT UPDATED";
-    });
-
-    selector.appendChild(button);
-  });
-
-  renderHunterPortrait(selectedAvatar);
-}
-
+// INITIALIZE DASHBOARD
 async function initializeDashboard() {
   try {
     // 1. VERIFY USER SESSION
@@ -204,31 +128,44 @@ async function initializeDashboard() {
     const { data: profile, error: profileError } =
       await supabase
         .from("profiles")
-        .select("display_name, avatar_id, rank, level, xp, coins, current_streak, longest_streak")
+        .select(`
+          display_name,
+          avatar_id,
+          rank,
+          level,
+          xp,
+          coins,
+          current_streak,
+          longest_streak
+        `)
         .eq("user_id", user.id)
         .single();
 
     if (profileError) throw profileError;
-    // LOAD HUNTER PORTRAIT AND SELECTOR
-renderAvatarSelector(profile.avatar_id, user.id);
-// LOAD EQUIPPED COSMETICS
-const { data: equippedCosmetics, error: cosmeticsError } =
-  await supabase
-    .from("user_equipped_cosmetics")
-    .select(`
-      equipment_slot,
-      shop_items (
-        item_code,
-        item_name
-      )
-    `)
-    .eq("user_id", user.id);
 
-if (cosmeticsError) throw cosmeticsError;
+    // LOAD SAVED HUNTER PORTRAIT
+    renderHunterPortrait(profile.avatar_id);
 
-renderDashboardCosmetics(equippedCosmetics || []);
+    // LOAD EQUIPPED COSMETICS
+    const { data: equippedCosmetics, error: cosmeticsError } =
+      await supabase
+        .from("user_equipped_cosmetics")
+        .select(`
+          equipment_slot,
+          shop_items (
+            item_code,
+            item_name
+          )
+        `)
+        .eq("user_id", user.id);
+
+    if (cosmeticsError) throw cosmeticsError;
+
+    renderDashboardCosmetics(equippedCosmetics || []);
+
+    // HUNTER IDENTITY
     document.getElementById("hunterName").textContent =
-      profile.display_name;
+      profile.display_name || "UNKNOWN HUNTER";
 
     document.getElementById("hunterRank").textContent =
       `RANK ${profile.rank}`;
@@ -240,18 +177,21 @@ renderDashboardCosmetics(equippedCosmetics || []);
       profile.coins ?? 0;
 
     // XP PROGRESS
+    const currentXP = profile.xp ?? 0;
+    const currentLevel = profile.level ?? 1;
+
     document.getElementById("xpText").textContent =
-      `${profile.xp} XP`;
+      `${currentXP} XP`;
 
     const currentLevelXp =
-      100 * (profile.level - 1) * profile.level / 2;
+      100 * (currentLevel - 1) * currentLevel / 2;
 
     const nextLevelXp =
-      100 * profile.level * (profile.level + 1) / 2;
+      100 * currentLevel * (currentLevel + 1) / 2;
 
     const xpIntoLevel = Math.max(
       0,
-      profile.xp - currentLevelXp
+      currentXP - currentLevelXp
     );
 
     const xpNeededForLevel =
@@ -266,55 +206,95 @@ renderDashboardCosmetics(equippedCosmetics || []);
       `${xpProgress}%`;
 
     document.getElementById("xpNext").textContent =
-      `${Math.max(0, nextLevelXp - profile.xp)} XP TO NEXT LEVEL · ${Math.round(xpProgress)}%`;
+      `${Math.max(0, nextLevelXp - currentXP)} XP TO NEXT LEVEL · ${Math.round(xpProgress)}%`;
 
-// HUNTER RANK PROGRESSION
-const rankRequirements = {
-  E: { next: "D", currentXP: 0, nextXP: 1000, nextLevel: 5 },
-  D: { next: "C", currentXP: 1000, nextXP: 4500, nextLevel: 10 },
-  C: { next: "B", currentXP: 4500, nextXP: 19000, nextLevel: 20 },
-  B: { next: "A", currentXP: 19000, nextXP: 43500, nextLevel: 30 },
-  A: { next: "S", currentXP: 43500, nextXP: 122500, nextLevel: 50 },
-  S: null
-};
+    // HUNTER RANK PROGRESSION
+    const rankRequirements = {
+      E: {
+        next: "D",
+        currentXP: 0,
+        nextXP: 1000,
+        nextLevel: 5
+      },
+      D: {
+        next: "C",
+        currentXP: 1000,
+        nextXP: 4500,
+        nextLevel: 10
+      },
+      C: {
+        next: "B",
+        currentXP: 4500,
+        nextXP: 19000,
+        nextLevel: 20
+      },
+      B: {
+        next: "A",
+        currentXP: 19000,
+        nextXP: 43500,
+        nextLevel: 30
+      },
+      A: {
+        next: "S",
+        currentXP: 43500,
+        nextXP: 122500,
+        nextLevel: 50
+      },
+      S: null
+    };
 
-const currentRank = profile.rank;
-const rankData = rankRequirements[currentRank];
+    const currentRank = profile.rank;
+    const rankData = rankRequirements[currentRank];
 
-document.getElementById("currentRankDisplay").textContent = currentRank;
+    document.getElementById("currentRankDisplay").textContent =
+      currentRank || "E";
 
-if (rankData) {
-  const rankProgress = Math.min(
-    100,
-    Math.max(
-      0,
-      ((profile.xp - rankData.currentXP) /
-        (rankData.nextXP - rankData.currentXP)) * 100
-    )
-  );
+    if (rankData) {
+      const rankProgress = Math.min(
+        100,
+        Math.max(
+          0,
+          ((currentXP - rankData.currentXP) /
+            (rankData.nextXP - rankData.currentXP)) * 100
+        )
+      );
 
-  const remainingXP = Math.max(0, rankData.nextXP - profile.xp);
+      const remainingXP = Math.max(
+        0,
+        rankData.nextXP - currentXP
+      );
 
-  document.getElementById("nextRankDisplay").textContent = rankData.next;
-  document.getElementById("nextRankLevel").textContent =
-    `REACH LEVEL ${rankData.nextLevel}`;
+      document.getElementById("nextRankDisplay").textContent =
+        rankData.next;
 
-  document.getElementById("rankXpText").textContent =
-    `${profile.xp.toLocaleString()} / ${rankData.nextXP.toLocaleString()} XP`;
+      document.getElementById("nextRankLevel").textContent =
+        `REACH LEVEL ${rankData.nextLevel}`;
 
-  document.getElementById("rankProgressBar").style.width =
-    `${rankProgress}%`;
+      document.getElementById("rankXpText").textContent =
+        `${currentXP.toLocaleString()} / ${rankData.nextXP.toLocaleString()} XP`;
 
-  document.getElementById("rankProgressStatus").textContent =
-    `${remainingXP.toLocaleString()} XP TO NEXT RANK`;
-} else {
-  document.getElementById("nextRankDisplay").textContent = "MAX";
-  document.getElementById("nextRankLevel").textContent = "HIGHEST RANK";
-  document.getElementById("rankXpText").textContent = "MAXIMUM RANK";
-  document.getElementById("rankProgressBar").style.width = "100%";
-  document.getElementById("rankProgressStatus").textContent =
-    "YOU HAVE REACHED THE HIGHEST HUNTER RANK";
-}
+      document.getElementById("rankProgressBar").style.width =
+        `${rankProgress}%`;
+
+      document.getElementById("rankProgressStatus").textContent =
+        `${remainingXP.toLocaleString()} XP TO NEXT RANK`;
+
+    } else {
+      document.getElementById("nextRankDisplay").textContent =
+        "MAX";
+
+      document.getElementById("nextRankLevel").textContent =
+        "HIGHEST RANK";
+
+      document.getElementById("rankXpText").textContent =
+        "MAXIMUM RANK";
+
+      document.getElementById("rankProgressBar").style.width =
+        "100%";
+
+      document.getElementById("rankProgressStatus").textContent =
+        "YOU HAVE REACHED THE HIGHEST HUNTER RANK";
+    }
 
     // STREAKS
     document.getElementById("currentStreak").textContent =
@@ -323,71 +303,70 @@ if (rankData) {
     document.getElementById("longestStreak").textContent =
       profile.longest_streak ?? 0;
 
-    // 5. LOAD HUNTER ATTRIBUTES
+    // 5. LOAD HP AND ENERGY
+    const { data: stats, error: statsError } =
+      await supabase
+        .from("player_stats")
+        .select("hp, energy")
+        .eq("user_id", user.id)
+        .single();
 
-// LOAD HP AND ENERGY
-const { data: stats, error: statsError } =
-  await supabase
-    .from("player_stats")
-    .select("hp, energy")
-    .eq("user_id", user.id)
-    .single();
+    if (statsError) throw statsError;
 
-if (statsError) throw statsError;
+    document.getElementById("hunterHP").textContent =
+      stats.hp;
 
-document.getElementById("hunterHP").textContent =
-  stats.hp;
+    document.getElementById("hunterEnergy").textContent =
+      stats.energy;
 
-document.getElementById("hunterEnergy").textContent =
-  stats.energy;
+    // LOAD BASE STATS + EQUIPMENT BONUSES
+    const { data: hunterStats, error: hunterStatsError } =
+      await supabase.rpc("get_hunter_stats");
 
-// LOAD BASE STATS + EQUIPMENT BONUSES
-const { data: hunterStats, error: hunterStatsError } =
-  await supabase.rpc("get_hunter_stats");
+    if (hunterStatsError) throw hunterStatsError;
 
-if (hunterStatsError) throw hunterStatsError;
+    const attributes = [
+      { key: "str", label: "STR" },
+      { key: "vit", label: "VIT" },
+      { key: "agi", label: "AGI" },
+      { key: "int", label: "INT" },
+      { key: "per", label: "PER" },
+      { key: "sen", label: "SEN" }
+    ];
 
-const attributes = [
-  { key: "str", label: "STR" },
-  { key: "vit", label: "VIT" },
-  { key: "agi", label: "AGI" },
-  { key: "int", label: "INT" },
-  { key: "per", label: "PER" },
-  { key: "sen", label: "SEN" }
-];
+    statsList.replaceChildren();
 
-statsList.replaceChildren();
+    attributes.forEach(({ key, label }) => {
+      const base = hunterStats.base_stats[key] ?? 0;
+      const bonus = hunterStats.equipment_bonus[key] ?? 0;
+      const total = hunterStats.total_stats[key] ?? 0;
 
-attributes.forEach(({ key, label }) => {
-  const base = hunterStats.base_stats[key] ?? 0;
-  const bonus = hunterStats.equipment_bonus[key] ?? 0;
-  const total = hunterStats.total_stats[key] ?? 0;
+      const row = document.createElement("div");
+      row.className = "stat-row";
 
-  const row = document.createElement("div");
-  row.className = "stat-row";
+      const name = document.createElement("span");
+      name.className = "stat-label";
+      name.textContent = label;
 
-  const name = document.createElement("span");
-  name.className = "stat-label";
-  name.textContent = label;
+      const amount = document.createElement("strong");
+      amount.className = "stat-total";
+      amount.textContent = total;
 
-  const amount = document.createElement("strong");
-  amount.className = "stat-total";
-  amount.textContent = total;
+      const breakdown = document.createElement("div");
+      breakdown.className = "stat-breakdown";
 
-  const breakdown = document.createElement("div");
-  breakdown.className = "stat-breakdown";
+      const baseValue = document.createElement("span");
+      baseValue.textContent = `BASE ${base}`;
 
-  const baseValue = document.createElement("span");
-  baseValue.textContent = `BASE ${base}`;
+      const bonusValue = document.createElement("span");
+      bonusValue.textContent = `EQUIPMENT +${bonus}`;
 
-  const bonusValue = document.createElement("span");
-  bonusValue.textContent = `EQUIPMENT +${bonus}`;
+      breakdown.append(baseValue, bonusValue);
+      row.append(name, amount, breakdown);
 
-  breakdown.append(baseValue, bonusValue);
-  row.append(name, amount, breakdown);
+      statsList.appendChild(row);
+    });
 
-  statsList.appendChild(row);
-});
     // 6. LOAD PLAYER QUESTS
     const { data: quests, error: questsError } =
       await supabase
@@ -423,7 +402,7 @@ attributes.forEach(({ key, label }) => {
       questsList.appendChild(empty);
 
     } else {
-      quests.forEach((item) => {
+      quests.forEach(item => {
         if (!item.quests) return;
 
         const card = document.createElement("div");
@@ -449,7 +428,10 @@ attributes.forEach(({ key, label }) => {
     const { count: completedCount, error: completedError } =
       await supabase
         .from("user_quests")
-        .select("id", { count: "exact", head: true })
+        .select("id", {
+          count: "exact",
+          head: true
+        })
         .eq("user_id", user.id)
         .in("status", ["completed", "claimed"]);
 
@@ -498,7 +480,7 @@ attributes.forEach(({ key, label }) => {
     let dailyCount = 0;
     let weeklyCount = 0;
 
-    completedQuests.forEach(item => {
+    (completedQuests || []).forEach(item => {
       const completedDate = getMexicoDateKey(
         new Date(item.completed_at)
       );
@@ -520,44 +502,45 @@ attributes.forEach(({ key, label }) => {
 
     document.getElementById("weeklyQuestCount").textContent =
       weeklyCount;
-// DAILY GOAL PROGRESS
-const dailyGoal = 4;
 
-const dailyProgress = Math.min(
-  100,
-  (dailyCount / dailyGoal) * 100
-);
+    // DAILY GOAL PROGRESS
+    const dailyGoal = 4;
 
-document.getElementById("dailyGoalText").textContent =
-  `${dailyCount} / ${dailyGoal}`;
+    const dailyProgress = Math.min(
+      100,
+      (dailyCount / dailyGoal) * 100
+    );
 
-document.getElementById("dailyGoalBar").style.width =
-  `${dailyProgress}%`;
+    document.getElementById("dailyGoalText").textContent =
+      `${dailyCount} / ${dailyGoal}`;
 
-document.getElementById("dailyGoalStatus").textContent =
-  dailyCount >= dailyGoal
-    ? "DAILY GOAL COMPLETED!"
-    : `${Math.round(dailyProgress)}% COMPLETE · ${dailyGoal - dailyCount} MISSIONS REMAINING`;
+    document.getElementById("dailyGoalBar").style.width =
+      `${dailyProgress}%`;
 
-// WEEKLY GOAL PROGRESS
-const weeklyGoal = 20;
+    document.getElementById("dailyGoalStatus").textContent =
+      dailyCount >= dailyGoal
+        ? "DAILY GOAL COMPLETED!"
+        : `${Math.round(dailyProgress)}% COMPLETE · ${dailyGoal - dailyCount} MISSIONS REMAINING`;
 
-const weeklyProgress = Math.min(
-  100,
-  (weeklyCount / weeklyGoal) * 100
-);
+    // WEEKLY GOAL PROGRESS
+    const weeklyGoal = 20;
 
-document.getElementById("weeklyGoalText").textContent =
-  `${weeklyCount} / ${weeklyGoal}`;
+    const weeklyProgress = Math.min(
+      100,
+      (weeklyCount / weeklyGoal) * 100
+    );
 
-document.getElementById("weeklyGoalBar").style.width =
-  `${weeklyProgress}%`;
+    document.getElementById("weeklyGoalText").textContent =
+      `${weeklyCount} / ${weeklyGoal}`;
 
-document.getElementById("weeklyGoalStatus").textContent =
-  weeklyCount >= weeklyGoal
-    ? "WEEKLY GOAL COMPLETED!"
-    : `${Math.round(weeklyProgress)}% COMPLETE · ${weeklyGoal - weeklyCount} MISSIONS REMAINING`;
- 
+    document.getElementById("weeklyGoalBar").style.width =
+      `${weeklyProgress}%`;
+
+    document.getElementById("weeklyGoalStatus").textContent =
+      weeklyCount >= weeklyGoal
+        ? "WEEKLY GOAL COMPLETED!"
+        : `${Math.round(weeklyProgress)}% COMPLETE · ${weeklyGoal - weeklyCount} MISSIONS REMAINING`;
+
     // 9. LOAD RECENT ACTIVITY LOG
     if (activityList) {
       activityList.replaceChildren();
@@ -565,7 +548,13 @@ document.getElementById("weeklyGoalStatus").textContent =
       const { data: activities, error: activityError } =
         await supabase
           .from("activity_log")
-          .select("id, activity_type, description, xp_earned, created_at")
+          .select(`
+            id,
+            activity_type,
+            description,
+            xp_earned,
+            created_at
+          `)
           .eq("user_id", user.id)
           .order("created_at", { ascending: false })
           .limit(7);
@@ -575,7 +564,8 @@ document.getElementById("weeklyGoalStatus").textContent =
 
         const errorMessage = document.createElement("p");
         errorMessage.className = "muted";
-        errorMessage.textContent = "Unable to load recent activity.";
+        errorMessage.textContent =
+          "Unable to load recent activity.";
 
         activityList.appendChild(errorMessage);
 
@@ -587,7 +577,7 @@ document.getElementById("weeklyGoalStatus").textContent =
         activityList.appendChild(emptyMessage);
 
       } else {
-        activities.forEach((activity) => {
+        activities.forEach(activity => {
           const activityTypes = {
             quest_completed: {
               icon: "⚔️",
@@ -617,7 +607,9 @@ document.getElementById("weeklyGoalStatus").textContent =
 
           const type = activityTypes[activity.activity_type] || {
             icon: "◈",
-            label: activity.activity_type.replaceAll("_", " ").toUpperCase()
+            label: activity.activity_type
+              .replaceAll("_", " ")
+              .toUpperCase()
           };
 
           const card = document.createElement("div");
@@ -639,9 +631,12 @@ document.getElementById("weeklyGoalStatus").textContent =
           description.textContent = activity.description || "";
 
           const activityDate = new Date(activity.created_at);
-          const today = getMexicoDateKey(new Date());
+          const currentToday = getMexicoDateKey(new Date());
 
-          const yesterdayDate = new Date();
+          const yesterdayDate = new Date(
+            `${currentToday}T12:00:00`
+          );
+
           yesterdayDate.setDate(yesterdayDate.getDate() - 1);
 
           const yesterday = getMexicoDateKey(yesterdayDate);
@@ -654,10 +649,12 @@ document.getElementById("weeklyGoalStatus").textContent =
             hour12: false
           }).format(activityDate);
 
-          if (activityDay === today) {
+          if (activityDay === currentToday) {
             dateLabel = `TODAY · ${dateLabel}`;
+
           } else if (activityDay === yesterday) {
             dateLabel = `YESTERDAY · ${dateLabel}`;
+
           } else {
             dateLabel = new Intl.DateTimeFormat("en-US", {
               timeZone: "America/Mexico_City",
@@ -683,7 +680,7 @@ document.getElementById("weeklyGoalStatus").textContent =
       }
     }
 
-    // 9. SYSTEM MESSAGE
+    // 10. SYSTEM MESSAGE
     message.textContent =
       "SYSTEM ONLINE · HUNTER DATA LOADED";
 
@@ -694,15 +691,19 @@ document.getElementById("weeklyGoalStatus").textContent =
 }
 
 // LOGOUT
-document.getElementById("logoutButton").addEventListener("click", async () => {
-  const { error } = await supabase.auth.signOut();
+document.getElementById("logoutButton").addEventListener(
+  "click",
+  async () => {
+    const { error } = await supabase.auth.signOut();
 
-  if (error) {
-    message.textContent = error.message;
-    return;
+    if (error) {
+      message.textContent = error.message;
+      return;
+    }
+
+    window.location.href = "login.html";
   }
+);
 
-  window.location.href = "login.html";
-});
-
+// START DASHBOARD
 initializeDashboard();
