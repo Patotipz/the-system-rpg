@@ -2435,3 +2435,118 @@
     transition: none !important;
   }
 }
+
+/* =========================================
+   RARITY FULL CARD GLOW - INVENTORY
+========================================= */
+
+.inventory-item {
+  --item-color: #a4b2c3;
+  --item-glow: rgba(164, 178, 195, 0.16);
+  --item-bg: rgba(164, 178, 195, 0.055);
+
+  background:
+    radial-gradient(
+      ellipse at 50% 0%,
+      var(--item-glow),
+      transparent 65%
+    ),
+    linear-gradient(
+      145deg,
+      var(--item-bg),
+      rgba(7, 16, 29, 0.98) 75%
+    ) !important;
+
+  border: 1px solid var(--item-color) !important;
+
+  box-shadow:
+    0 0 7px var(--item-glow),
+    inset 0 0 18px var(--item-glow),
+    0 8px 25px rgba(0, 0, 0, 0.3) !important;
+
+  transition: all 0.3s ease;
+}
+
+/* COMMON */
+
+.inventory-item.rarity-common {
+  --item-color: #a4b2c3;
+  --item-glow: rgba(164, 178, 195, 0.17);
+  --item-bg: rgba(164, 178, 195, 0.07);
+}
+
+/* UNCOMMON */
+
+.inventory-item.rarity-uncommon {
+  --item-color: #35d69a;
+  --item-glow: rgba(53, 214, 154, 0.2);
+  --item-bg: rgba(53, 214, 154, 0.085);
+}
+
+/* RARE */
+
+.inventory-item.rarity-rare {
+  --item-color: #4ca5ff;
+  --item-glow: rgba(76, 165, 255, 0.24);
+  --item-bg: rgba(76, 165, 255, 0.09);
+}
+
+/* EPIC */
+
+.inventory-item.rarity-epic {
+  --item-color: #b477ff;
+  --item-glow: rgba(180, 119, 255, 0.25);
+  --item-bg: rgba(180, 119, 255, 0.09);
+}
+
+/* LEGENDARY */
+
+.inventory-item.rarity-legendary {
+  --item-color: #f5c542;
+  --item-glow: rgba(245, 197, 66, 0.27);
+  --item-bg: rgba(245, 197, 66, 0.10);
+}
+
+/* FULL BORDER AND INNER LIGHT */
+
+.inventory-item::before {
+  height: 2px;
+  background: var(--item-color);
+  box-shadow: 0 0 15px var(--item-color);
+}
+
+.inventory-item:hover {
+  border-color: var(--item-color) !important;
+
+  box-shadow:
+    0 0 10px var(--item-glow),
+    0 0 25px var(--item-glow),
+    inset 0 0 25px var(--item-glow),
+    0 12px 30px rgba(0, 0, 0, 0.4) !important;
+
+  transform: translateY(-5px);
+}
+
+/* IMAGE FRAME */
+
+.inventory-item .inventory-item-icon {
+  border-color: var(--item-color) !important;
+
+  background:
+    radial-gradient(
+      circle,
+      var(--item-glow),
+      rgba(5, 13, 25, 0.55)
+    ) !important;
+
+  box-shadow:
+    inset 0 0 18px var(--item-glow),
+    0 0 8px var(--item-glow);
+}
+
+/* RARITY TEXT */
+
+.inventory-item .inventory-item-rarity {
+  color: var(--item-color);
+  text-shadow: 0 0 10px var(--item-glow);
+}
