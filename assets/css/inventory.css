@@ -2017,3 +2017,421 @@
     transition: none;
   }
 }
+
+/* =========================================
+   THE SYSTEM - ITEM CARD REDESIGN
+========================================= */
+
+#inventoryItems.inventory-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 22px;
+  align-items: stretch;
+}
+
+.inventory-item {
+  --item-color: #8293a8;
+  --item-glow: rgba(130, 147, 168, 0.15);
+
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  padding: 22px;
+  overflow: hidden;
+
+  background:
+    radial-gradient(
+      circle at 50% 0%,
+      var(--item-glow),
+      transparent 55%
+    ),
+    linear-gradient(155deg, #101f34 0%, #081321 100%);
+
+  border: 1px solid color-mix(in srgb, var(--item-color) 45%, #203b5c);
+  border-radius: 13px;
+
+  box-shadow:
+    0 8px 24px rgba(0, 0, 0, 0.25),
+    inset 0 0 20px rgba(255, 255, 255, 0.015);
+
+  transition:
+    transform 0.25s ease,
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.inventory-item::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 12%;
+  width: 76%;
+  height: 2px;
+  background: var(--item-color);
+  box-shadow: 0 0 12px var(--item-color);
+  opacity: 0.75;
+}
+
+.inventory-item::after {
+  content: "";
+  position: absolute;
+  top: -75px;
+  right: -75px;
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  background: var(--item-glow);
+  filter: blur(25px);
+  pointer-events: none;
+}
+
+.inventory-item:hover {
+  transform: translateY(-5px);
+  border-color: var(--item-color);
+  box-shadow:
+    0 12px 30px rgba(0, 0, 0, 0.35),
+    0 0 18px var(--item-glow);
+}
+
+/* RARITY COLORS */
+
+.inventory-item.rarity-common {
+  --item-color: #a4b2c3;
+  --item-glow: rgba(164, 178, 195, 0.12);
+}
+
+.inventory-item.rarity-uncommon {
+  --item-color: #35d69a;
+  --item-glow: rgba(53, 214, 154, 0.15);
+}
+
+.inventory-item.rarity-rare {
+  --item-color: #4ca5ff;
+  --item-glow: rgba(76, 165, 255, 0.18);
+}
+
+.inventory-item.rarity-epic {
+  --item-color: #b477ff;
+  --item-glow: rgba(180, 119, 255, 0.19);
+}
+
+.inventory-item.rarity-legendary {
+  --item-color: #f5c542;
+  --item-glow: rgba(245, 197, 66, 0.20);
+}
+
+/* ITEM IMAGE */
+
+.inventory-item .inventory-item-icon {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 155px;
+  margin-bottom: 17px;
+  overflow: hidden;
+
+  background:
+    radial-gradient(
+      circle,
+      var(--item-glow),
+      rgba(5, 13, 25, 0.3) 70%
+    );
+
+  border: 1px solid color-mix(in srgb, var(--item-color) 35%, transparent);
+  border-radius: 10px;
+}
+
+.inventory-item .item-visual-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  padding: 12px;
+  filter: drop-shadow(0 0 12px var(--item-glow));
+  transition: transform 0.3s ease;
+}
+
+.inventory-item:hover .item-visual-image {
+  transform: scale(1.08);
+}
+
+.inventory-item .item-visual-fallback {
+  width: 100%;
+  height: 100%;
+  place-items: center;
+  font-size: 48px;
+  filter: drop-shadow(0 0 12px var(--item-glow));
+}
+
+/* CATEGORY */
+
+.inventory-item-category {
+  display: inline-flex;
+  align-self: flex-start;
+  margin-bottom: 9px;
+  padding: 5px 9px;
+
+  color: var(--item-color);
+  background: var(--item-glow);
+  border: 1px solid color-mix(in srgb, var(--item-color) 30%, transparent);
+  border-radius: 4px;
+
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+}
+
+/* NAME */
+
+.inventory-item h3 {
+  color: #e8f2ff;
+  font-size: 17px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  line-height: 1.35;
+  margin-bottom: 9px;
+  overflow-wrap: anywhere;
+}
+
+/* DESCRIPTION */
+
+.inventory-item-description {
+  min-height: 42px;
+  color: #8da4bf;
+  font-size: 11px;
+  line-height: 1.6;
+  margin-bottom: 14px;
+}
+
+/* RARITY LABEL */
+
+.inventory-item-rarity {
+  align-self: flex-start;
+  margin-bottom: 15px;
+
+  color: var(--item-color);
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 2px;
+  text-shadow: 0 0 10px var(--item-glow);
+}
+
+/* QUANTITY AND ENHANCEMENT */
+
+.inventory-item-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+
+  padding: 12px 0;
+  border-top: 1px solid rgba(76, 165, 255, 0.13);
+  border-bottom: 1px solid rgba(76, 165, 255, 0.13);
+
+  color: #8da4bf;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+}
+
+.enhancement-level-badge {
+  color: #f5c542;
+  background: rgba(245, 197, 66, 0.09);
+  border: 1px solid rgba(245, 197, 66, 0.25);
+  border-radius: 4px;
+  padding: 5px 8px;
+}
+
+/* ATTRIBUTE BONUSES */
+
+.inventory-item-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-top: 13px;
+}
+
+.inventory-item-stats span {
+  padding: 5px 8px;
+  color: #75bdff;
+  background: rgba(76, 165, 255, 0.08);
+  border: 1px solid rgba(76, 165, 255, 0.18);
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 800;
+}
+
+/* EQUIPPED STATUS */
+
+.inventory-equipped {
+  align-self: flex-start;
+  margin-top: 12px;
+  padding: 6px 10px;
+
+  color: #42e6ad;
+  background: rgba(53, 214, 154, 0.09);
+  border: 1px solid rgba(53, 214, 154, 0.3);
+  border-radius: 4px;
+
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: 1.5px;
+}
+
+/* ACTION AREA */
+
+.inventory-primary-actions {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+  margin-top: 17px;
+}
+
+.inventory-primary-actions.has-compare {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.inventory-item .inventory-action {
+  min-width: 0;
+  min-height: 38px;
+  border-radius: 5px;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.8px;
+  transition: 0.2s ease;
+}
+
+.inventory-item .inspect-button {
+  color: #8dcaff;
+  background: rgba(76, 165, 255, 0.09);
+  border: 1px solid rgba(76, 165, 255, 0.35);
+}
+
+.inventory-item .inspect-button:hover {
+  color: #ffffff;
+  background: rgba(76, 165, 255, 0.2);
+  box-shadow: 0 0 12px rgba(76, 165, 255, 0.15);
+}
+
+.inventory-item .compare-button {
+  color: #c6a0ff;
+  background: rgba(164, 112, 255, 0.09);
+  border: 1px solid rgba(164, 112, 255, 0.35);
+}
+
+.inventory-item .compare-button:hover {
+  color: #ffffff;
+  background: rgba(164, 112, 255, 0.2);
+  box-shadow: 0 0 12px rgba(164, 112, 255, 0.15);
+}
+
+/* OTHER ACTION BUTTONS */
+
+.inventory-item > .equip-button {
+  color: #58e6b0;
+  background: rgba(53, 214, 154, 0.08);
+  border: 1px solid rgba(53, 214, 154, 0.35);
+}
+
+.inventory-item > .unequip-button {
+  color: #ff9c9c;
+  background: rgba(239, 68, 68, 0.08);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.inventory-item > .enhance-button {
+  color: #f5c542;
+  background: rgba(245, 197, 66, 0.08);
+  border: 1px solid rgba(245, 197, 66, 0.35);
+}
+
+.inventory-item > .use-button {
+  color: #63d8ff;
+  background: rgba(65, 190, 255, 0.08);
+  border: 1px solid rgba(65, 190, 255, 0.35);
+}
+
+.inventory-item > .skill-button {
+  color: #c6a0ff;
+  background: rgba(164, 112, 255, 0.08);
+  border: 1px solid rgba(164, 112, 255, 0.35);
+}
+
+.inventory-item > .cosmetic-button {
+  color: #ff91c8;
+  background: rgba(255, 100, 180, 0.08);
+  border: 1px solid rgba(255, 100, 180, 0.35);
+}
+
+.inventory-item > .inventory-action {
+  width: 100%;
+  margin-top: 9px;
+}
+
+.inventory-item .inventory-action:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  filter: grayscale(0.5);
+}
+
+.inventory-item .inventory-action:not(:disabled):hover {
+  filter: brightness(1.25);
+  transform: translateY(-1px);
+}
+
+/* EMPTY INVENTORY */
+
+.inventory-empty {
+  grid-column: 1 / -1;
+  padding: 55px 20px;
+  text-align: center;
+  background: #0b192c;
+  border: 1px dashed #315276;
+  border-radius: 12px;
+}
+
+.inventory-empty h3 {
+  color: #83c5ff;
+  letter-spacing: 2px;
+  margin-bottom: 10px;
+}
+
+.inventory-empty p {
+  color: #8da4bf;
+  font-size: 12px;
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 1100px) {
+  #inventoryItems.inventory-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 600px) {
+  #inventoryItems.inventory-grid {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+
+  .inventory-item {
+    padding: 17px;
+  }
+
+  .inventory-item .inventory-item-icon {
+    height: 135px;
+  }
+
+  .inventory-primary-actions.has-compare {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .inventory-item,
+  .inventory-item * {
+    transition: none !important;
+  }
+}
