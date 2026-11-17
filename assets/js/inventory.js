@@ -489,10 +489,10 @@ async function loadInventory() {
   }
 
   const { data: profile, error: profileError } = await supabase
-    .from("profiles")
-    .select("display_name, rank, level, coins")
-    .eq("user_id", authData.user.id)
-    .single();
+  .from("profiles")
+  .select("display_name, rank, level, coins, avatar_id")
+  .eq("user_id", authData.user.id)
+  .single();
 
   if (profileError) throw profileError;
 
@@ -510,7 +510,26 @@ async function loadInventory() {
   if (nameEl) nameEl.textContent = profile.display_name || "HUNTER";
   if (rankEl) rankEl.textContent = `RANK ${profile.rank || "E"}`;
   if (levelEl) levelEl.textContent = `LV. ${profile.level ?? 1}`;
+// HUNTER PORTRAIT
+const avatarElement = document.getElementById("inventoryHunterAvatar");
 
+const validAvatarIds = [
+  "hunter-01",
+  "hunter-02",
+  "hunter-03",
+  "hunter-04",
+  "hunter-05",
+  "hunter-06"
+];
+
+const selectedAvatar = validAvatarIds.includes(profile.avatar_id)
+  ? profile.avatar_id
+  : "hunter-01";
+
+if (avatarElement) {
+  avatarElement.src = `images/${selectedAvatar}.png`;
+  avatarElement.alt = `${selectedAvatar} Hunter Portrait`;
+}
   const { data, error } = await supabase
     .from("inventory")
     .select(`
