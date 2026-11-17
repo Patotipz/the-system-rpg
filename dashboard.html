@@ -9,31 +9,27 @@
 </head>
 <body>
 
- 
-<aside class="sidebar">
-  <div class="logo">THE <span>SYSTEM</span></div>
+  <aside class="sidebar">
+    <div class="logo">THE <span>SYSTEM</span></div>
 
-  <div class="menu-label">MAIN MENU</div>
+    <div class="menu-label">MAIN MENU</div>
 
+    <nav>
+      <a href="#dashboard" class="nav-link active">◈ DASHBOARD</a>
+      <a href="status.html" class="nav-link">▣ STATUS</a>
+      <a href="quests.html" class="nav-link">⚔ QUESTS</a>
+      <a href="shop.html" class="nav-link">🛒 SHOP</a>
+      <a href="inventory.html" class="nav-link">▤ INVENTORY</a>
+      <a href="achievements.html" class="nav-link">♛ ACHIEVEMENTS</a>
+      <a href="guild.html" class="nav-link">♜ GUILD</a>
+      <a href="activity.html" class="nav-link">◷ ACTIVITY</a>
+    </nav>
 
-<nav>
-  <a href="#dashboard" class="nav-link active">◈ DASHBOARD</a>
-  <a href="status.html" class="nav-link">▣ STATUS</a>
-  <a href="quests.html" class="nav-link">⚔ QUESTS</a>
-  <a href="shop.html" class="nav-link">🛒 SHOP</a>
-  <a href="inventory.html" class="nav-link">▤ INVENTORY</a>
-  <a href="achievements.html" class="nav-link">♛ ACHIEVEMENTS</a>
-  <a href="guild.html" class="nav-link">♜ GUILD</a>
-  <a href="activity.html" class="nav-link">◷ ACTIVITY</a>
-</nav>
-
-
-  <div class="sidebar-bottom">
-    <button id="logoutButton">↪ LOG OUT</button>
-    <p>SYSTEM VERSION 1.0</p>
-  </div>
-</aside>
-
+    <div class="sidebar-bottom">
+      <button id="logoutButton">↪ LOG OUT</button>
+      <p>SYSTEM VERSION 1.0</p>
+    </div>
+  </aside>
 
   <main class="main-content" id="dashboard">
 
@@ -49,52 +45,31 @@
       </div>
     </header>
 
+    <!-- WELCOME / HUNTER PROFILE -->
     <section class="welcome-section">
+
       <div>
         <p class="system-label">WELCOME BACK, HUNTER</p>
         <h2 id="hunterName">Loading...</h2>
         <p class="muted">Your journey continues.</p>
       </div>
 
-      
+      <div class="hunter-avatar-container" id="hunterVisual">
 
-<div class="hunter-profile-column">
+        <img
+          src="images/hunter-01.png"
+          alt="Hunter Portrait"
+          class="hunter-avatar"
+          id="hunterAvatar"
+        />
 
-  <div class="hunter-avatar-container" id="hunterVisual">
-    <img
-      src="images/hunter-01.png"
-      alt="Hunter Portrait"
-      class="hunter-avatar"
-      id="hunterAvatar"
-    />
+        <div class="hunter-title-layer" id="dashboardTitle"></div>
 
-    <div class="hunter-title-layer" id="dashboardTitle"></div>
-  </div>
-
-  <div
-    class="avatar-selector"
-    id="avatarSelector"
-    aria-label="Choose your hunter portrait"
-  ></div>
-
-</div>
-
-
-  <!-- Retrato principal -->
-  <img
-    src="images/hunter-portrait.png"
-    alt="Hunter Portrait"
-    class="hunter-avatar"
-    id="hunterAvatar"
-  />
-
-  <!-- Título -->
-  <div class="hunter-title-layer" id="dashboardTitle"></div>
-
-</div>
+      </div>
 
     </section>
 
+    <!-- EXPERIENCE -->
     <section class="progress-section">
       <div class="section-heading">
         <h2>EXPERIENCE</h2>
@@ -108,7 +83,9 @@
       <p class="muted" id="xpNext">Your next level awaits.</p>
     </section>
 
+    <!-- RESOURCES -->
     <section class="resource-grid">
+
       <article class="resource-card">
         <span>✦</span>
         <p>COINS</p>
@@ -126,112 +103,136 @@
         <p>ENERGY</p>
         <h2 id="hunterEnergy">100</h2>
       </article>
-    </section>
-<div class="streak-grid">
-  <div class="streak-card">
-    <span class="stat-icon">🔥</span>
-    <div class="stat-label">CURRENT STREAK</div>
-    <div class="stat-value" id="currentStreak">0</div>
-    <div class="stat-description">Consecutive days</div>
-  </div>
 
-  <div class="streak-card">
-    <span class="stat-icon">🏆</span>
-    <div class="stat-label">BEST STREAK</div>
-    <div class="stat-value" id="longestStreak">0</div>
-    <div class="stat-description">Personal record</div>
-  </div>
-</div>
+    </section>
+
+    <!-- STREAKS -->
+    <div class="streak-grid">
+
+      <div class="streak-card">
+        <span class="stat-icon">🔥</span>
+        <div class="stat-label">CURRENT STREAK</div>
+        <div class="stat-value" id="currentStreak">0</div>
+        <div class="stat-description">Consecutive days</div>
+      </div>
+
+      <div class="streak-card">
+        <span class="stat-icon">🏆</span>
+        <div class="stat-label">BEST STREAK</div>
+        <div class="stat-value" id="longestStreak">0</div>
+        <div class="stat-description">Personal record</div>
+      </div>
+
+    </div>
+
+    <!-- QUEST COUNTS -->
     <section class="resource-grid mission-progress">
 
-  <article class="resource-card">
-    <span>⚔</span>
-    <p>COMPLETED QUESTS</p>
-    <h2 id="completedQuestCount">0</h2>
-  </article>
+      <article class="resource-card">
+        <span>⚔</span>
+        <p>COMPLETED QUESTS</p>
+        <h2 id="completedQuestCount">0</h2>
+      </article>
 
-  <article class="resource-card">
-    <span>◈</span>
-    <p>DAILY COMPLETED</p>
-    <h2 id="dailyQuestCount">0</h2>
-  </article>
+      <article class="resource-card">
+        <span>◈</span>
+        <p>DAILY COMPLETED</p>
+        <h2 id="dailyQuestCount">0</h2>
+      </article>
 
-  <article class="resource-card">
-    <span>◷</span>
-    <p>WEEKLY COMPLETED</p>
-    <h2 id="weeklyQuestCount">0</h2>
-  </article>
+      <article class="resource-card">
+        <span>◷</span>
+        <p>WEEKLY COMPLETED</p>
+        <h2 id="weeklyQuestCount">0</h2>
+      </article>
 
-</section>
+    </section>
+
+    <!-- MISSION PROGRESS -->
     <section class="panel mission-goals">
-  <div class="panel-heading">
-    <h2>MISSION PROGRESS</h2>
-    <span>HUNTER OBJECTIVES</span>
-  </div>
 
-<!-- HUNTER RANK PROGRESSION -->
-<section class="panel rank-progression">
-  <div class="panel-heading">
-    <h2>HUNTER RANK</h2>
-    <span>RANK ADVANCEMENT</span>
-  </div>
+      <div class="panel-heading">
+        <h2>MISSION PROGRESS</h2>
+        <span>HUNTER OBJECTIVES</span>
+      </div>
 
-  <div class="rank-overview">
-    <div class="current-rank">
-      <span>CURRENT RANK</span>
-      <strong id="currentRankDisplay">E</strong>
-    </div>
+      <!-- HUNTER RANK PROGRESSION -->
+      <section class="panel rank-progression">
 
-    <div class="next-rank">
-      <span>NEXT RANK</span>
-      <strong id="nextRankDisplay">D</strong>
-      <small id="nextRankLevel">REACH LEVEL 5</small>
-    </div>
-  </div>
+        <div class="panel-heading">
+          <h2>HUNTER RANK</h2>
+          <span>RANK ADVANCEMENT</span>
+        </div>
 
-  <div class="rank-progress-info">
-    <span>RANK PROGRESS</span>
-    <strong id="rankXpText">0 / 1,000 XP</strong>
-  </div>
+        <div class="rank-overview">
 
-  <div class="goal-track rank-track">
-    <div id="rankProgressBar" class="goal-fill rank-fill"></div>
-  </div>
+          <div class="current-rank">
+            <span>CURRENT RANK</span>
+            <strong id="currentRankDisplay">E</strong>
+          </div>
 
-  <p id="rankProgressStatus" class="muted">
-    1,000 XP TO NEXT RANK
-  </p>
-</section>
+          <div class="next-rank">
+            <span>NEXT RANK</span>
+            <strong id="nextRankDisplay">D</strong>
+            <small id="nextRankLevel">REACH LEVEL 5</small>
+          </div>
 
-  <div class="goal-card">
-    <div class="goal-heading">
-      <span>◈ DAILY GOAL</span>
-      <strong id="dailyGoalText">0 / 4</strong>
-    </div>
+        </div>
 
-    <div class="goal-track daily-track">
-      <div id="dailyGoalBar" class="goal-fill daily-fill"></div>
-    </div>
+        <div class="rank-progress-info">
+          <span>RANK PROGRESS</span>
+          <strong id="rankXpText">0 / 1,000 XP</strong>
+        </div>
 
-    <p id="dailyGoalStatus" class="muted">0% COMPLETE</p>
-  </div>
+        <div class="goal-track rank-track">
+          <div id="rankProgressBar" class="goal-fill rank-fill"></div>
+        </div>
 
-  <div class="goal-card">
-    <div class="goal-heading">
-      <span>◷ WEEKLY GOAL</span>
-      <strong id="weeklyGoalText">0 / 20</strong>
-    </div>
+        <p id="rankProgressStatus" class="muted">
+          1,000 XP TO NEXT RANK
+        </p>
 
-    <div class="goal-track weekly-track">
-      <div id="weeklyGoalBar" class="goal-fill weekly-fill"></div>
-    </div>
+      </section>
 
-    <p id="weeklyGoalStatus" class="muted">0% COMPLETE</p>
-  </div>
-</section>
+      <!-- DAILY GOAL -->
+      <div class="goal-card">
+
+        <div class="goal-heading">
+          <span>◈ DAILY GOAL</span>
+          <strong id="dailyGoalText">0 / 4</strong>
+        </div>
+
+        <div class="goal-track daily-track">
+          <div id="dailyGoalBar" class="goal-fill daily-fill"></div>
+        </div>
+
+        <p id="dailyGoalStatus" class="muted">0% COMPLETE</p>
+
+      </div>
+
+      <!-- WEEKLY GOAL -->
+      <div class="goal-card">
+
+        <div class="goal-heading">
+          <span>◷ WEEKLY GOAL</span>
+          <strong id="weeklyGoalText">0 / 20</strong>
+        </div>
+
+        <div class="goal-track weekly-track">
+          <div id="weeklyGoalBar" class="goal-fill weekly-fill"></div>
+        </div>
+
+        <p id="weeklyGoalStatus" class="muted">0% COMPLETE</p>
+
+      </div>
+
+    </section>
+
+    <!-- STATUS AND QUESTS -->
     <section class="content-grid">
 
       <article class="panel" id="status">
+
         <div class="panel-heading">
           <h2>STATUS WINDOW</h2>
           <span>ATTRIBUTES</span>
@@ -240,64 +241,74 @@
         <div id="statsList" class="stats-list">
           <p class="muted">Loading attributes...</p>
         </div>
+
       </article>
 
-      
-<article class="panel" id="quests">
-  <div class="panel-heading">
-    <h2>ACTIVE QUESTS</h2>
-    <span>MISSIONS</span>
-  </div>
+      <article class="panel" id="quests">
 
-  <div id="questsList">
-    <p class="muted">Loading quests...</p>
-  </div>
+        <div class="panel-heading">
+          <h2>ACTIVE QUESTS</h2>
+          <span>MISSIONS</span>
+        </div>
 
-  <div class="panel-footer">
-    <a href="quests.html" class="panel-link">
-      VIEW ALL QUESTS →
-    </a>
-  </div>
-</article>
+        <div id="questsList">
+          <p class="muted">Loading quests...</p>
+        </div>
 
+        <div class="panel-footer">
+          <a href="quests.html" class="panel-link">
+            VIEW ALL QUESTS →
+          </a>
+        </div>
+
+      </article>
 
     </section>
 
+    <!-- INVENTORY -->
     <section class="panel secondary-panel" id="inventory">
+
       <div class="panel-heading">
         <h2>INVENTORY</h2>
         <span>ITEM STORAGE</span>
       </div>
+
       <p class="muted">Your inventory will appear here.</p>
+
     </section>
 
-    
-<section class="panel secondary-panel" id="achievements">
-  <div class="panel-heading">
-    <h2>ACHIEVEMENTS</h2>
-    <span>HUNTER RECORD</span>
-  </div>
+    <!-- ACHIEVEMENTS -->
+    <section class="panel secondary-panel" id="achievements">
 
-  <p class="muted">
-    Track your unlocked achievements, milestones and hunter progression.
-  </p>
+      <div class="panel-heading">
+        <h2>ACHIEVEMENTS</h2>
+        <span>HUNTER RECORD</span>
+      </div>
 
-  <div class="panel-footer">
-    <a href="achievements.html" class="panel-link">
-      VIEW ALL ACHIEVEMENTS →
-    </a>
-  </div>
-</section>
+      <p class="muted">
+        Track your unlocked achievements, milestones and hunter progression.
+      </p>
 
+      <div class="panel-footer">
+        <a href="achievements.html" class="panel-link">
+          VIEW ALL ACHIEVEMENTS →
+        </a>
+      </div>
 
+    </section>
+
+    <!-- ACTIVITY LOG -->
     <section class="panel secondary-panel" id="activity">
+
       <div class="panel-heading">
         <h2>ACTIVITY LOG</h2>
         <span>RECENT EVENTS</span>
       </div>
+
       <div id="activityList">
         <p class="muted">No recent activity.</p>
       </div>
+
     </section>
 
     <p id="dashboardMessage" class="system-label"></p>
