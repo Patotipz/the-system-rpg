@@ -897,42 +897,57 @@ function renderFeatured(quests) {
 // PHYSICAL EVIDENCE UI
 // ==========================================
 
-function renderEvidenceStatus(userQuestId) {
+
+function renderEvidenceSubmission(userQuestId) {
   const approved = getApprovedEvidence(userQuestId);
   const pending = getPendingEvidence(userQuestId);
-  const latest = getLatestEvidence(userQuestId);
 
-  if (approved) {
-    return `
-      <div class="evidence-status evidence-approved">
-        <strong>✓ EVIDENCE APPROVED</strong>
-        <p>Your physical challenge has been validated.</p>
-      </div>
-    `;
-  }
+  if (approved || pending) return "";
 
-  if (pending) {
-    return `
-      <div class="evidence-status evidence-pending">
-        <strong>◷ EVIDENCE UNDER REVIEW</strong>
-        <p>Your submission is waiting for administrator approval.</p>
-      </div>
-    `;
-  }
+  return `
+    <form
+      class="evidence-form"
+      data-evidence-form
+      data-user-quest-id="${Number(userQuestId)}">
 
-  if (latest?.review_status === "rejected") {
-    return `
-      <div class="evidence-status evidence-rejected">
-        <strong>✕ EVIDENCE REJECTED</strong>
-        <p>${escapeHTML(
-          latest.review_notes || "Please submit new evidence."
-        )}</p>
-      </div>
-    `;
-  }
+      <p class="evidence-form-title">
+        [ SUBMIT OFFICIAL PROOF ]
+      </p>
 
-  return "";
+      <label>
+        Upload result / certificate / photo
+      </label>
+
+      <input
+        type="file"
+        name="evidence_file"
+        accept="image/jpeg,image/png,image/webp,application/pdf">
+
+      <p class="evidence-or">OR</p>
+
+      <label>Official result URL</label>
+
+      <input
+        type="url"
+        name="evidence_link"
+        placeholder="https://...">
+
+      <label>Notes (optional)</label>
+
+      <textarea
+        name="evidence_notes"
+        rows="2"
+        maxlength="500"
+        placeholder="Event name, date, category..."></textarea>
+
+      <button type="submit" class="quest-action">
+        SUBMIT EVIDENCE
+      </button>
+
+    </form>
+  `;
 }
+
 
 function renderEvidenceSubmission(userQuestId) {
   const approved = getApprovedEvidence(userQuestId);
