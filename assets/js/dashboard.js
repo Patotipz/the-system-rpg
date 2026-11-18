@@ -143,7 +143,10 @@ async function initializeDashboard() {
         .single();
 
     if (profileError) throw profileError;
-
+if (profile.character_created !== true) {
+  window.location.href = "character.html";
+  return;
+}
     // LOAD SAVED HUNTER PORTRAIT
     renderHunterPortrait(profile.avatar_id);
 
