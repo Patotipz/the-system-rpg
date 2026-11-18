@@ -948,67 +948,6 @@ function renderEvidenceSubmission(userQuestId) {
   `;
 }
 
-
-function renderEvidenceSubmission(userQuestId) {
-  const approved = getApprovedEvidence(userQuestId);
-  const pending = getPendingEvidence(userQuestId);
-
-  if (approved) return "";
-
-  if (pending) {
-    return renderEvidenceStatus(userQuestId);
-  }
-
-  return `
-    ${renderEvidenceStatus(userQuestId)}
-
-    <form
-      class="evidence-form"
-      data-evidence-form
-      data-user-quest-id="${Number(userQuestId)}">
-
-      <p class="evidence-form-title">
-        [ SUBMIT OFFICIAL PROOF ]
-      </p>
-
-      <label>
-        Upload result / certificate / photo
-      </label>
-
-      <input
-        type="file"
-        name="evidence_file"
-        accept="image/jpeg,image/png,image/webp,application/pdf">
-
-      <p class="evidence-or">OR</p>
-
-      <label>
-        Official result URL
-      </label>
-
-      <input
-        type="url"
-        name="evidence_link"
-        placeholder="https://...">
-
-      <label>
-        Notes (optional)
-      </label>
-
-      <textarea
-        name="evidence_notes"
-        rows="2"
-        maxlength="500"
-        placeholder="Event name, date, category..."></textarea>
-
-      <button type="submit" class="quest-action">
-        SUBMIT EVIDENCE
-      </button>
-
-    </form>
-  `;
-}
-
 // ==========================================
 // RENDER MY QUESTS
 // ==========================================
