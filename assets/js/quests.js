@@ -1420,48 +1420,50 @@ async function loadAdminEvidence() {
 // ADMIN: APPROVE OR REJECT EVIDENCE
 // ==========================================
 
-adminEvidenceList.addEventListener("click", async event => {
-  const button = event.target.closest("[data-review-id]");
+if (adminEvidenceList) {
+  adminEvidenceList.addEventListener("click", async event => {
+    const button = event.target.closest("[data-review-id]");
 
-  if (!button || !isAdmin) return;
+    if (!button || !isAdmin) return;
 
-  const evidenceId = Number(button.dataset.reviewId);
-  const decision = button.dataset.decision;
+    const evidenceId = Number(button.dataset.reviewId);
+    const decision = button.dataset.decision;
 
-  const notesInput = adminEvidenceList.querySelector(
-    `[data-review-notes="${evidenceId}"]`
-  );
-
-  const reviewNotes = notesInput?.value.trim() || null;
-
-  button.disabled = true;
-
-  try {
-    const { error } = await supabase.rpc(
-      "review_quest_evidence",
-      {
-        p_evidence_id: evidenceId,
-        p_decision: decision,
-        p_review_notes: reviewNotes
-      }
+    const notesInput = adminEvidenceList.querySelector(
+      `[data-review-notes="${evidenceId}"]`
     );
 
-    if (error) throw error;
+    const reviewNotes = notesInput?.value.trim() || null;
 
-    message.textContent = decision === "approved"
-      ? "EVIDENCE APPROVED."
-      : "EVIDENCE REJECTED.";
+    button.disabled = true;
 
-    await loadAdminEvidence();
-    await loadQuests();
+    try {
+      const { error } = await supabase.rpc(
+        "review_quest_evidence",
+        {
+          p_evidence_id: evidenceId,
+          p_decision: decision,
+          p_review_notes: reviewNotes
+        }
+      );
 
-  } catch (error) {
-    console.error("EVIDENCE REVIEW ERROR:", error);
+      if (error) throw error;
 
-    message.textContent = getQuestErrorMessage(error);
-    button.disabled = false;
-  }
-});
+      message.textContent = decision === "approved"
+        ? "EVIDENCE APPROVED."
+        : "EVIDENCE REJECTED.";
+
+      await loadAdminEvidence();
+      await loadQuests();
+
+    } catch (error) {
+      console.error("EVIDENCE REVIEW ERROR:", error);
+
+      message.textContent = getQuestErrorMessage(error);
+      button.disabled = false;
+    }
+  });
+}
 
 // ==========================================
 // LOGOUT
