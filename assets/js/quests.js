@@ -1366,54 +1366,153 @@ myQuestsContainer.addEventListener("click", async event => {
   }
 });
 
+
 // ==========================================
 // ADMIN: LOAD PENDING EVIDENCE
 // ==========================================
 
 async function loadAdminEvidence() {
-  if (adminEvidenceList) {
-  adminEvidenceList.addEventListener("click", async event => {
-    const button = event.target.closest("[data-review-id]");
+  if (!adminEvidenceList || !isAdmin) return;
 
-    if (!button || !isAdmin) return;
+  adminEvidenceList.innerHTML =
+    '<p class="muted">Loading pending evidence...</p>';
 
-    const evidenceId = Number(button.dataset.reviewId);
-    const decision = button.dataset.decision;
+  try {
+    const { data, error } = await supabase
+      .from("quest_evidence")
+      .select(`
+        id,
+        user_quest_id,
+        user_id,
+        evidence_url,
+        evidence_type,
+        notes,
+        created_at
+      `)
+      .eq("review_status", "pending")
+      .order("created_at", { ascending: true });
 
-    const notesInput = adminEvidenceList.querySelector(
-      `[data-review-notes="${evidenceId}"]`
+    if (error) throw error;
+
+    const pendingEvidence = data || [];
+
+    if (!pendingEvidence.length) {
+      adminEvidenceList.innerHTML =
+        '<p class="muted">No pending evidence to review.</p>';
+      return;
+    }
+
+    const evidenceCards = await Promise.all(
+      pendingEvidence.map(async evidence => {
+        let evidenceLink = "";
+
+        if (evidence.evidence_type === "file") {
+          const { data: signedData, error: signedError } =
+            await supabase.storage
+              .from(EVIDENCE_BUCKET)
+              .createSignedUrl(evidence.evidence_url, 300);
+
+          if (signedError) {
+            console.error("SIGNED URL ERROR:", signedError);
+          } else {
+            evidenceLink = signedData?.signedUrl || "";
+          }
+        } else {
+          evidenceLink = safeExternalURL(evidence.evidence_url) || "";
+        }
+
+        const evidencePreview = evidenceLink
+          ? `
+            <a
+              class="quest-action"
+              href="${escapeHTML(evidenceLink)}"
+              target="_blank"
+              rel="noopener noreferrer">
+              VIEW EVIDENCE
+            </a>
+          `
+          : `
+            <p class="muted">
+              Evidence file could not be opened.
+            </p>
+          `;
+
+        return `
+          <article class="quest-card admin-evidence-card">
+            <div class="quest-card-top">
+              <span class="quest-type">
+                ◷ PENDING REVIEW
+              </span>
+
+              <span class="quest-difficulty">
+                ID #${Number(evidence.id)}
+              </span>
+            </div>
+
+            <p>
+              <strong>Hunter:</strong>
+              ${escapeHTML(evidence.user_id)}
+            </p>
+
+            <p>
+              <strong>Quest assignment:</strong>
+              #${Number(evidence.user_quest_id)}
+            </p>
+
+            <p>
+              <strong>Submitted:</strong>
+              ${escapeHTML(
+                new Date(evidence.created_at).toLocaleString()
+              )}
+            </p>
+
+            <p>
+              <strong>Notes:</strong>
+              ${escapeHTML(evidence.notes || "No notes provided.")}
+            </p>
+
+            ${evidencePreview}
+
+            <label>
+              Review notes
+            </label>
+
+            <textarea
+              rows="2"
+              maxlength="500"
+              data-review-notes="${Number(evidence.id)}"
+              placeholder="Optional feedback for the hunter..."></textarea>
+
+            <div class="quest-actions">
+              <button
+                type="button"
+                class="quest-action"
+                data-review-id="${Number(evidence.id)}"
+                data-decision="approved">
+                APPROVE
+              </button>
+
+              <button
+                type="button"
+                class="quest-action"
+                data-review-id="${Number(evidence.id)}"
+                data-decision="rejected">
+                REJECT
+              </button>
+            </div>
+          </article>
+        `;
+      })
     );
 
-    const reviewNotes = notesInput?.value.trim() || null;
+    adminEvidenceList.innerHTML = evidenceCards.join("");
 
-    button.disabled = true;
+  } catch (error) {
+    console.error("LOAD ADMIN EVIDENCE ERROR:", error);
 
-    try {
-      const { error } = await supabase.rpc(
-        "review_quest_evidence",
-        {
-          p_evidence_id: evidenceId,
-          p_decision: decision,
-          p_review_notes: reviewNotes
-        }
-      );
-
-      if (error) throw error;
-
-      message.textContent = decision === "approved"
-        ? "EVIDENCE APPROVED."
-        : "EVIDENCE REJECTED.";
-
-      await loadAdminEvidence();
-      await loadQuests();
-
-    } catch (error) {
-      console.error("EVIDENCE REVIEW ERROR:", error);
-
-      message.textContent = getQuestErrorMessage(error);
-      button.disabled = false;
-    }
-  });
+    adminEvidenceList.innerHTML =
+      '<p class="muted">Could not load pending evidence.</p>';
+  }
 }
 
 // ==========================================
@@ -1428,6 +1527,8 @@ if (adminEvidenceList) {
 
     const evidenceId = Number(button.dataset.reviewId);
     const decision = button.dataset.decision;
+
+    if (!["approved", "rejected"].includes(decision)) return;
 
     const notesInput = adminEvidenceList.querySelector(
       `[data-review-notes="${evidenceId}"]`
@@ -1469,18 +1570,22 @@ if (adminEvidenceList) {
 // LOGOUT
 // ==========================================
 
-logoutButton.addEventListener("click", async () => {
-  await supabase.auth.signOut();
-  window.location.href = "login.html";
-});
+if (logoutButton) {
+  logoutButton.addEventListener("click", async () => {
+    await supabase.auth.signOut();
+    window.location.href = "login.html";
+  });
+}
 
 // ==========================================
 // START SYSTEM
 // ==========================================
 
 initialize().catch(error => {
-  console.error(error);
+  console.error("QUEST INITIALIZATION ERROR:", error);
 
-  message.textContent =
-    "SYSTEM ERROR: " + error.message;
+  if (message) {
+    message.textContent =
+      "SYSTEM ERROR: " + (error.message || "UNKNOWN ERROR");
+  }
 });
