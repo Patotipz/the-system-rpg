@@ -134,10 +134,10 @@ form.addEventListener("submit", async (event) => {
 
     if (profileError) throw profileError;
 
-    window.location.href =
-      profile.character_created === false
-        ? "character.html"
-        : "dashboard.html";
+  window.location.href =
+  profile.character_created === true
+    ? "dashboard.html"
+    : "character.html";
 
   } catch (error) {
     console.error(error);
