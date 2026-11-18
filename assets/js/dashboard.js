@@ -129,15 +129,16 @@ async function initializeDashboard() {
       await supabase
         .from("profiles")
         .select(`
-          display_name,
-          avatar_id,
-          rank,
-          level,
-          xp,
-          coins,
-          current_streak,
-          longest_streak
-        `)
+  display_name,
+  avatar_id,
+  character_created,
+  rank,
+  level,
+  xp,
+  coins,
+  current_streak,
+  longest_streak
+`)
         .eq("user_id", user.id)
         .single();
 
