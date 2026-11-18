@@ -39,6 +39,7 @@
         <p class="system-label">[ SYSTEM MISSION CENTER ]</p>
         <h1>QUEST BOARD</h1>
       </div>
+
       <div class="topbar-right">
         <span id="hunterRank">RANK E</span>
         <span id="hunterLevel">LV. 1</span>
@@ -88,8 +89,14 @@
         </div>
 
         <small id="questHPPercentage">LOADING...</small>
-<div id="questHPRegen" class="resource-regen-indicator" hidden></div>
-        <div id="questExhaustedWarning" class="quest-exhausted-warning" hidden>
+
+        <div id="questHPRegen"
+             class="resource-regen-indicator"
+             hidden></div>
+
+        <div id="questExhaustedWarning"
+             class="quest-exhausted-warning"
+             hidden>
           ⚠ EXHAUSTED — RECOVER TO 50% HP
         </div>
       </article>
@@ -109,7 +116,10 @@
         </div>
 
         <small id="questEnergyPercentage">LOADING...</small>
-        <div id="questEnergyRegen" class="resource-regen-indicator" hidden></div>
+
+        <div id="questEnergyRegen"
+             class="resource-regen-indicator"
+             hidden></div>
       </article>
 
     </section>
@@ -142,6 +152,8 @@
         <button class="filter-button" data-filter="weekly">WEEKLY</button>
         <button class="filter-button" data-filter="special">SPECIAL</button>
         <button class="filter-button" data-filter="main">MAIN</button>
+        <button class="filter-button" data-filter="annual">ANNUAL</button>
+        <button class="filter-button" data-filter="physical">PHYSICAL</button>
         <button class="filter-button" data-filter="dungeon">DUNGEON</button>
       </div>
 
@@ -155,7 +167,7 @@
     <section class="quest-section">
 
       <div class="quest-section-heading">
-        <h2>MY ACTIVE QUESTS</h2>
+        <h2>MY QUESTS</h2>
         <span>YOUR MISSIONS</span>
       </div>
 
@@ -165,11 +177,33 @@
 
     </section>
 
+    <!-- ADMIN EVIDENCE REVIEW -->
+    <section id="adminEvidenceSection"
+             class="quest-section admin-evidence-section"
+             hidden>
+
+      <div class="quest-section-heading">
+        <h2>ADMINISTRATION</h2>
+        <span>[ PHYSICAL CHALLENGE REVIEW ]</span>
+      </div>
+
+      <div class="admin-evidence-intro">
+        <p class="muted">
+          Review submitted evidence and validate official physical challenges.
+        </p>
+      </div>
+
+      <div id="adminEvidenceList" class="admin-evidence-list">
+        <p class="muted">Loading pending evidence...</p>
+      </div>
+
+    </section>
+
     <p id="questMessage" class="system-label"></p>
 
   </main>
 
-  <!-- ACHIEVEMENT UNLOCKED MODAL -->
+  <!-- ACHIEVEMENT / SYSTEM NOTIFICATION MODAL -->
   <div id="achievementModal" class="achievement-modal hidden">
 
     <div class="achievement-modal-content">
@@ -184,9 +218,7 @@
         ACHIEVEMENT UNLOCKED
       </p>
 
-      <h2 id="modalAchievementTitle">
-        AWAKENING
-      </h2>
+      <h2 id="modalAchievementTitle">AWAKENING</h2>
 
       <p id="modalAchievementDescription">
         A new achievement has been unlocked.
