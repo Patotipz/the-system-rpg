@@ -2,6 +2,20 @@
 import { supabase } from "./config.js";
 
 // ==========================================
+// CONFIGURATION
+// ==========================================
+
+const EVIDENCE_BUCKET = "quest-evidence";
+const MAX_EVIDENCE_SIZE = 10 * 1024 * 1024;
+
+const ALLOWED_EVIDENCE_TYPES = [
+  "image/jpeg",
+  "image/png",
+  "image/webp",
+  "application/pdf"
+];
+
+// ==========================================
 // DOM ELEMENTS
 // ==========================================
 
@@ -18,14 +32,14 @@ const rankElement = document.getElementById("hunterRank");
 const levelElement = document.getElementById("hunterLevel");
 const logoutButton = document.getElementById("logoutButton");
 
-// ENERGY ELEMENTS
+// ENERGY
 
 const energyValue = document.getElementById("questEnergyValue");
 const energyMax = document.getElementById("questEnergyMax");
 const energyBar = document.getElementById("questEnergyBar");
 const energyPercentage = document.getElementById("questEnergyPercentage");
 
-// HP ELEMENTS
+// HP
 
 const hpValue = document.getElementById("questHPValue");
 const hpMax = document.getElementById("questHPMax");
@@ -45,24 +59,127 @@ const modalXP = document.getElementById("modalAchievementXP");
 const modalCoins = document.getElementById("modalAchievementCoins");
 const closeAchievementModal = document.getElementById("closeAchievementModal");
 
+// ADMIN EVIDENCE
+
+const adminEvidenceSection = document.getElementById("adminEvidenceSection");
+const adminEvidenceList = document.getElementById("adminEvidenceList");
+
 // ==========================================
 // GLOBAL VARIABLES
 // ==========================================
 
 let currentFilter = "all";
 let currentUser = null;
+let isAdmin = false;
 
 let catalog = [];
 let userQuests = [];
+let userEvidence = [];
 
 let achievementQueue = [];
+
+// ==========================================
+// HELPERS
+// ==========================================
+
+function escapeHTML(value) {
+  return String(value ?? "").replace(/[&<>"']/g, character => {
+    const entities = {
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#039;"
+    };
+
+    return entities[character];
+  });
+}
+
+function safeExternalURL(value) {
+  try {
+    const url = new URL(value);
+
+    if (url.protocol !== "https:" && url.protocol !== "http:") {
+      return null;
+    }
+
+    return url.href;
+  } catch {
+    return null;
+  }
+}
+
+function getEvidenceForQuest(userQuestId) {
+  return userEvidence
+    .filter(item => Number(item.user_quest_id) === Number(userQuestId))
+    .sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+}
+
+function getApprovedEvidence(userQuestId) {
+  return getEvidenceForQuest(userQuestId)
+    .find(item => item.review_status === "approved");
+}
+
+function getPendingEvidence(userQuestId) {
+  return getEvidenceForQuest(userQuestId)
+    .find(item => item.review_status === "pending");
+}
+
+function getLatestEvidence(userQuestId) {
+  return getEvidenceForQuest(userQuestId)[0] || null;
+}
+
+function getQuestErrorMessage(error) {
+  const errorMessage = [
+    error?.message,
+    error?.details,
+    error?.hint
+  ].filter(Boolean).join(" ");
+
+  if (errorMessage.includes("EXHAUSTED")) {
+    return "⚠ SYSTEM WARNING: YOU ARE EXHAUSTED. RECOVER AT LEAST 50% HP BEFORE ACCEPTING OR COMPLETING QUESTS.";
+  }
+
+  if (
+    errorMessage.includes("Not enough energy") ||
+    errorMessage.includes("Insufficient energy")
+  ) {
+    return "INSUFFICIENT ENERGY. RESTORE YOUR ENERGY BEFORE COMPLETING THIS QUEST.";
+  }
+
+  if (errorMessage.includes("EVIDENCE_REQUIRED")) {
+    return "EVIDENCE REQUIRED. SUBMIT YOUR OFFICIAL RESULT AND WAIT FOR APPROVAL.";
+  }
+
+  if (errorMessage.includes("special quest has already been assigned")) {
+    return "YOU HAVE ALREADY ACCEPTED A SPECIAL QUEST THIS MONTH.";
+  }
+
+  if (errorMessage.includes("already assigned this week")) {
+    return "YOU HAVE ALREADY ACCEPTED THIS WEEKLY QUEST.";
+  }
+
+  if (errorMessage.includes("already assigned today")) {
+    return "YOU HAVE ALREADY ACCEPTED THIS DAILY QUEST TODAY.";
+  }
+
+  if (errorMessage.includes("already assigned this year")) {
+    return "YOU HAVE ALREADY ACCEPTED THIS ANNUAL QUEST THIS YEAR.";
+  }
+
+  if (errorMessage.includes("Physical challenge already assigned")) {
+    return "YOU HAVE ALREADY ACCEPTED THIS PHYSICAL CHALLENGE.";
+  }
+
+  return "SYSTEM ERROR: " + (error?.message || "UNKNOWN ERROR.");
+}
 
 // ==========================================
 // NOTIFICATION SYSTEM
 // ==========================================
 
 function showSystemNotification(title, description, icon) {
-
   achievementQueue.push({
     title,
     description,
@@ -76,7 +193,6 @@ function showSystemNotification(title, description, icon) {
 }
 
 function showNextAchievement() {
-
   if (!achievementQueue.length) {
     achievementModal.classList.add("hidden");
     return;
@@ -94,7 +210,6 @@ function showNextAchievement() {
   );
 
   if (achievement.isSystem) {
-
     if (achievement.title === "RANK UP!") {
       modalContent.classList.add("system-rank-up");
     } else {
@@ -103,7 +218,6 @@ function showNextAchievement() {
   }
 
   modalIcon.textContent = achievement.icon || "🏆";
-
   modalTitle.textContent = achievement.title;
 
   modalDescription.textContent =
@@ -122,7 +236,6 @@ function showNextAchievement() {
 }
 
 function showAchievementNotifications(achievements) {
-
   if (!Array.isArray(achievements) || !achievements.length) {
     return;
   }
@@ -133,31 +246,7 @@ function showAchievementNotifications(achievements) {
     showNextAchievement();
   }
 }
-// ==========================================
-// USER-FRIENDLY ERROR MESSAGES
-// ==========================================
 
-function getQuestErrorMessage(error) {
-
-  const errorMessage = [
-    error?.message,
-    error?.details,
-    error?.hint
-  ].filter(Boolean).join(" ");
-
-  if (errorMessage.includes("EXHAUSTED")) {
-    return "⚠ SYSTEM WARNING: YOU ARE EXHAUSTED. RECOVER AT LEAST 50% HP BEFORE ACCEPTING OR COMPLETING QUESTS.";
-  }
-
-  if (
-    errorMessage.includes("Not enough energy") ||
-    errorMessage.includes("Insufficient energy")
-  ) {
-    return "INSUFFICIENT ENERGY. RESTORE YOUR ENERGY BEFORE COMPLETING THIS QUEST.";
-  }
-
-  return "SYSTEM ERROR: " + (error?.message || "UNKNOWN ERROR.");
-}
 closeAchievementModal.addEventListener(
   "click",
   showNextAchievement
@@ -168,7 +257,6 @@ closeAchievementModal.addEventListener(
 // ==========================================
 
 function getMexicoDate() {
-
   const parts = new Intl.DateTimeFormat("en-CA", {
     timeZone: "America/Mexico_City",
     year: "numeric",
@@ -184,7 +272,6 @@ function getMexicoDate() {
 }
 
 function getMexicoDateFromTimestamp(timestamp) {
-
   const parts = new Intl.DateTimeFormat("en-CA", {
     timeZone: "America/Mexico_City",
     year: "numeric",
@@ -200,13 +287,10 @@ function getMexicoDateFromTimestamp(timestamp) {
 }
 
 function getMexicoWeekStart(dateString) {
-
   const [year, month, day] = dateString.split("-").map(Number);
 
   const date = new Date(Date.UTC(year, month - 1, day));
-
   const dayOfWeek = date.getUTCDay();
-
   const daysToMonday = (dayOfWeek + 6) % 7;
 
   date.setUTCDate(date.getUTCDate() - daysToMonday);
@@ -214,16 +298,22 @@ function getMexicoWeekStart(dateString) {
   return date.toISOString().slice(0, 10);
 }
 
+function getMexicoMonth(timestamp) {
+  return getMexicoDateFromTimestamp(timestamp).slice(0, 7);
+}
+
+function getMexicoYear(timestamp) {
+  return getMexicoDateFromTimestamp(timestamp).slice(0, 4);
+}
+
 // ==========================================
 // AUTOMATIC DAILY REFRESH
 // ==========================================
 
 function startDailyRefresh() {
-
   let lastDate = getMexicoDate();
 
   async function checkNewDay() {
-
     const today = getMexicoDate();
 
     if (today === lastDate) return;
@@ -231,14 +321,11 @@ function startDailyRefresh() {
     lastDate = today;
 
     try {
-
       await loadQuests();
       await loadQuestEnergy();
 
       message.textContent = "NEW DAY. DAILY QUESTS RESET.";
-
     } catch (error) {
-
       console.error(error);
       message.textContent = error.message;
     }
@@ -247,7 +334,6 @@ function startDailyRefresh() {
   setInterval(checkNewDay, 30000);
 
   document.addEventListener("visibilitychange", async () => {
-
     if (document.visibilityState !== "visible") return;
 
     await checkNewDay();
@@ -259,7 +345,6 @@ function startDailyRefresh() {
 // ==========================================
 
 async function initialize() {
-
   const { data: authData, error: authError } =
     await supabase.auth.getUser();
 
@@ -268,7 +353,6 @@ async function initialize() {
   currentUser = authData.user;
 
   if (!currentUser) {
-
     window.location.href = "login.html";
     return;
   }
@@ -279,17 +363,33 @@ async function initialize() {
   if (error) throw error;
 
   if (!authorized) {
-
     await supabase.auth.signOut();
-
     window.location.href = "login.html";
     return;
+  }
+
+  const { data: adminResult, error: adminError } =
+    await supabase.rpc("is_admin");
+
+  if (adminError) {
+    console.warn("ADMIN CHECK:", adminError.message);
+  }
+
+  isAdmin = Boolean(adminResult);
+
+  if (adminEvidenceSection) {
+    adminEvidenceSection.hidden = !isAdmin;
   }
 
   await loadProfile();
   await loadQuestEnergy();
   await loadQuests();
-startResourceRefresh();
+
+  if (isAdmin) {
+    await loadAdminEvidence();
+  }
+
+  startResourceRefresh();
   startDailyRefresh();
 }
 
@@ -298,7 +398,6 @@ startResourceRefresh();
 // ==========================================
 
 async function loadProfile() {
-
   const { data, error } = await supabase
     .from("profiles")
     .select("rank, level")
@@ -308,7 +407,6 @@ async function loadProfile() {
   if (error) throw error;
 
   rankElement.textContent = `RANK ${data.rank}`;
-
   levelElement.textContent = `LV. ${data.level}`;
 }
 
@@ -317,7 +415,6 @@ async function loadProfile() {
 // ==========================================
 
 async function loadQuestEnergy() {
-
   const { data, error } = await supabase
     .from("player_stats")
     .select("hp, max_hp, energy, max_energy, exhausted")
@@ -335,13 +432,8 @@ async function loadQuestEnergy() {
     ? Math.min(100, (energy / maxEnergy) * 100)
     : 0;
 
-  if (energyValue) {
-    energyValue.textContent = energy;
-  }
-
-  if (energyMax) {
-    energyMax.textContent = maxEnergy;
-  }
+  if (energyValue) energyValue.textContent = energy;
+  if (energyMax) energyMax.textContent = maxEnergy;
 
   if (energyBar) {
     energyBar.style.width = `${energyPercent}%`;
@@ -362,13 +454,8 @@ async function loadQuestEnergy() {
     ? Math.min(100, (hp / maxHP) * 100)
     : 0;
 
-  if (hpValue) {
-    hpValue.textContent = hp;
-  }
-
-  if (hpMax) {
-    hpMax.textContent = maxHP;
-  }
+  if (hpValue) hpValue.textContent = hp;
+  if (hpMax) hpMax.textContent = maxHP;
 
   if (hpBar) {
     hpBar.style.width = `${hpPercent}%`;
@@ -389,7 +476,6 @@ async function loadQuestEnergy() {
 // ==========================================
 
 function showResourceGain(element, amount, label) {
-
   if (!element) return;
 
   if (amount <= 0) {
@@ -400,7 +486,6 @@ function showResourceGain(element, amount, label) {
   element.textContent = `+${amount} ${label}`;
   element.hidden = false;
 
-  // Reiniciar la animación
   element.style.animation = "none";
   void element.offsetWidth;
   element.style.animation = "";
@@ -411,11 +496,8 @@ function showResourceGain(element, amount, label) {
 }
 
 function startResourceRefresh() {
-
   async function refreshResources() {
-
     try {
-
       const { data, error } = await supabase.rpc(
         "regenerate_player_resources"
       );
@@ -432,44 +514,28 @@ function startResourceRefresh() {
 
       await loadQuestEnergy();
 
-      showResourceGain(
-        hpRegenIndicator,
-        hpRegenerated,
-        "HP"
-      );
-
-      showResourceGain(
-        energyRegenIndicator,
-        energyRegenerated,
-        "ENERGY"
-      );
+      showResourceGain(hpRegenIndicator, hpRegenerated, "HP");
+      showResourceGain(energyRegenIndicator, energyRegenerated, "ENERGY");
 
     } catch (error) {
-
       console.error("RESOURCE REFRESH ERROR:", error);
-
     }
   }
 
   setInterval(refreshResources, 30000);
 
   document.addEventListener("visibilitychange", () => {
-
     if (document.visibilityState === "visible") {
       refreshResources();
     }
-
   });
 }
 
 // ==========================================
-// LOAD QUESTS
+// LOAD QUESTS AND EVIDENCE
 // ==========================================
 
 async function loadQuests() {
-
-  // LOAD QUEST CATALOG
-
   const { data: questData, error: questError } = await supabase
     .from("quests")
     .select(`
@@ -489,8 +555,6 @@ async function loadQuests() {
 
   catalog = questData || [];
 
-  // LOAD USER ASSIGNED QUESTS
-
   const { data: assignedData, error: assignedError } =
     await supabase
       .from("user_quests")
@@ -499,6 +563,7 @@ async function loadQuests() {
         quest_id,
         status,
         assigned_at,
+        completed_at,
         quests (
           title,
           description,
@@ -515,7 +580,37 @@ async function loadQuests() {
 
   userQuests = assignedData || [];
 
+  await loadUserEvidence();
+
   renderAll();
+}
+
+async function loadUserEvidence() {
+  const assignmentIds = userQuests.map(item => item.id);
+
+  if (!assignmentIds.length) {
+    userEvidence = [];
+    return;
+  }
+
+  const { data, error } = await supabase
+    .from("quest_evidence")
+    .select(`
+      id,
+      user_quest_id,
+      evidence_url,
+      evidence_type,
+      notes,
+      review_status,
+      review_notes,
+      created_at
+    `)
+    .in("user_quest_id", assignmentIds)
+    .eq("user_id", currentUser.id);
+
+  if (error) throw error;
+
+  userEvidence = data || [];
 }
 
 // ==========================================
@@ -523,48 +618,60 @@ async function loadQuests() {
 // ==========================================
 
 function getAvailableQuests() {
-
   const today = getMexicoDate();
-
   const currentWeek = getMexicoWeekStart(today);
+  const currentMonth = today.slice(0, 7);
+  const currentYear = today.slice(0, 4);
+
+  const hasSpecialThisMonth = userQuests.some(item => {
+    const type = item.quests?.quest_type;
+
+    return type === "special" &&
+      getMexicoMonth(item.assigned_at) === currentMonth;
+  });
 
   return catalog.filter(quest => {
-
     const assignments = userQuests.filter(
-      uq => uq.quest_id === quest.id
+      item => Number(item.quest_id) === Number(quest.id)
     );
 
-    // DAILY QUESTS
-
     if (quest.quest_type === "daily") {
-
-      return !assignments.some(uq =>
-        getMexicoDateFromTimestamp(uq.assigned_at) === today
+      return !assignments.some(item =>
+        getMexicoDateFromTimestamp(item.assigned_at) === today
       );
     }
 
-    // WEEKLY QUESTS
-
     if (quest.quest_type === "weekly") {
-
-      return !assignments.some(uq =>
+      return !assignments.some(item =>
         getMexicoWeekStart(
-          getMexicoDateFromTimestamp(uq.assigned_at)
+          getMexicoDateFromTimestamp(item.assigned_at)
         ) === currentWeek
       );
     }
 
-    // MAIN AND SPECIAL QUESTS
+    if (quest.quest_type === "special") {
+      return !hasSpecialThisMonth;
+    }
 
-    if (
-      quest.quest_type === "main" ||
-      quest.quest_type === "special"
-    ) {
-
+    if (quest.quest_type === "main") {
       return assignments.length === 0;
     }
 
-    return true;
+    if (quest.quest_type === "annual") {
+      return !assignments.some(item =>
+        getMexicoYear(item.assigned_at) === currentYear
+      );
+    }
+
+    if (quest.quest_type === "physical") {
+      return assignments.length === 0;
+    }
+
+    if (quest.quest_type === "dungeon") {
+      return true;
+    }
+
+    return false;
   });
 }
 
@@ -573,28 +680,23 @@ function getAvailableQuests() {
 // ==========================================
 
 function renderAll() {
-
-  const active = userQuests.filter(q =>
-    q.status === "active" ||
-    q.status === "pending"
+  const active = userQuests.filter(item =>
+    item.status === "active" ||
+    item.status === "pending"
   );
 
-  const completed = userQuests.filter(q =>
-    q.status === "completed"
+  const completed = userQuests.filter(item =>
+    item.status === "completed"
   );
 
   const available = getAvailableQuests();
 
   activeCount.textContent = active.length;
-
   availableCount.textContent = available.length;
-
   completedCount.textContent = completed.length;
 
   renderAvailable(available);
-
   renderFeatured(available);
-
   renderMyQuests(active.concat(completed));
 }
 
@@ -603,7 +705,6 @@ function renderAll() {
 // ==========================================
 
 const questTypes = {
-
   daily: {
     label: "DAILY QUEST",
     class: "type-daily",
@@ -628,6 +729,18 @@ const questTypes = {
     icon: "♛"
   },
 
+  annual: {
+    label: "ANNUAL QUEST",
+    class: "type-annual",
+    icon: "⌛"
+  },
+
+  physical: {
+    label: "PHYSICAL CHALLENGE",
+    class: "type-physical",
+    icon: "🏅"
+  },
+
   dungeon: {
     label: "DUNGEON",
     class: "type-dungeon",
@@ -636,7 +749,6 @@ const questTypes = {
 };
 
 function getQuestType(type) {
-
   return questTypes[type] || {
     label: "QUEST",
     class: "type-default",
@@ -645,20 +757,15 @@ function getQuestType(type) {
 }
 
 // ==========================================
-// QUEST REWARDS HTML
+// QUEST REWARDS
 // ==========================================
 
 function renderRewards(quest) {
-
   return `
     <div class="quest-rewards">
-
-      <span>✦ +${quest.xp_reward || 0} XP</span>
-
-      <span>◈ +${quest.coin_reward || 0} COINS</span>
-
+      <span>✦ +${Number(quest.xp_reward || 0)} XP</span>
+      <span>◈ +${Number(quest.coin_reward || 0)} COINS</span>
       <span>⚡ ${Number(quest.energy_cost || 0)} ENERGY</span>
-
     </div>
   `;
 }
@@ -668,73 +775,61 @@ function renderRewards(quest) {
 // ==========================================
 
 function renderAvailable(quests) {
-
   const priority = {
     main: 1,
-    special: 2,
-    weekly: 3,
-    daily: 4,
-    dungeon: 5
+    physical: 2,
+    special: 3,
+    annual: 4,
+    weekly: 5,
+    daily: 6,
+    dungeon: 7
   };
 
   const filtered = (
-
     currentFilter === "all"
       ? [...quests]
-      : quests.filter(q =>
-          q.quest_type === currentFilter
-        )
-
+      : quests.filter(item => item.quest_type === currentFilter)
   ).sort((a, b) =>
     (priority[a.quest_type] || 99) -
     (priority[b.quest_type] || 99)
   );
 
   if (!filtered.length) {
-
     availableContainer.innerHTML =
-      '<p class="muted">No available missions.</p>';
-
+      '<p class="muted">No available missions in this category.</p>';
     return;
   }
 
-  availableContainer.innerHTML = filtered.map(q => {
-
-    const type = getQuestType(q.quest_type);
+  availableContainer.innerHTML = filtered.map(quest => {
+    const type = getQuestType(quest.quest_type);
 
     return `
-
       <article class="quest-card ${type.class}">
-
         <div class="quest-card-top">
-
           <span class="quest-type">
             ${type.icon} ${type.label}
           </span>
 
           <span class="quest-difficulty">
-            RANK ${q.difficulty}
+            RANK ${escapeHTML(quest.difficulty)}
           </span>
-
         </div>
 
-        <h3>${q.title}</h3>
+        <h3>${escapeHTML(quest.title)}</h3>
 
-        <p>${q.description || "No description available."}</p>
+        <p>${escapeHTML(
+          quest.description || "No description available."
+        )}</p>
 
-        ${renderRewards(q)}
+        ${renderRewards(quest)}
 
         <button
           class="quest-action"
-          data-quest-id="${q.id}"
-        >
+          data-quest-id="${Number(quest.id)}">
           ACCEPT QUEST
         </button>
-
       </article>
-
     `;
-
   }).join("");
 }
 
@@ -743,69 +838,160 @@ function renderAvailable(quests) {
 // ==========================================
 
 function renderFeatured(quests) {
-
   const featured = quests
-    .filter(q =>
-      q.quest_type === "main" ||
-      q.quest_type === "special"
+    .filter(item =>
+      item.quest_type === "main" ||
+      item.quest_type === "special" ||
+      item.quest_type === "physical"
     )
     .sort((a, b) => {
-
       const priority = {
         main: 1,
-        special: 2
+        physical: 2,
+        special: 3
       };
 
-      return priority[a.quest_type] -
-        priority[b.quest_type];
+      return priority[a.quest_type] - priority[b.quest_type];
     });
 
   if (!featured.length) {
-
     featuredContainer.innerHTML =
       '<p class="muted">No featured missions available.</p>';
-
     return;
   }
 
-  featuredContainer.innerHTML = featured.map(q => {
-
-    const type = getQuestType(q.quest_type);
+  featuredContainer.innerHTML = featured.map(quest => {
+    const type = getQuestType(quest.quest_type);
 
     return `
-
       <article class="quest-card ${type.class} featured-card">
-
         <div class="quest-card-top">
-
           <span class="quest-type">
             ${type.icon} ${type.label}
           </span>
 
           <span class="quest-difficulty">
-            RANK ${q.difficulty}
+            RANK ${escapeHTML(quest.difficulty)}
           </span>
-
         </div>
 
-        <h3>${q.title}</h3>
+        <h3>${escapeHTML(quest.title)}</h3>
 
-        <p>${q.description || "No description available."}</p>
+        <p>${escapeHTML(
+          quest.description || "No description available."
+        )}</p>
 
-        ${renderRewards(q)}
+        ${renderRewards(quest)}
 
         <button
           class="quest-action"
-          data-featured-quest-id="${q.id}"
-        >
+          data-featured-quest-id="${Number(quest.id)}">
           ACCEPT QUEST
         </button>
-
       </article>
-
     `;
-
   }).join("");
+}
+
+// ==========================================
+// PHYSICAL EVIDENCE UI
+// ==========================================
+
+function renderEvidenceStatus(userQuestId) {
+  const approved = getApprovedEvidence(userQuestId);
+  const pending = getPendingEvidence(userQuestId);
+  const latest = getLatestEvidence(userQuestId);
+
+  if (approved) {
+    return `
+      <div class="evidence-status evidence-approved">
+        <strong>✓ EVIDENCE APPROVED</strong>
+        <p>Your physical challenge has been validated.</p>
+      </div>
+    `;
+  }
+
+  if (pending) {
+    return `
+      <div class="evidence-status evidence-pending">
+        <strong>◷ EVIDENCE UNDER REVIEW</strong>
+        <p>Your submission is waiting for administrator approval.</p>
+      </div>
+    `;
+  }
+
+  if (latest?.review_status === "rejected") {
+    return `
+      <div class="evidence-status evidence-rejected">
+        <strong>✕ EVIDENCE REJECTED</strong>
+        <p>${escapeHTML(
+          latest.review_notes || "Please submit new evidence."
+        )}</p>
+      </div>
+    `;
+  }
+
+  return "";
+}
+
+function renderEvidenceSubmission(userQuestId) {
+  const approved = getApprovedEvidence(userQuestId);
+  const pending = getPendingEvidence(userQuestId);
+
+  if (approved) return "";
+
+  if (pending) {
+    return renderEvidenceStatus(userQuestId);
+  }
+
+  return `
+    ${renderEvidenceStatus(userQuestId)}
+
+    <form
+      class="evidence-form"
+      data-evidence-form
+      data-user-quest-id="${Number(userQuestId)}">
+
+      <p class="evidence-form-title">
+        [ SUBMIT OFFICIAL PROOF ]
+      </p>
+
+      <label>
+        Upload result / certificate / photo
+      </label>
+
+      <input
+        type="file"
+        name="evidence_file"
+        accept="image/jpeg,image/png,image/webp,application/pdf">
+
+      <p class="evidence-or">OR</p>
+
+      <label>
+        Official result URL
+      </label>
+
+      <input
+        type="url"
+        name="evidence_link"
+        placeholder="https://...">
+
+      <label>
+        Notes (optional)
+      </label>
+
+      <textarea
+        name="evidence_notes"
+        rows="2"
+        maxlength="500"
+        placeholder="Event name, date, category..."></textarea>
+
+      <button type="submit" class="quest-action">
+        SUBMIT EVIDENCE
+      </button>
+
+    </form>
+  `;
 }
 
 // ==========================================
@@ -813,124 +999,104 @@ function renderFeatured(quests) {
 // ==========================================
 
 function renderMyQuests(quests) {
-
   if (!quests.length) {
-
     myQuestsContainer.innerHTML =
       '<p class="muted">You have no active missions.</p>';
-
     return;
   }
 
-  myQuestsContainer.innerHTML = quests.map(q => {
-
-    const quest = q.quests;
+  myQuestsContainer.innerHTML = quests.map(item => {
+    const quest = item.quests;
 
     if (!quest) return "";
 
     const type = getQuestType(quest.quest_type);
+    const completed = item.status === "completed";
+    const physical = quest.quest_type === "physical";
+
+    const approvedEvidence = physical
+      ? getApprovedEvidence(item.id)
+      : null;
 
     let action = "";
 
-    if (
-      q.status === "active" ||
-      q.status === "pending"
-    ) {
-
+    if (completed) {
       action = `
-
         <button
           class="quest-action"
-          data-complete-id="${q.id}"
-        >
-          COMPLETE QUEST
-        </button>
-
-      `;
-
-    } else if (q.status === "completed") {
-
-      action = `
-
-        <button
-          class="quest-action"
-          data-claim-id="${q.id}"
-        >
+          data-claim-id="${Number(item.id)}">
           CLAIM REWARDS
         </button>
-
+      `;
+    } else if (physical && !approvedEvidence) {
+      action = renderEvidenceSubmission(item.id);
+    } else {
+      action = `
+        <button
+          class="quest-action"
+          data-complete-id="${Number(item.id)}">
+          COMPLETE QUEST
+        </button>
       `;
     }
 
-    const completed = q.status === "completed";
-
     const progress = completed ? 100 : 25;
 
+    let statusText = "◈ ACTIVE MISSION";
+
+    if (completed) {
+      statusText = "✦ READY TO CLAIM";
+    } else if (physical && approvedEvidence) {
+      statusText = "✓ EVIDENCE APPROVED — READY TO COMPLETE";
+    }
+
     return `
-
       <article class="quest-card ${type.class}">
-
         <div class="quest-card-top">
-
           <span class="quest-type">
             ${type.icon} ${type.label}
           </span>
 
           <span class="quest-difficulty">
-            RANK ${quest.difficulty}
+            RANK ${escapeHTML(quest.difficulty)}
           </span>
-
         </div>
 
-        <h3>${quest.title}</h3>
+        <h3>${escapeHTML(quest.title)}</h3>
 
-        <p>${quest.description || ""}</p>
+        <p>${escapeHTML(quest.description || "")}</p>
 
         ${renderRewards(quest)}
 
         <div class="quest-progress">
-
           <div class="quest-progress-info">
-
             <span>MISSION PROGRESS</span>
-
             <strong>${progress}%</strong>
-
           </div>
 
           <div class="quest-progress-track">
-
             <div
               class="quest-progress-fill ${
-                completed
-                  ? "progress-completed"
-                  : "progress-active"
+                completed ? "progress-completed" : "progress-active"
               }"
-              style="width: ${progress}%"
-            ></div>
-
+              style="width: ${progress}%">
+            </div>
           </div>
-
         </div>
 
         <p class="quest-status-label ${
           completed ? "status-ready" : "status-active"
         }">
-
-          ${
-            completed
-              ? "✦ READY TO CLAIM"
-              : "◈ ACTIVE MISSION"
-          }
-
+          ${statusText}
         </p>
 
+        ${physical && !completed
+          ? renderEvidenceStatus(item.id)
+          : ""}
+
         ${action}
-
       </article>
-
     `;
-
   }).join("");
 }
 
@@ -939,25 +1105,20 @@ function renderMyQuests(quests) {
 // ==========================================
 
 document.querySelectorAll(".filter-button").forEach(button => {
-
   button.addEventListener("click", () => {
-
     document.querySelectorAll(".filter-button")
-      .forEach(b => b.classList.remove("active"));
+      .forEach(item => item.classList.remove("active"));
 
     button.classList.add("active");
-
     currentFilter = button.dataset.filter;
 
     renderAvailable(getAvailableQuests());
   });
-
 });
 
 // ==========================================
 // ACCEPT QUEST
 // ==========================================
-
 
 async function acceptQuest(questId, button) {
   button.disabled = true;
@@ -978,14 +1139,11 @@ async function acceptQuest(questId, button) {
     console.error(error);
 
     message.textContent = getQuestErrorMessage(error);
-
     button.disabled = false;
   }
 }
 
-
 availableContainer.addEventListener("click", async event => {
-
   const button = event.target.closest("[data-quest-id]");
 
   if (!button) return;
@@ -994,7 +1152,6 @@ availableContainer.addEventListener("click", async event => {
 });
 
 featuredContainer.addEventListener("click", async event => {
-
   const button = event.target.closest("[data-featured-quest-id]");
 
   if (!button) return;
@@ -1003,29 +1160,134 @@ featuredContainer.addEventListener("click", async event => {
 });
 
 // ==========================================
+// SUBMIT PHYSICAL EVIDENCE
+// ==========================================
+
+myQuestsContainer.addEventListener("submit", async event => {
+  const form = event.target.closest("[data-evidence-form]");
+
+  if (!form) return;
+
+  event.preventDefault();
+
+  const submitButton = form.querySelector('button[type="submit"]');
+  const fileInput = form.querySelector('[name="evidence_file"]');
+  const linkInput = form.querySelector('[name="evidence_link"]');
+  const notesInput = form.querySelector('[name="evidence_notes"]');
+
+  const userQuestId = Number(form.dataset.userQuestId);
+  const file = fileInput.files?.[0] || null;
+  const rawLink = linkInput.value.trim();
+  const notes = notesInput.value.trim();
+
+  if (!file && !rawLink) {
+    message.textContent = "PLEASE UPLOAD A FILE OR PROVIDE A RESULT URL.";
+    return;
+  }
+
+  if (file && rawLink) {
+    message.textContent = "PLEASE SUBMIT EITHER A FILE OR A LINK, NOT BOTH.";
+    return;
+  }
+
+  submitButton.disabled = true;
+  submitButton.textContent = "SUBMITTING...";
+
+  try {
+    let evidenceURL = "";
+    let evidenceType = "";
+
+    if (file) {
+      if (!ALLOWED_EVIDENCE_TYPES.includes(file.type)) {
+        throw new Error(
+          "INVALID FILE TYPE. USE JPG, PNG, WEBP OR PDF."
+        );
+      }
+
+      if (file.size > MAX_EVIDENCE_SIZE) {
+        throw new Error("FILE TOO LARGE. MAXIMUM SIZE IS 10 MB.");
+      }
+
+      const safeName = file.name
+        .normalize("NFKD")
+        .replace(/[^a-zA-Z0-9._-]/g, "_")
+        .slice(-100);
+
+      const filePath =
+        `${currentUser.id}/${userQuestId}/` +
+        `${Date.now()}-${safeName}`;
+
+      const { error: uploadError } = await supabase
+        .storage
+        .from(EVIDENCE_BUCKET)
+        .upload(filePath, file, {
+          contentType: file.type,
+          upsert: false
+        });
+
+      if (uploadError) throw uploadError;
+
+      evidenceURL = filePath;
+      evidenceType = "file";
+
+    } else {
+      const safeURL = safeExternalURL(rawLink);
+
+      if (!safeURL) {
+        throw new Error("PLEASE PROVIDE A VALID HTTP OR HTTPS URL.");
+      }
+
+      evidenceURL = safeURL;
+      evidenceType = "link";
+    }
+
+    const { error: insertError } = await supabase
+      .from("quest_evidence")
+      .insert({
+        user_quest_id: userQuestId,
+        user_id: currentUser.id,
+        evidence_url: evidenceURL,
+        evidence_type: evidenceType,
+        notes: notes || null
+      });
+
+    if (insertError) throw insertError;
+
+    message.textContent =
+      "EVIDENCE SUBMITTED. WAITING FOR ADMIN APPROVAL.";
+
+    await loadQuests();
+
+    if (isAdmin) {
+      await loadAdminEvidence();
+    }
+
+  } catch (error) {
+    console.error("EVIDENCE SUBMISSION ERROR:", error);
+    message.textContent = getQuestErrorMessage(error);
+
+    submitButton.disabled = false;
+    submitButton.textContent = "SUBMIT EVIDENCE";
+  }
+});
+
+// ==========================================
 // COMPLETE OR CLAIM QUEST
 // ==========================================
 
 myQuestsContainer.addEventListener("click", async event => {
-
   const completeButton = event.target.closest("[data-complete-id]");
-
   const claimButton = event.target.closest("[data-claim-id]");
 
   if (!completeButton && !claimButton) return;
 
   const button = completeButton || claimButton;
-
   button.disabled = true;
 
   try {
-
-    // ======================================
     // COMPLETE QUEST
-    // ======================================
 
     if (completeButton) {
-
       const { data, error } = await supabase.rpc(
         "complete_quest",
         {
@@ -1037,13 +1299,8 @@ myQuestsContainer.addEventListener("click", async event => {
 
       if (error) throw error;
 
-      const energySpent = Number(
-        data?.energy_spent ?? 0
-      );
-
-      const energyRemaining = Number(
-        data?.energy_remaining ?? 0
-      );
+      const energySpent = Number(data?.energy_spent ?? 0);
+      const energyRemaining = Number(data?.energy_remaining ?? 0);
 
       message.textContent =
         `QUEST COMPLETED. -${energySpent} ENERGY. ` +
@@ -1054,22 +1311,14 @@ myQuestsContainer.addEventListener("click", async event => {
       );
     }
 
-    // ======================================
     // CLAIM REWARDS
-    // ======================================
 
     if (claimButton) {
-
-      const { data: userData, error: userError } =
-        await supabase.auth.getUser();
-
-      if (userError) throw userError;
-
       const { data: oldProfile, error: oldProfileError } =
         await supabase
           .from("profiles")
           .select("level, rank")
-          .eq("user_id", userData.user.id)
+          .eq("user_id", currentUser.id)
           .single();
 
       if (oldProfileError) throw oldProfileError;
@@ -1085,13 +1334,9 @@ myQuestsContainer.addEventListener("click", async event => {
 
       if (error) throw error;
 
-      message.textContent =
-        "REWARDS CLAIMED SUCCESSFULLY.";
-
-      // LEVEL UP
+      message.textContent = "REWARDS CLAIMED SUCCESSFULLY.";
 
       if (data.level > oldProfile.level) {
-
         showSystemNotification(
           "LEVEL UP!",
           `YOU REACHED LEVEL ${data.level}`,
@@ -1099,10 +1344,7 @@ myQuestsContainer.addEventListener("click", async event => {
         );
       }
 
-      // RANK UP
-
       if (data.rank !== oldProfile.rank) {
-
         showSystemNotification(
           "RANK UP!",
           `HUNTER RANK ${oldProfile.rank} → ${data.rank}`,
@@ -1110,29 +1352,19 @@ myQuestsContainer.addEventListener("click", async event => {
         );
       }
 
-      // ACHIEVEMENTS
-
-      const achievements =
-        data.achievements?.unlocked || [];
+      const achievements = data.achievements?.unlocked || [];
 
       showAchievementNotifications(achievements);
     }
-
-    // ======================================
-    // REFRESH SYSTEM DATA
-    // ======================================
 
     await loadQuests();
     await loadProfile();
     await loadQuestEnergy();
 
   } catch (error) {
-
     console.error(error);
 
     message.textContent = getQuestErrorMessage(error);
-
-    // Refresh data even if an operation fails.
 
     try {
       await loadQuests();
@@ -1141,22 +1373,201 @@ myQuestsContainer.addEventListener("click", async event => {
     } catch (refreshError) {
       console.error(refreshError);
     }
-
   }
-
 });
 
+// ==========================================
+// ADMIN: LOAD PENDING EVIDENCE
+// ==========================================
+
+async function loadAdminEvidence() {
+  if (!isAdmin || !adminEvidenceList) return;
+
+  adminEvidenceList.innerHTML =
+    '<p class="muted">Loading pending evidence...</p>';
+
+  const { data, error } = await supabase
+    .from("quest_evidence")
+    .select(`
+      id,
+      user_id,
+      user_quest_id,
+      evidence_url,
+      evidence_type,
+      notes,
+      created_at,
+      user_quests (
+        quest_id,
+        quests (
+          title,
+          description
+        )
+      )
+    `)
+    .eq("review_status", "pending")
+    .order("created_at", { ascending: true });
+
+  if (error) {
+    console.error("ADMIN EVIDENCE LOAD ERROR:", error);
+    adminEvidenceList.innerHTML =
+      '<p class="muted">Could not load pending evidence.</p>';
+    return;
+  }
+
+  if (!data?.length) {
+    adminEvidenceList.innerHTML =
+      '<p class="muted">No pending evidence submissions.</p>';
+    return;
+  }
+
+  const cards = await Promise.all(data.map(async item => {
+    const questTitle =
+      item.user_quests?.quests?.title || "Physical Challenge";
+
+    let evidenceLink = "";
+
+    if (item.evidence_type === "file") {
+      const { data: signedData, error: signedError } =
+        await supabase.storage
+          .from(EVIDENCE_BUCKET)
+          .createSignedUrl(item.evidence_url, 300);
+
+      if (!signedError && signedData?.signedUrl) {
+        evidenceLink = signedData.signedUrl;
+      }
+    } else {
+      evidenceLink = safeExternalURL(item.evidence_url) || "";
+    }
+
+    const evidenceMarkup = evidenceLink
+      ? `
+        <a
+          class="evidence-open-link"
+          href="${escapeHTML(evidenceLink)}"
+          target="_blank"
+          rel="noopener noreferrer">
+          OPEN SUBMITTED EVIDENCE ↗
+        </a>
+      `
+      : `
+        <p class="muted">Evidence file could not be opened.</p>
+      `;
+
+    return `
+      <article class="admin-evidence-card">
+        <div class="quest-card-top">
+          <span class="quest-type type-physical">
+            🏅 PHYSICAL CHALLENGE
+          </span>
+
+          <span class="quest-difficulty">
+            PENDING REVIEW
+          </span>
+        </div>
+
+        <h3>${escapeHTML(questTitle)}</h3>
+
+        <p class="admin-evidence-user">
+          HUNTER: ${escapeHTML(item.user_id)}
+        </p>
+
+        <p class="admin-evidence-date">
+          SUBMITTED: ${escapeHTML(
+            new Date(item.created_at).toLocaleString("en-US", {
+              timeZone: "America/Mexico_City"
+            })
+          )}
+        </p>
+
+        <p>${escapeHTML(item.notes || "No additional notes.")}</p>
+
+        ${evidenceMarkup}
+
+        <label>REVIEW NOTES</label>
+
+        <textarea
+          class="admin-review-notes"
+          data-review-notes="${Number(item.id)}"
+          rows="2"
+          maxlength="500"
+          placeholder="Optional feedback for the Hunter..."></textarea>
+
+        <div class="admin-review-actions">
+          <button
+            class="quest-action approve-evidence-button"
+            data-review-id="${Number(item.id)}"
+            data-decision="approved">
+            APPROVE
+          </button>
+
+          <button
+            class="quest-action reject-evidence-button"
+            data-review-id="${Number(item.id)}"
+            data-decision="rejected">
+            REJECT
+          </button>
+        </div>
+      </article>
+    `;
+  }));
+
+  adminEvidenceList.innerHTML = cards.join("");
+}
+
+// ==========================================
+// ADMIN: APPROVE OR REJECT EVIDENCE
+// ==========================================
+
+adminEvidenceList.addEventListener("click", async event => {
+  const button = event.target.closest("[data-review-id]");
+
+  if (!button || !isAdmin) return;
+
+  const evidenceId = Number(button.dataset.reviewId);
+  const decision = button.dataset.decision;
+
+  const notesInput = adminEvidenceList.querySelector(
+    `[data-review-notes="${evidenceId}"]`
+  );
+
+  const reviewNotes = notesInput?.value.trim() || null;
+
+  button.disabled = true;
+
+  try {
+    const { error } = await supabase.rpc(
+      "review_quest_evidence",
+      {
+        p_evidence_id: evidenceId,
+        p_decision: decision,
+        p_review_notes: reviewNotes
+      }
+    );
+
+    if (error) throw error;
+
+    message.textContent = decision === "approved"
+      ? "EVIDENCE APPROVED."
+      : "EVIDENCE REJECTED.";
+
+    await loadAdminEvidence();
+    await loadQuests();
+
+  } catch (error) {
+    console.error("EVIDENCE REVIEW ERROR:", error);
+
+    message.textContent = getQuestErrorMessage(error);
+    button.disabled = false;
+  }
+});
 
 // ==========================================
 // LOGOUT
 // ==========================================
 
 logoutButton.addEventListener("click", async () => {
-
   await supabase.auth.signOut();
-
   window.location.href = "login.html";
-
 });
 
 // ==========================================
@@ -1164,10 +1575,8 @@ logoutButton.addEventListener("click", async () => {
 // ==========================================
 
 initialize().catch(error => {
-
   console.error(error);
 
   message.textContent =
     "SYSTEM ERROR: " + error.message;
-
 });
