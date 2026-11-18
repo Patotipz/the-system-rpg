@@ -890,3 +890,285 @@
     transform: translateY(-5px);
   }
 }
+
+/* =========================================
+   ANNUAL QUESTS — GOLD / TEAL
+========================================= */
+
+.quest-card.type-annual {
+  border-left: 4px solid #d7b86a;
+  background: linear-gradient(
+    135deg,
+    rgba(215, 184, 106, 0.10),
+    var(--surface-2)
+  );
+}
+
+.type-annual .quest-type {
+  color: #e6ca83;
+  background: rgba(215, 184, 106, 0.10);
+}
+
+/* =========================================
+   PHYSICAL CHALLENGES — RED / ORANGE
+========================================= */
+
+.quest-card.type-physical {
+  border-left: 4px solid #ff8066;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 128, 102, 0.10),
+    var(--surface-2)
+  );
+}
+
+.type-physical .quest-type {
+  color: #ff9a83;
+  background: rgba(255, 128, 102, 0.10);
+}
+
+.quest-card.type-physical:hover {
+  border-color: #ff8066;
+}
+
+/* =========================================
+   EVIDENCE SUBMISSION
+========================================= */
+
+.evidence-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 18px;
+  padding: 16px;
+  background: rgba(5, 15, 30, 0.65);
+  border: 1px solid var(--border);
+}
+
+.evidence-form-title {
+  color: #ff9a83 !important;
+  font-size: 10px !important;
+  font-weight: bold;
+  letter-spacing: 2px;
+}
+
+.evidence-form label,
+.admin-evidence-card label {
+  color: var(--blue-light);
+  font-size: 10px;
+  letter-spacing: 1px;
+  font-weight: bold;
+}
+
+.evidence-form input,
+.evidence-form textarea,
+.admin-review-notes {
+  width: 100%;
+  padding: 11px;
+  background: #0b1425;
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 11px;
+  outline: none;
+}
+
+.evidence-form input:focus,
+.evidence-form textarea:focus,
+.admin-review-notes:focus {
+  border-color: var(--blue-light);
+}
+
+.evidence-form input[type="file"] {
+  font-size: 10px;
+}
+
+.evidence-form input[type="file"]::file-selector-button {
+  padding: 7px 10px;
+  margin-right: 10px;
+  background: #203b63;
+  border: 1px solid #426b9e;
+  color: white;
+  cursor: pointer;
+}
+
+.evidence-form textarea,
+.admin-review-notes {
+  resize: vertical;
+  line-height: 1.6;
+}
+
+.evidence-or {
+  text-align: center;
+  color: var(--muted) !important;
+  font-size: 9px !important;
+  letter-spacing: 2px;
+}
+
+/* =========================================
+   EVIDENCE STATUS
+========================================= */
+
+.evidence-status {
+  margin: 14px 0;
+  padding: 12px;
+  border: 1px solid var(--border);
+  background: rgba(5, 15, 30, 0.55);
+}
+
+.evidence-status strong {
+  display: block;
+  font-size: 10px;
+  letter-spacing: 1.5px;
+}
+
+.evidence-status p {
+  margin-top: 7px;
+  font-size: 10px;
+  line-height: 1.6;
+}
+
+.evidence-approved {
+  border-color: rgba(69, 214, 154, 0.5);
+}
+
+.evidence-approved strong {
+  color: #65e5ad;
+}
+
+.evidence-pending {
+  border-color: rgba(232, 189, 85, 0.5);
+}
+
+.evidence-pending strong {
+  color: #e8bd55;
+}
+
+.evidence-rejected {
+  border-color: rgba(255, 100, 116, 0.5);
+}
+
+.evidence-rejected strong {
+  color: #ff8793;
+}
+
+/* =========================================
+   ADMIN EVIDENCE REVIEW
+========================================= */
+
+.admin-evidence-section {
+  padding: 22px;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 128, 102, 0.05),
+    rgba(181, 138, 255, 0.04)
+  );
+  border: 1px solid var(--border);
+}
+
+.admin-evidence-intro {
+  margin-bottom: 18px;
+}
+
+.admin-evidence-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.admin-evidence-card {
+  min-width: 0;
+  padding: 20px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-left: 3px solid #e8bd55;
+}
+
+.admin-evidence-card h3 {
+  margin: 12px 0;
+  color: var(--blue-light);
+  font-size: 14px;
+}
+
+.admin-evidence-card p {
+  overflow-wrap: anywhere;
+  color: var(--muted);
+  font-size: 10px;
+  line-height: 1.7;
+}
+
+.admin-evidence-user {
+  margin: 8px 0;
+  color: #c5a3ff !important;
+}
+
+.admin-evidence-date {
+  margin-bottom: 12px;
+}
+
+.evidence-open-link {
+  display: inline-block;
+  margin: 14px 0;
+  color: #8cbfff;
+  font-size: 10px;
+  font-weight: bold;
+  letter-spacing: 1px;
+  text-decoration: none;
+}
+
+.evidence-open-link:hover {
+  color: white;
+  text-decoration: underline;
+}
+
+.admin-review-notes {
+  display: block;
+  margin: 8px 0 14px;
+}
+
+.admin-review-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.admin-review-actions .quest-action {
+  flex: 1;
+}
+
+.approve-evidence-button {
+  border-color: #45d69a;
+  color: #65e5ad;
+}
+
+.approve-evidence-button:hover {
+  background: #287b58;
+}
+
+.reject-evidence-button {
+  border-color: #ff6474;
+  color: #ff8793;
+}
+
+.reject-evidence-button:hover {
+  background: #8e3440;
+}
+
+@media (max-width: 850px) {
+  .admin-evidence-list {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .admin-evidence-section {
+    padding: 14px;
+  }
+
+  .evidence-form {
+    padding: 12px;
+  }
+
+  .admin-review-actions {
+    flex-direction: column;
+  }
+}
