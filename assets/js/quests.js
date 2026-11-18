@@ -947,7 +947,43 @@ function renderEvidenceSubmission(userQuestId) {
     </form>
   `;
 }
+function renderEvidenceStatus(userQuestId) {
+  const evidence = getLatestEvidence(userQuestId);
 
+  if (!evidence) return "";
+
+  if (evidence.review_status === "pending") {
+    return `
+      <div class="evidence-status evidence-pending">
+        <strong>◷ EVIDENCE UNDER REVIEW</strong>
+        <p>Your submission is waiting for admin approval.</p>
+      </div>
+    `;
+  }
+
+  if (evidence.review_status === "approved") {
+    return `
+      <div class="evidence-status evidence-approved">
+        <strong>✓ EVIDENCE APPROVED</strong>
+        <p>Your official result has been verified.</p>
+      </div>
+    `;
+  }
+
+  if (evidence.review_status === "rejected") {
+    return `
+      <div class="evidence-status evidence-rejected">
+        <strong>✕ EVIDENCE REJECTED</strong>
+        <p>${escapeHTML(
+          evidence.review_notes || "Please submit new evidence."
+        )}</p>
+        <p>You can submit new evidence below.</p>
+      </div>
+    `;
+  }
+
+  return "";
+}
 // ==========================================
 // RENDER MY QUESTS
 // ==========================================
@@ -1335,137 +1371,49 @@ myQuestsContainer.addEventListener("click", async event => {
 // ==========================================
 
 async function loadAdminEvidence() {
-  if (!isAdmin || !adminEvidenceList) return;
+  if (adminEvidenceList) {
+  adminEvidenceList.addEventListener("click", async event => {
+    const button = event.target.closest("[data-review-id]");
 
-  adminEvidenceList.innerHTML =
-    '<p class="muted">Loading pending evidence...</p>';
+    if (!button || !isAdmin) return;
 
-  const { data, error } = await supabase
-    .from("quest_evidence")
-    .select(`
-      id,
-      user_id,
-      user_quest_id,
-      evidence_url,
-      evidence_type,
-      notes,
-      created_at,
-      user_quests (
-        quest_id,
-        quests (
-          title,
-          description
-        )
-      )
-    `)
-    .eq("review_status", "pending")
-    .order("created_at", { ascending: true });
+    const evidenceId = Number(button.dataset.reviewId);
+    const decision = button.dataset.decision;
 
-  if (error) {
-    console.error("ADMIN EVIDENCE LOAD ERROR:", error);
-    adminEvidenceList.innerHTML =
-      '<p class="muted">Could not load pending evidence.</p>';
-    return;
-  }
+    const notesInput = adminEvidenceList.querySelector(
+      `[data-review-notes="${evidenceId}"]`
+    );
 
-  if (!data?.length) {
-    adminEvidenceList.innerHTML =
-      '<p class="muted">No pending evidence submissions.</p>';
-    return;
-  }
+    const reviewNotes = notesInput?.value.trim() || null;
 
-  const cards = await Promise.all(data.map(async item => {
-    const questTitle =
-      item.user_quests?.quests?.title || "Physical Challenge";
+    button.disabled = true;
 
-    let evidenceLink = "";
+    try {
+      const { error } = await supabase.rpc(
+        "review_quest_evidence",
+        {
+          p_evidence_id: evidenceId,
+          p_decision: decision,
+          p_review_notes: reviewNotes
+        }
+      );
 
-    if (item.evidence_type === "file") {
-      const { data: signedData, error: signedError } =
-        await supabase.storage
-          .from(EVIDENCE_BUCKET)
-          .createSignedUrl(item.evidence_url, 300);
+      if (error) throw error;
 
-      if (!signedError && signedData?.signedUrl) {
-        evidenceLink = signedData.signedUrl;
-      }
-    } else {
-      evidenceLink = safeExternalURL(item.evidence_url) || "";
+      message.textContent = decision === "approved"
+        ? "EVIDENCE APPROVED."
+        : "EVIDENCE REJECTED.";
+
+      await loadAdminEvidence();
+      await loadQuests();
+
+    } catch (error) {
+      console.error("EVIDENCE REVIEW ERROR:", error);
+
+      message.textContent = getQuestErrorMessage(error);
+      button.disabled = false;
     }
-
-    const evidenceMarkup = evidenceLink
-      ? `
-        <a
-          class="evidence-open-link"
-          href="${escapeHTML(evidenceLink)}"
-          target="_blank"
-          rel="noopener noreferrer">
-          OPEN SUBMITTED EVIDENCE ↗
-        </a>
-      `
-      : `
-        <p class="muted">Evidence file could not be opened.</p>
-      `;
-
-    return `
-      <article class="admin-evidence-card">
-        <div class="quest-card-top">
-          <span class="quest-type type-physical">
-            🏅 PHYSICAL CHALLENGE
-          </span>
-
-          <span class="quest-difficulty">
-            PENDING REVIEW
-          </span>
-        </div>
-
-        <h3>${escapeHTML(questTitle)}</h3>
-
-        <p class="admin-evidence-user">
-          HUNTER: ${escapeHTML(item.user_id)}
-        </p>
-
-        <p class="admin-evidence-date">
-          SUBMITTED: ${escapeHTML(
-            new Date(item.created_at).toLocaleString("en-US", {
-              timeZone: "America/Mexico_City"
-            })
-          )}
-        </p>
-
-        <p>${escapeHTML(item.notes || "No additional notes.")}</p>
-
-        ${evidenceMarkup}
-
-        <label>REVIEW NOTES</label>
-
-        <textarea
-          class="admin-review-notes"
-          data-review-notes="${Number(item.id)}"
-          rows="2"
-          maxlength="500"
-          placeholder="Optional feedback for the Hunter..."></textarea>
-
-        <div class="admin-review-actions">
-          <button
-            class="quest-action approve-evidence-button"
-            data-review-id="${Number(item.id)}"
-            data-decision="approved">
-            APPROVE
-          </button>
-
-          <button
-            class="quest-action reject-evidence-button"
-            data-review-id="${Number(item.id)}"
-            data-decision="rejected">
-            REJECT
-          </button>
-        </div>
-      </article>
-    `;
-  }));
-
-  adminEvidenceList.innerHTML = cards.join("");
+  });
 }
 
 // ==========================================
